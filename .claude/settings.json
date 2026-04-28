@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "bash",
+            "command": "input=$(cat); if printf '%s' \"$input\" | grep -q '\"stop_hook_active\":[[:space:]]*true'; then exit 0; fi; printf '%s' '{\"decision\":\"block\",\"reason\":\"Before stopping: did this turn include a scope decision, milestone, tech choice resolved, blocker identified/cleared, or sourcing decision on a contested fact? If yes, update progress.md (rewrite the top snapshot in place, append a dated log entry at the bottom). If no, acknowledge briefly and stop.\"}'"
+          }
+        ]
+      }
+    ]
+  }
+}
