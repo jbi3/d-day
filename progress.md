@@ -6,8 +6,8 @@ place. Bottom section is an append-only dated log.
 
 ## Current state
 
-**Phase:** Session 1 complete — brief, README, and Claude bootstrap on
-`main`. Pre-Session 2.
+**Phase:** Pre-Session 2 — execution plan adopted, awaiting tech-stack
+sign-off (0.0).
 
 **Done**
 - `brief.md` — scope, success criteria, MVP slice, roadmap, sourcing
@@ -15,19 +15,21 @@ place. Bottom section is an append-only dated log.
 - `README.md` — project pointer.
 - `CLAUDE.md` — working instructions for Claude on this repo.
 - `progress.md` — this file, with Stop-hook reminder wired in.
+- `mvp-execution-plan.md` — refined MVP execution plan: vertical slice
+  before fan-out; tech-stack as gate; painted basemap deferred out of
+  MVP.
 
-**Next (Session 2 per brief)**
-- Define data schemas: unit, movement, event, source.
-- Stand up minimal MapLibre + deck.gl page animating one unit on a
-  placeholder basemap (tech-stack validation).
+**Next**
+- 0.0 tech-stack sign-off (user gate).
+- Then 0.1 SvelteKit + MapLibre + deck.gl scaffold and 0.2 data
+  schemas (parallel after 0.0).
 
 **Open questions / unresolved**
 - Tech stack in `brief.md` is proposed, not validated. Renderer, tile
-  format, app shell, hosting all pending sign-off.
-- Painted basemap viability at all zoom levels — flagged as risk in
-  brief.
-- Uncertainty visual treatment for contested German positions — design
-  not yet started.
+  format, app shell, hosting all pending sign-off in 0.0.
+- Uncertainty visual treatment for contested German positions —
+  schema models `disputedBy` in 0.2, but visual design (B.7) not
+  started.
 
 **Known blockers**
 - None.
@@ -53,3 +55,24 @@ place. Bottom section is an append-only dated log.
   `GIT_SSH_COMMAND="ssh" git push` worked. Root cause not yet
   identified — `~/.ssh/config` and Git Bash's `/usr/bin/ssh` both
   resolve `github-perso` correctly. Revisit if it recurs.
+
+### 2026-04-29 — MVP execution plan adopted
+- `mvp-execution-plan.md` added at repo root (branch
+  `claude/mvp-execution-plan-001`).
+- Chose vertical-slice ordering (US 1st ID end-to-end before
+  dataset/renderer fan-out) over the draft's broad parallelism, to
+  surface schema gaps under a real renderer before six dataset
+  authors hit them.
+- Promoted the source registry seed to Phase 0.3 (was buried in
+  Stream A) so every dataset task starts with valid SourceIDs.
+- Tech stack (renderer / tiles / app shell / hosting) reframed as a
+  Phase 0.0 user-sign-off gate, not a locked decision.
+- `disputedBy` (or equivalent) treated as a first-class schema field
+  in 0.2, with a fixture exercising it, so contested facts can't be
+  silently picked downstream.
+- Painted basemap moved out of MVP and into the post-MVP roadmap;
+  MVP ships on a placeholder MapLibre style. Brief flagged painted
+  basemaps as a risk; not the place to absorb that risk during
+  integration.
+- Hard perf numbers (TTI / fps) demoted to qualitative for MVP;
+  promote to gated targets in v1 once a real basemap is in.
