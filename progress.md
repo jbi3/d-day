@@ -6,7 +6,8 @@ place. Bottom section is an append-only dated log.
 
 ## Current state
 
-**Phase:** Session 1 complete — brief and README on `main`. Pre-Session 2.
+**Phase:** Session 1 complete — brief, README, and Claude bootstrap on
+`main`. Pre-Session 2.
 
 **Done**
 - `brief.md` — scope, success criteria, MVP slice, roadmap, sourcing
@@ -43,3 +44,12 @@ place. Bottom section is an append-only dated log.
 - Initialized `progress.md` (this file).
 - Configured project-scoped `Stop` hook to prompt progress-update
   consideration at end of turn (soft reminder, not hard block).
+
+### 2026-04-29 — Bootstrap committed and pushed
+- Commit `f320ecd` pushed to `origin/main`: `CLAUDE.md`, `progress.md`,
+  `.claude/settings.json`, `.gitignore` (excludes
+  `.claude/settings.local.json`).
+- Env note: bare `git push` failed with `Permission denied (publickey)`;
+  `GIT_SSH_COMMAND="ssh" git push` worked. Root cause not yet
+  identified — `~/.ssh/config` and Git Bash's `/usr/bin/ssh` both
+  resolve `github-perso` correctly. Revisit if it recurs.
