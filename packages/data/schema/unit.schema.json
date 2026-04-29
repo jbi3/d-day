@@ -1,0 +1,28 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "unit.schema.json",
+	"title": "Unit",
+	"type": "object",
+	"additionalProperties": false,
+	"required": ["id", "side", "country", "echelon", "branch", "name", "sources"],
+	"properties": {
+		"id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+		"side": { "type": "string", "enum": ["allied", "axis"] },
+		"country": { "type": "string", "pattern": "^[A-Z]{2,3}$" },
+		"echelon": {
+			"type": "string",
+			"enum": ["division", "regiment", "battalion", "company"]
+		},
+		"branch": {
+			"type": "string",
+			"enum": ["infantry", "airborne", "armor", "engineer", "artillery", "naval", "air"]
+		},
+		"name": { "type": "string", "minLength": 1 },
+		"shortName": { "type": "string" },
+		"sources": {
+			"type": "array",
+			"items": { "type": "string" },
+			"minItems": 1
+		}
+	}
+}

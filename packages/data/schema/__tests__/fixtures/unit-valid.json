@@ -1,0 +1,10 @@
+{
+	"id": "us-1st-id",
+	"side": "allied",
+	"country": "US",
+	"echelon": "division",
+	"branch": "infantry",
+	"name": "1st Infantry Division",
+	"shortName": "1st ID",
+	"sources": ["harrison-1951"]
+}

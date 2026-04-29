@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "pnpm --filter web dev",
     "build": "pnpm --filter web build",
-    "check": "pnpm --filter web check"
+    "check": "pnpm --filter web check",
+    "test": "pnpm -r --if-present test"
   },
   "packageManager": "pnpm@10.33.2"
 }

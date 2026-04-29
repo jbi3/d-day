@@ -1,0 +1,16 @@
+{
+	"unitId": "us-1st-id",
+	"waypoints": [
+		{
+			"time": "1944-06-06T06:30:00Z",
+			"position": [-0.8843, 49.3816],
+			"sources": ["harrison-1951"],
+			"note": "H-Hour landing, Easy Red sector, Omaha."
+		},
+		{
+			"time": "1944-06-06T18:00:00Z",
+			"position": [-0.85, 49.34],
+			"sources": ["harrison-1951"]
+		}
+	]
+}
