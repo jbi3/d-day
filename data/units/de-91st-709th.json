@@ -20,16 +20,16 @@
 				"note": "Pre-invasion deployment. 91. Luftlande-Division (HQ Picauville, Generalleutnant Falley): Grenadier-Regiment 1057 east of the Merderet, 1058 west, plus Fallschirmjäger-Regiment 6 (attached). 709. Infanterie-Division (Generalleutnant von Schlieben): coastal stronglines along Cotentin including Utah frontage. This entry is a single MVP abstraction over both divisions' Cotentin operations; centroid approximates the operational center."
 			},
 			{
-				"time": "1944-06-06T01:30:00Z",
-				"position": [-1.33, 49.39],
+				"time": "1944-06-06T04:00:00Z",
+				"position": [-1.385, 49.395],
 				"sources": ["zetterling-2000", "harrison-1951"],
 				"disputedBy": [
 					{
 						"source": "harrison-1951",
-						"claim": "Generalleutnant Falley (91. Luftlande-Division CO) was killed early on D-Day while returning to his HQ from a Kriegsspiel in Rennes, ambushed by a 508 PIR patrol. Sources differ on the exact location and circumstances; Harrison and Zetterling give slightly different accounts of the engagement near Picauville."
+						"claim": "Generalleutnant Falley (91. Luftlande-Division CO) was killed early on D-Day while returning to his HQ near Picauville from a Kriegsspiel in Rennes, ambushed by a 508 PIR patrol. Sources put the time anywhere from c. 03:00 to 06:00 local; Harrison and Zetterling give slightly different accounts of the location and identifying patrol."
 					}
 				],
-				"note": "Falley killed; 91. LL command paralyzed early. Local German reaction to airborne drops fragmented into platoon-level engagements across the Merderet."
+				"note": "Falley killed near Picauville while returning to HQ; 91. LL command paralyzed early. Local German reaction to airborne drops fragmented into platoon-level engagements across the Merderet."
 			},
 			{
 				"time": "1944-06-06T06:30:00Z",

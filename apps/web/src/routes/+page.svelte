@@ -31,13 +31,25 @@
 	onMount(() => {
 		map = new maplibregl.Map({
 			container: mapContainer,
-			style: 'https://demotiles.maplibre.org/style.json',
-			center: [-0.88, 49.37],
-			zoom: 9
+			// OpenFreeMap positron — free vector basemap, no API key, no
+			// rate limit. Placeholder until the painted basemap (post-MVP).
+			style: 'https://tiles.openfreemap.org/styles/positron',
+			center: [-0.95, 49.4],
+			zoom: 8.5
 		});
 
 		deckOverlay = new MapboxOverlay({
 			layers: [],
+			getTooltip: ({ object, layer }) => {
+				if (!object || !layer?.id) return null;
+				if (layer.id === 'units-marker' && object.label) {
+					return { text: object.label };
+				}
+				if (layer.id === 'events' && object.title) {
+					return { text: object.title };
+				}
+				return null;
+			},
 			onClick: ({ object, layer }) => {
 				if (!object || !layer?.id) {
 					selection = null;

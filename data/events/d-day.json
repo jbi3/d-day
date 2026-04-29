@@ -178,14 +178,14 @@
 			"id": "falley-killed",
 			"title": "Generalleutnant Falley killed (91. LL CO)",
 			"description": "91. Luftlande-Division commander killed near Picauville while returning from a Kriegsspiel in Rennes; ambushed by a 508 PIR patrol. Decapitates German Cotentin command early.",
-			"time": "1944-06-06T09:30:00Z",
+			"time": "1944-06-06T04:00:00Z",
 			"position": [-1.385, 49.395],
 			"involvedUnits": ["de-91st-709th-elements", "us-82nd-airborne"],
 			"sources": ["zetterling-2000", "harrison-1951"],
 			"disputedBy": [
 				{
 					"source": "beevor-2009",
-					"claim": "The exact time, location, and identifying patrol have been recounted slightly differently by Harrison, Zetterling, and Beevor; the broad facts (CO killed in transit near Picauville) are not disputed."
+					"claim": "Sources disagree on the exact time (anywhere from c. 03:00 to 06:00 local), location, and identifying patrol; Harrison, Zetterling, and Beevor differ. The broad facts (CO killed in transit near Picauville) are not disputed."
 				}
 			]
 		},
