@@ -96,13 +96,27 @@
 		if (initial.simHours !== undefined) time.seek(initial.simHours);
 		if (initial.selection) selection = initial.selection;
 
+		// OpenFreeMap positron — free vector basemap, no API key, no rate
+		// limit. Placeholder until the painted basemap (post-MVP). If the
+		// service is unreachable, fall back to MapLibre demotiles so the
+		// app stays usable.
+		const primaryStyle = 'https://tiles.openfreemap.org/styles/positron';
+		const fallbackStyle = 'https://demotiles.maplibre.org/style.json';
+
 		map = new maplibregl.Map({
 			container: mapContainer,
-			// OpenFreeMap positron — free vector basemap, no API key, no
-			// rate limit. Placeholder until the painted basemap (post-MVP).
-			style: 'https://tiles.openfreemap.org/styles/positron',
+			style: primaryStyle,
 			center: [-0.95, 49.4],
 			zoom: 8.5
+		});
+
+		map.on('error', (e) => {
+			const err = e?.error as { message?: string } | undefined;
+			const msg = err?.message ?? '';
+			if (msg.includes('openfreemap') || msg.includes('Failed to fetch')) {
+				console.warn('[basemap] primary unreachable, falling back to demotiles:', msg);
+				map?.setStyle(fallbackStyle);
+			}
 		});
 
 		deckOverlay = new MapboxOverlay({
