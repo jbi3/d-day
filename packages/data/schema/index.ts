@@ -12,7 +12,16 @@ export type {
 	Unit,
 	Waypoint,
 	Movement,
-	MapEvent
+	MapEvent,
+	FrontlineKeyframe,
+	FrontlineSegment,
+	FrontlineFile
 } from './types.ts';
 
-export { sourceSchema, unitSchema, movementSchema, eventSchema } from './schemas.ts';
+export {
+	sourceSchema,
+	unitSchema,
+	movementSchema,
+	eventSchema,
+	frontlineSchema
+} from './schemas.ts';

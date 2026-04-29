@@ -9,6 +9,7 @@
 	import { buildUnitLayers } from '$lib/layers/units';
 	import { buildEventLayers } from '$lib/layers/events';
 	import { buildTrailLayers } from '$lib/layers/trails';
+	import { buildFrontlineLayers } from '$lib/layers/frontline';
 	import Timeline from '$lib/components/timeline.svelte';
 	import Details, { type Selection } from '$lib/components/details.svelte';
 	import Legend from '$lib/components/legend.svelte';
@@ -179,6 +180,7 @@
 		if (!deckOverlay) return;
 		deckOverlay.setProps({
 			layers: [
+				...buildFrontlineLayers({ segments: data.frontlineSegments, currentEpoch }),
 				...buildTrailLayers({ tracks: data.units, isoTime: currentIso }),
 				...buildEventLayers({ events: data.events, currentEpoch }),
 				...buildUnitLayers({ tracks: data.units, isoTime: currentIso })

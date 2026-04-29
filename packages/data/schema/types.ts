@@ -60,6 +60,23 @@ export interface Movement {
 	waypoints: Waypoint[];
 }
 
+export interface FrontlineKeyframe {
+	time: string; // ISO-8601
+	path: Position[];
+}
+
+export interface FrontlineSegment {
+	id: string;
+	label?: string;
+	closed?: boolean;
+	keyframes: FrontlineKeyframe[];
+	sources: SourceID[];
+}
+
+export interface FrontlineFile {
+	segments: FrontlineSegment[];
+}
+
 export interface MapEvent {
 	id: EventID;
 	title: string;
