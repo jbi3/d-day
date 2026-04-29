@@ -39,7 +39,7 @@
 		{
 			"id": "us-101st-drop-begins",
 			"title": "101st Airborne first sticks over Cotentin",
-			"description": "First 101st Airborne pathfinders, then assault sticks (502 PIR), drop over the Hiesville / Saint-Marie-du-Mont area.",
+			"description": "101st pathfinders go in first, then assault sticks: 502 PIR to DZ-A (Saint-Martin-de-Varreville), 506 PIR to DZ-C (Hiesville), 501 PIR to DZ-D (Vierville). Sticks scatter widely across the Cotentin interior due to weather and AAA.",
 			"time": "1944-06-06T00:30:00Z",
 			"position": [-1.260, 49.367],
 			"involvedUnits": ["us-101st-airborne"],
