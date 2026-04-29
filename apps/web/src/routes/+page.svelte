@@ -7,6 +7,7 @@
 	import { TimeStore } from '$lib/time-store.svelte';
 	import { loadData } from '$lib/data-loader';
 	import { buildUnitLayers } from '$lib/layers/units';
+	import { buildFrontlineLayers } from '$lib/layers/frontline';
 
 	const data = loadData();
 
@@ -42,7 +43,10 @@
 	$effect(() => {
 		if (!deckOverlay) return;
 		deckOverlay.setProps({
-			layers: buildUnitLayers({ tracks: data.units, isoTime: currentIso })
+			layers: [
+				...buildFrontlineLayers({ tracks: data.units, isoTime: currentIso }),
+				...buildUnitLayers({ tracks: data.units, isoTime: currentIso })
+			]
 		});
 	});
 
