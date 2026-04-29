@@ -12,12 +12,8 @@
 			<dd>Allied unit (1st ID, 29th ID, 82nd / 101st Airborne)</dd>
 			<dt><span class="swatch axis"></span></dt>
 			<dd>Axis unit (352. ID, 91. LL / 709. ID)</dd>
-			<dt><span class="swatch frontline-allied"></span></dt>
-			<dd>Allied frontline (soft polyline through unit positions)</dd>
-			<dt><span class="swatch frontline-axis"></span></dt>
-			<dd>Axis frontline</dd>
 			<dt><span class="swatch event"></span></dt>
-			<dd>Event marker (dim = upcoming, bright = active ±30 min)</dd>
+			<dd>Event marker — fires at its time, fades over ~1h</dd>
 			<dt><span class="swatch event-disputed"></span></dt>
 			<dd>Event with <code>disputedBy</code> entries</dd>
 			<dt><span class="swatch uncertainty"></span></dt>
@@ -87,20 +83,6 @@
 	}
 	.swatch.axis {
 		background: rgb(200, 70, 70);
-	}
-	.swatch.frontline-allied {
-		background: rgba(80, 150, 230, 0.5);
-		border-color: rgba(80, 150, 230, 0.95);
-		border-radius: 2px;
-		height: 0.35rem;
-		width: 1rem;
-	}
-	.swatch.frontline-axis {
-		background: rgba(220, 80, 80, 0.5);
-		border-color: rgba(220, 80, 80, 0.95);
-		border-radius: 2px;
-		height: 0.35rem;
-		width: 1rem;
 	}
 	.swatch.event {
 		background: rgb(240, 200, 30);
