@@ -1,0 +1,58 @@
+{
+	"$schema": "../../packages/data/schema/source.schema.json",
+	"version": 1,
+	"sources": [
+		{
+			"id": "harrison-1951",
+			"title": "Cross-Channel Attack",
+			"author": "Gordon A. Harrison",
+			"year": 1951,
+			"kind": "book",
+			"notes": "US Army Green Books series; primary Allied operational narrative for the cross-Channel invasion. Authoritative for US OOB, landing schedules, and corps/division-level planning."
+		},
+		{
+			"id": "zetterling-2000",
+			"title": "Normandy 1944: German Military Organization, Combat Power and Organizational Effectiveness",
+			"author": "Niklas Zetterling",
+			"year": 2000,
+			"kind": "book",
+			"notes": "Authoritative reconstruction of the German order of battle at division/regiment level; works directly from Wehrmacht/W-SS archival sources."
+		},
+		{
+			"id": "bigot-maps",
+			"title": "BIGOT Allied tactical map series (declassified)",
+			"year": 1944,
+			"kind": "map",
+			"notes": "Top-secret Allied tactical maps produced for OVERLORD planning, including beach exit grids and fortification overlays. Held in multiple national archives; declassified post-war."
+		},
+		{
+			"id": "iwm-archives",
+			"title": "Imperial War Museum archives",
+			"kind": "archive",
+			"url": "https://www.iwm.org.uk/collections",
+			"notes": "British/Commonwealth unit war diaries, photography, and after-action material — primary for UK 50th, 3rd, 6th Airborne, and Canadian 3rd."
+		},
+		{
+			"id": "memorial-caen",
+			"title": "Mémorial de Caen — Centre Historique",
+			"kind": "archive",
+			"url": "https://www.memorial-caen.fr/",
+			"notes": "Aggregates French, Allied, and German source material for the Battle of Normandy; particularly useful for civilian/local context and event chronology."
+		},
+		{
+			"id": "us-na-aar",
+			"title": "US National Archives — morning reports and after-action reports",
+			"kind": "aar",
+			"url": "https://www.archives.gov/research/military/ww2",
+			"notes": "Primary US unit-level records: morning reports, AARs, and operational journals at battalion/regiment/division level."
+		},
+		{
+			"id": "beevor-2009",
+			"title": "D-Day: The Battle for Normandy",
+			"author": "Antony Beevor",
+			"year": 2009,
+			"kind": "book",
+			"notes": "Narrative cross-check, not a primary source per CLAUDE.md sourcing posture. Useful for second-opinion timing and disputedBy entries."
+		}
+	]
+}
