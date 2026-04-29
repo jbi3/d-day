@@ -30,6 +30,45 @@
 	let map: maplibregl.Map | undefined;
 	let deckOverlay: MapboxOverlay | undefined;
 
+	function readHashState(): { simHours?: number; selection?: Selection } {
+		if (typeof window === 'undefined') return {};
+		const raw = window.location.hash.replace(/^#/, '');
+		if (!raw) return {};
+		const params = new URLSearchParams(raw);
+		const out: { simHours?: number; selection?: Selection } = {};
+		const t = params.get('t');
+		if (t) {
+			const n = Number.parseFloat(t);
+			if (Number.isFinite(n)) out.simHours = n;
+		}
+		const sel = params.get('s');
+		if (sel) {
+			const [kind, id] = sel.split(':');
+			if (kind === 'unit' && id) {
+				const track = data.unitById.get(id);
+				if (track) out.selection = { kind: 'unit', track };
+			} else if (kind === 'event' && id) {
+				const event = data.eventById.get(id);
+				if (event) out.selection = { kind: 'event', event };
+			}
+		}
+		return out;
+	}
+
+	function writeHashState() {
+		if (typeof window === 'undefined') return;
+		const params = new URLSearchParams();
+		params.set('t', time.simHours.toFixed(2));
+		if (selection) {
+			if (selection.kind === 'unit') params.set('s', `unit:${selection.track.unit.id}`);
+			else params.set('s', `event:${selection.event.id}`);
+		}
+		const next = `#${params.toString()}`;
+		if (window.location.hash !== next) {
+			window.history.replaceState(null, '', next);
+		}
+	}
+
 	function onKeydown(e: KeyboardEvent) {
 		const target = e.target as HTMLElement | null;
 		if (target && (target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.isContentEditable)) {
@@ -53,6 +92,10 @@
 	}
 
 	onMount(() => {
+		const initial = readHashState();
+		if (initial.simHours !== undefined) time.seek(initial.simHours);
+		if (initial.selection) selection = initial.selection;
+
 		map = new maplibregl.Map({
 			container: mapContainer,
 			// OpenFreeMap positron — free vector basemap, no API key, no
@@ -94,6 +137,17 @@
 		return () => {
 			map?.remove();
 		};
+	});
+
+	// Keep the URL hash in sync with state — but throttle while playing
+	// so we don't churn history at 60fps. Updates on pause + selection
+	// + seek (whenever simHours changes outside of playback).
+	$effect(() => {
+		if (time.playing) return;
+		// Read state to register dependencies; values used inside writeHashState.
+		void time.simHours;
+		void selection;
+		writeHashState();
 	});
 
 	$effect(() => {
