@@ -9,68 +9,78 @@ interface BuildTrailLayersOptions {
 	isoTime: string;
 }
 
-interface TrailEntry {
-	id: string;
+interface TrailSegment {
 	side: Side;
-	path: [number, number][];
+	path: [[number, number], [number, number]];
+	alpha: number;
 }
 
+const HALF_LIFE_MS = 2 * 3600 * 1000;
+const MAX_ALPHA = 160;
+const MIN_VISIBLE_ALPHA = 6;
+
 /**
- * Per-unit fading trail: for each track, builds the polyline from the
- * first waypoint through every passed waypoint and ending at the
- * current interpolated position. Color follows the side hue family
- * but dimmer than the live marker — suggesting "where the unit has
- * been" without competing with the current position.
- *
- * Fading toward the tail is approximated via deck.gl's getColor and
- * a low alpha; finer-grained per-vertex alpha gradient would need a
- * custom shader and is left for post-MVP.
+ * Per-segment fading trail. Each segment between consecutive passed
+ * waypoints (and from the last waypoint to the current head) gets an
+ * alpha that decays exponentially from when the unit reached the
+ * segment's far endpoint. Older segments fade out, recent direction
+ * stays visible.
  */
 export function buildTrailLayers({
 	tracks,
 	isoTime
 }: BuildTrailLayersOptions): Layer[] {
-	const trails: TrailEntry[] = [];
+	const segments: TrailSegment[] = [];
 	const t = Date.parse(isoTime);
 
 	for (const track of tracks) {
 		const wps = track.movement.waypoints;
 		if (wps.length === 0) continue;
 
-		const path: [number, number][] = [];
+		const reached: Array<{ pos: [number, number]; passedAt: number }> = [];
 		for (const w of wps) {
-			if (Date.parse(w.time) <= t) path.push(w.position);
+			const wt = Date.parse(w.time);
+			if (wt <= t) reached.push({ pos: w.position, passedAt: wt });
 			else break;
 		}
 		const head = unitPositionAt(track, isoTime);
-		if (head) {
-			const last = path[path.length - 1];
-			if (!last || last[0] !== head[0] || last[1] !== head[1]) path.push(head);
+		if (!head) continue;
+		const last = reached[reached.length - 1];
+		if (!last || last.pos[0] !== head[0] || last.pos[1] !== head[1]) {
+			reached.push({ pos: head, passedAt: t });
 		}
-		if (path.length < 2) continue;
+		if (reached.length < 2) continue;
 
-		trails.push({
-			id: track.unit.id,
-			side: track.unit.side,
-			path
-		});
+		for (let i = 1; i < reached.length; i++) {
+			const ageMs = Math.max(0, t - reached[i].passedAt);
+			const alpha = MAX_ALPHA * Math.pow(0.5, ageMs / HALF_LIFE_MS);
+			if (alpha < MIN_VISIBLE_ALPHA) continue;
+			segments.push({
+				side: track.unit.side,
+				path: [reached[i - 1].pos, reached[i].pos],
+				alpha
+			});
+		}
 	}
 
-	if (trails.length === 0) return [];
+	if (segments.length === 0) return [];
 
 	return [
-		new PathLayer<TrailEntry>({
+		new PathLayer<TrailSegment>({
 			id: 'unit-trails',
-			data: trails,
+			data: segments,
 			getPath: (d) => d.path,
 			getColor: (d) =>
-				d.side === 'allied' ? [80, 150, 230, 90] : [220, 80, 80, 90],
+				d.side === 'allied'
+					? [80, 150, 230, d.alpha]
+					: [220, 80, 80, d.alpha],
 			getWidth: 3,
 			widthUnits: 'pixels',
 			widthMinPixels: 2,
 			capRounded: true,
 			jointRounded: true,
-			pickable: false
+			pickable: false,
+			updateTriggers: { getColor: isoTime }
 		})
 	];
 }

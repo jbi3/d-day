@@ -7,7 +7,6 @@
 	import { TimeStore } from '$lib/time-store.svelte';
 	import { loadData, unitPositionAt } from '$lib/data-loader';
 	import { buildUnitLayers } from '$lib/layers/units';
-	import { buildFrontlineLayers } from '$lib/layers/frontline';
 	import { buildEventLayers } from '$lib/layers/events';
 	import { buildUncertaintyLayers } from '$lib/layers/uncertainty';
 	import { buildTrailLayers } from '$lib/layers/trails';
@@ -182,7 +181,6 @@
 		deckOverlay.setProps({
 			layers: [
 				...buildTrailLayers({ tracks: data.units, isoTime: currentIso }),
-				...buildFrontlineLayers({ tracks: data.units, isoTime: currentIso }),
 				...buildUncertaintyLayers({
 					tracks: data.units,
 					events: data.events,
