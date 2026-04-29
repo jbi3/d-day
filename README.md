@@ -8,5 +8,7 @@ Interactive, visual, sourced map of D-Day (June 6, 1944).
 
 See \[`brief.md`](./brief.md) for project scope, success criteria, MVP, and
 
-roadmap.
+roadmap. See \[`mvp-execution-plan.md`](./mvp-execution-plan.md) for the
+
+phase-by-phase plan to deliver the MVP.
 

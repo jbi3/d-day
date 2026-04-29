@@ -6,8 +6,8 @@ place. Bottom section is an append-only dated log.
 
 ## Current state
 
-**Phase:** Session 1 complete — brief, README, and Claude bootstrap on
-`main`. Pre-Session 2.
+**Phase:** 0.0 cleared (renderer / tiles / app shell / tooling
+approved, hosting deferred). Ready for 0.1 scaffold.
 
 **Done**
 - `brief.md` — scope, success criteria, MVP slice, roadmap, sourcing
@@ -15,19 +15,26 @@ place. Bottom section is an append-only dated log.
 - `README.md` — project pointer.
 - `CLAUDE.md` — working instructions for Claude on this repo.
 - `progress.md` — this file, with Stop-hook reminder wired in.
+- `mvp-execution-plan.md` — refined MVP execution plan: vertical slice
+  before fan-out; tech-stack as gate; painted basemap deferred out of
+  MVP.
+- 0.0 tech-stack sign-off — MapLibre GL JS + deck.gl, Protomaps
+  `.pmtiles`, SvelteKit + TypeScript, pnpm workspaces, vitest + ajv
+  approved. Hosting deferred to post-MVP.
 
-**Next (Session 2 per brief)**
-- Define data schemas: unit, movement, event, source.
-- Stand up minimal MapLibre + deck.gl page animating one unit on a
-  placeholder basemap (tech-stack validation).
+**Next**
+- 0.1 SvelteKit + MapLibre + deck.gl scaffold. Local env: node
+  v22.22.2 and corepack 0.34.6 present; pnpm not installed —
+  `corepack enable pnpm` is the zero-install path.
+- 0.2 data schemas (sequenced after 0.1 lands the pnpm workspace,
+  per the plan's "tooling fixed in 0.1" note).
 
 **Open questions / unresolved**
-- Tech stack in `brief.md` is proposed, not validated. Renderer, tile
-  format, app shell, hosting all pending sign-off.
-- Painted basemap viability at all zoom levels — flagged as risk in
-  brief.
-- Uncertainty visual treatment for contested German positions — design
-  not yet started.
+- Local pnpm install path: `corepack enable pnpm` (uses Node's
+  bundled tool, no extra install) vs `npm install -g pnpm`.
+- Uncertainty visual treatment for contested German positions —
+  schema models `disputedBy` in 0.2, but visual design (B.7) not
+  started.
 
 **Known blockers**
 - None.
@@ -53,3 +60,43 @@ place. Bottom section is an append-only dated log.
   `GIT_SSH_COMMAND="ssh" git push` worked. Root cause not yet
   identified — `~/.ssh/config` and Git Bash's `/usr/bin/ssh` both
   resolve `github-perso` correctly. Revisit if it recurs.
+
+### 2026-04-29 — MVP execution plan adopted
+- `mvp-execution-plan.md` added at repo root (branch
+  `claude/mvp-execution-plan-001`).
+- Chose vertical-slice ordering (US 1st ID end-to-end before
+  dataset/renderer fan-out) over the draft's broad parallelism, to
+  surface schema gaps under a real renderer before six dataset
+  authors hit them.
+- Promoted the source registry seed to Phase 0.3 (was buried in
+  Stream A) so every dataset task starts with valid SourceIDs.
+- Tech stack (renderer / tiles / app shell / hosting) reframed as a
+  Phase 0.0 user-sign-off gate, not a locked decision.
+- `disputedBy` (or equivalent) treated as a first-class schema field
+  in 0.2, with a fixture exercising it, so contested facts can't be
+  silently picked downstream.
+- Painted basemap moved out of MVP and into the post-MVP roadmap;
+  MVP ships on a placeholder MapLibre style. Brief flagged painted
+  basemaps as a risk; not the place to absorb that risk during
+  integration.
+- Hard perf numbers (TTI / fps) demoted to qualitative for MVP;
+  promote to gated targets in v1 once a real basemap is in.
+
+### 2026-04-29 — 0.0 tech-stack sign-off cleared
+- Renderer: MapLibre GL JS + deck.gl. Approved.
+- Tile format: Protomaps `.pmtiles`. Approved.
+- App shell: SvelteKit + TypeScript. Approved.
+- State / time: small custom store keyed on simulation time. Approved.
+- Tooling: pnpm workspaces + vitest + ajv. Approved.
+- Hosting: **deferred to post-MVP.** Cloudflare Pages was proposed;
+  user opted to defer the deploy story until after MVP. Phase 2.4
+  (Cloudflare Pages deploy) removed from MVP scope; hosting added
+  to "Out of MVP" alongside painted basemap. Old Phase 2.5 (MVP
+  acceptance review) renumbered to 2.4.
+- Local environment check: node v22.22.2 and corepack 0.34.6
+  available; pnpm not installed locally yet. `corepack enable pnpm`
+  is the zero-install path before 0.1 (uses Node's bundled package
+  manager bootstrapper, no extra install).
+- Plan amended on `claude/mvp-execution-plan-001`: 0.0 proposal list
+  drops "Cloudflare Pages"; Phase 2.4 removed; "Out of MVP"
+  expanded to include hosting / deploy.
