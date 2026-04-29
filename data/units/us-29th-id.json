@@ -1,0 +1,54 @@
+{
+	"$schema": "../../packages/data/schema/unit.schema.json",
+	"unit": {
+		"id": "us-29th-id",
+		"side": "allied",
+		"country": "US",
+		"echelon": "division",
+		"branch": "infantry",
+		"name": "29th Infantry Division",
+		"shortName": "29th ID",
+		"sources": ["harrison-1951", "us-na-aar"]
+	},
+	"movement": {
+		"unitId": "us-29th-id",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.96, 49.45],
+				"sources": ["harrison-1951"],
+				"note": "116th RCT (29th ID spearhead) embarked off Omaha; transit area V."
+			},
+			{
+				"time": "1944-06-06T06:30:00Z",
+				"position": [-0.9285, 49.3815],
+				"sources": ["harrison-1951", "us-na-aar"],
+				"note": "H-Hour 116th RCT first wave — Dog Green / Dog White sectors, west of 1st ID. Position approximates the Dog Green centerline (Vierville draw)."
+			},
+			{
+				"time": "1944-06-06T09:00:00Z",
+				"position": [-0.926, 49.380],
+				"sources": ["harrison-1951"],
+				"disputedBy": [
+					{
+						"source": "beevor-2009",
+						"claim": "Beevor and post-war US Army histories disagree on first-wave casualty figures at Dog Green; estimates range from ~50% to ~90% in the lead boat sections of A/116."
+					}
+				],
+				"note": "Dog Green pinned at the seawall through the morning; A/116 Co takes catastrophic casualties."
+			},
+			{
+				"time": "1944-06-06T13:00:00Z",
+				"position": [-0.918, 49.376],
+				"sources": ["harrison-1951"],
+				"note": "Rangers take Pointe-du-Hoc (attached for assault); 116th RCT pushes off the beach via the Vierville draw (D-1)."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.905, 49.367],
+				"sources": ["harrison-1951", "us-na-aar"],
+				"note": "End of MVP window: bluff line behind Dog sectors held; partial advance toward Vierville-sur-Mer. Position approximates division centroid."
+			}
+		]
+	}
+}
