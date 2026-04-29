@@ -3,7 +3,7 @@ import type { Layer } from '@deck.gl/core';
 import polygonClipping, { type Polygon as PCPolygon, type Ring as PCRing } from 'polygon-clipping';
 import type { FrontlineSegment, Position } from '@d-day/schema';
 
-import { NORMANDY_LAND_RING } from './normandy-land';
+import { FRANCE_LAND_RING } from './france-land';
 
 interface BuildFrontlineLayersOptions {
 	segments: FrontlineSegment[];
@@ -17,7 +17,7 @@ interface OccupationPolygon {
 
 const SMOOTH_ITERATIONS = 3;
 const FELDGRAU: [number, number, number] = [60, 70, 55];
-const VEIL_ALPHA = 95;
+const VEIL_ALPHA = 60;
 
 /**
  * Renders the German occupation as a feldgrau veil over the Normandy
@@ -49,7 +49,7 @@ export function buildFrontlineLayers({
 		segmentRings.push(toRing(smoothed));
 	}
 
-	const landMP: PCPolygon[] = [[toRing(NORMANDY_LAND_RING)]];
+	const landMP: PCPolygon[] = [[toRing(FRANCE_LAND_RING)]];
 
 	let occupied: PCPolygon[];
 	if (segmentRings.length === 0) {
