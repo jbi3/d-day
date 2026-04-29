@@ -49,8 +49,6 @@ acceptance review) are user calls.
 - B.3 deck.gl unit layer module —
   `apps/web/src/lib/layers/units.ts` (NATO-flavored hue family by
   side and branch; SDF text labels).
-- B.4 frontline layer — soft animated polylines per side, sorted
-  west-to-east through current unit positions.
 - B.5 timeline UI + event pins + map event layer — clickable pins
   on the scrub track seek the time store; disputed events get a
   warmer hue both on the timeline pin and on the map.
@@ -75,6 +73,19 @@ acceptance review) are user calls.
   map.
 - Event ↔ unit cross-links — clickable involvedUnits chips in the
   details panel switch the selection to the linked unit.
+- NATO unit symbology — Allied = blue rectangle (friendly frame),
+  Axis = red diamond (hostile frame); ✕ infantry / parachute arc
+  airborne; XX echelon mark; national badge (US 1944 flag for US,
+  Balkenkreuz for DE — swastika intentionally avoided). SVG data
+  URIs generated per (side, branch, country), used both on the map
+  via IconLayer and inline in the legend.
+- Progressive graphical disclosure — trails fade per-segment with
+  2h half-life on simulation time; events stay hidden until their
+  time, highlight for 30 min, then fade with 1h half-life. Removes
+  always-on graphical clutter.
+- Frontline polyline layer removed — connecting same-side units by
+  longitude was visually noisy and historically meaningless before
+  H-Hour.
 - README quick-start added (install / dev / build / test, repo
   layout, sourcing posture pointer).
 - 39/39 schema + registry + unit-data + events-data tests pass on
@@ -300,3 +311,32 @@ after every merge. Schema test suite remains at 39/39.
 - `pnpm --filter web check` + `pnpm --filter web build` clean.
 - Local feature branches deleted post-merge; remote branches
   retained for review (no permission to delete remote).
+
+### 2026-04-29 — UX overhaul: NATO symbology + progressive disclosure
+First user-facing review pass. Three changes landed on local `main`
+(2 commits ahead of `origin/main` — direct push to `main` is now
+blocked, requires PR).
+
+- `claude/cleanup-trails-001` — removed the frontline polyline
+  layer; rewrote trails to fade per-segment on a 2h simulation-time
+  half-life; events now hidden until their time, highlighted 30 min,
+  then fade with 1h half-life. Reduces always-on clutter.
+- `claude/nato-symbology-001` — replaced colored-circle unit
+  markers with NATO frames (rectangle = friendly, diamond = hostile),
+  branch glyphs (✕ infantry, parachute arc airborne), XX division
+  echelon mark, and national badges (1944-era US flag / Wehrmacht
+  Balkenkreuz). Implemented as generated SVG data URIs cached per
+  (side, branch, country). Same icons render inline in the legend
+  so the key matches the map exactly.
+
+**Workflow note**: `git push origin main` was denied this session
+("Pushing directly to the repository's default branch bypasses pull
+request review"). Earlier in the project the sandbox allowed this;
+the policy now requires a PR. Pushes to feature branches still work
+via SSH; main updates need explicit user action or a PR flow.
+
+**Sourcing posture (Wehrmacht national badge)**: Chose Balkenkreuz
+(white-edged black cross — Wehrmacht-on-equipment marker, no Nazi
+political content) over the swastika flag or pre-1935 Reichsflagge.
+Historically authentic for marking Heer divisions on operational
+maps; politically clean.
