@@ -12,6 +12,7 @@
 	import { buildUncertaintyLayers } from '$lib/layers/uncertainty';
 	import Timeline from '$lib/components/timeline.svelte';
 	import Details, { type Selection } from '$lib/components/details.svelte';
+	import Legend from '$lib/components/legend.svelte';
 
 	const data = loadData();
 
@@ -106,6 +107,8 @@
 
 <div class="map-wrap">
 	<div bind:this={mapContainer} class="map"></div>
+
+	<Legend />
 
 	<Details
 		{selection}
