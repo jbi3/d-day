@@ -10,10 +10,17 @@
 	interface Props {
 		selection: Selection;
 		sourceById: Map<string, Source>;
+		unitById: Map<string, UnitTrack>;
+		onSelect: (s: Selection) => void;
 		onClose: () => void;
 	}
 
-	const { selection, sourceById, onClose }: Props = $props();
+	const { selection, sourceById, unitById, onSelect, onClose }: Props = $props();
+
+	function selectUnit(id: string) {
+		const track = unitById.get(id);
+		if (track) onSelect({ kind: 'unit', track });
+	}
 
 	function formatTime(iso: string): string {
 		const d = new Date(iso);
@@ -82,6 +89,28 @@
 			<div class="event-time">{formatTime(e.time)}</div>
 			{#if e.description}
 				<p>{e.description}</p>
+			{/if}
+
+			{#if (e.involvedUnits?.length ?? 0) > 0}
+				<h3>Involved units</h3>
+				<ul class="unit-links">
+					{#each e.involvedUnits ?? [] as id (id)}
+						{@const track = unitById.get(id)}
+						{#if track}
+							<li>
+								<button
+									class="unit-link side-{track.unit.side}"
+									type="button"
+									onclick={() => selectUnit(id)}
+								>
+									{track.unit.shortName ?? track.unit.name}
+								</button>
+							</li>
+						{:else}
+							<li class="unit-link missing">{id} <span>(not in dataset)</span></li>
+						{/if}
+					{/each}
+				</ul>
 			{/if}
 
 			<h3>Sources</h3>
@@ -224,5 +253,40 @@
 	}
 	.claim {
 		opacity: 0.92;
+	}
+	.unit-links {
+		list-style: none;
+		padding: 0;
+		margin: 0.25rem 0 0.5rem;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+	}
+	.unit-link {
+		background: rgba(255, 255, 255, 0.1);
+		color: #f5f5f5;
+		border: 0;
+		padding: 0.25rem 0.6rem;
+		border-radius: 4px;
+		cursor: pointer;
+		font: inherit;
+		font-size: 0.82rem;
+	}
+	.unit-link:hover {
+		background: rgba(255, 255, 255, 0.18);
+	}
+	.unit-link.side-allied {
+		border-left: 3px solid #6db4ec;
+	}
+	.unit-link.side-axis {
+		border-left: 3px solid #e87a7a;
+	}
+	.unit-link.missing {
+		opacity: 0.55;
+		font-size: 0.78rem;
+		padding: 0.25rem 0.5rem;
+	}
+	.unit-link.missing span {
+		opacity: 0.7;
 	}
 </style>
