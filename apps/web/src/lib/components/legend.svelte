@@ -1,5 +1,17 @@
 <script lang="ts">
+	import { buildSvg } from '$lib/layers/unit-icons';
+
 	let open = $state(true);
+
+	const samples = [
+		{ side: 'allied' as const, branch: 'infantry' as const, country: 'US', label: 'US infantry division (1st ID, 29th ID)' },
+		{ side: 'allied' as const, branch: 'airborne' as const, country: 'US', label: 'US airborne division (82nd, 101st)' },
+		{ side: 'axis' as const, branch: 'infantry' as const, country: 'DE', label: 'German division (352. ID, 91./709.)' }
+	];
+
+	function svgUri(side: 'allied' | 'axis', branch: 'infantry' | 'airborne', country: string): string {
+		return `data:image/svg+xml;utf8,${encodeURIComponent(buildSvg(side, branch, country))}`;
+	}
 </script>
 
 <aside class="legend" class:collapsed={!open}>
@@ -8,10 +20,10 @@
 	</button>
 	{#if open}
 		<dl>
-			<dt><span class="swatch allied"></span></dt>
-			<dd>Allied unit (1st ID, 29th ID, 82nd / 101st Airborne)</dd>
-			<dt><span class="swatch axis"></span></dt>
-			<dd>Axis unit (352. ID, 91. LL / 709. ID)</dd>
+			{#each samples as s (s.label)}
+				<dt><img class="icon" src={svgUri(s.side, s.branch, s.country)} alt="" /></dt>
+				<dd>{s.label}</dd>
+			{/each}
 			<dt><span class="swatch event"></span></dt>
 			<dd>Event marker — fires at its time, fades over ~1h</dd>
 			<dt><span class="swatch event-disputed"></span></dt>
@@ -19,6 +31,11 @@
 			<dt><span class="swatch uncertainty"></span></dt>
 			<dd>Uncertainty halo — currently disputed position</dd>
 		</dl>
+		<p class="hint">
+			NATO frame: rectangle = friendly, diamond = hostile. Inside: ✕ infantry,
+			parachute arc airborne. Above: <code>XX</code> = division. National badge
+			above the frame.
+		</p>
 		<p class="hint">Click a marker for sources & disputed claims.</p>
 		<p class="hint">
 			<kbd>Space</kbd> play/pause · <kbd>←</kbd> <kbd>→</kbd> scrub
@@ -56,8 +73,8 @@
 	}
 	dl {
 		display: grid;
-		grid-template-columns: 1.25rem 1fr;
-		row-gap: 0.3rem;
+		grid-template-columns: 2rem 1fr;
+		row-gap: 0.4rem;
 		column-gap: 0.5rem;
 		margin: 0.5rem 0 0.4rem;
 		align-items: center;
@@ -71,18 +88,17 @@
 		margin: 0;
 		opacity: 0.9;
 	}
+	.icon {
+		width: 1.9rem;
+		height: 1.9rem;
+		display: block;
+	}
 	.swatch {
 		display: inline-block;
 		width: 0.85rem;
 		height: 0.85rem;
 		border-radius: 50%;
 		border: 1.5px solid rgba(240, 240, 240, 0.95);
-	}
-	.swatch.allied {
-		background: rgb(60, 130, 210);
-	}
-	.swatch.axis {
-		background: rgb(200, 70, 70);
 	}
 	.swatch.event {
 		background: rgb(240, 200, 30);
@@ -101,9 +117,9 @@
 		opacity: 0.9;
 	}
 	.hint {
-		margin: 0.25rem 0 0;
+		margin: 0.35rem 0 0;
 		font-size: 0.72rem;
-		opacity: 0.65;
+		opacity: 0.7;
 	}
 	kbd {
 		display: inline-block;
