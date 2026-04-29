@@ -1,0 +1,60 @@
+{
+	"$schema": "../../packages/data/schema/unit.schema.json",
+	"unit": {
+		"id": "us-82nd-airborne",
+		"side": "allied",
+		"country": "US",
+		"echelon": "division",
+		"branch": "airborne",
+		"name": "82nd Airborne Division",
+		"shortName": "82nd Abn",
+		"sources": ["harrison-1951", "us-na-aar"]
+	},
+	"movement": {
+		"unitId": "us-82nd-airborne",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-1.0, 50.7],
+				"sources": ["harrison-1951"],
+				"note": "Pre-jump: aboard C-47 serials forming over the south coast of England. Position approximates the IX TCC route start."
+			},
+			{
+				"time": "1944-06-06T01:30:00Z",
+				"position": [-1.317, 49.408],
+				"sources": ["harrison-1951"],
+				"disputedBy": [
+					{
+						"source": "beevor-2009",
+						"claim": "Beevor and post-war analyses note that 82nd Airborne stick drops were heavily dispersed: pathfinder beacons mis-set and cloud over the Cotentin caused many sticks to drop kilometers off-DZ. The 'on-DZ' centroid is therefore an idealization, not where most sticks actually landed."
+					}
+				],
+				"note": "First sticks (505th PIR) over DZ-O (Sainte-Mère-Église). Position is the planned DZ-O centroid; actual stick footprints scattered widely."
+			},
+			{
+				"time": "1944-06-06T04:30:00Z",
+				"position": [-1.317, 49.408],
+				"sources": ["harrison-1951", "us-na-aar"],
+				"note": "Sainte-Mère-Église taken by 3/505 PIR (Krause); first French town liberated."
+			},
+			{
+				"time": "1944-06-06T08:00:00Z",
+				"position": [-1.34, 49.40],
+				"sources": ["harrison-1951"],
+				"note": "Holding Sainte-Mère-Église; 507th and 508th rallying west of the Merderet against scattered German counterattacks (91st Luftlande)."
+			},
+			{
+				"time": "1944-06-06T13:00:00Z",
+				"position": [-1.33, 49.395],
+				"sources": ["harrison-1951"],
+				"note": "Mid-day: Merderet causeways (La Fière, Chef-du-Pont) contested; partial linkup with 4th ID elements pushing west from Utah."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-1.32, 49.40],
+				"sources": ["harrison-1951", "us-na-aar"],
+				"note": "End of MVP window: Sainte-Mère-Église held; western Cotentin still tenuous. Division centroid approximate."
+			}
+		]
+	}
+}
