@@ -139,6 +139,8 @@
 	<Details
 		{selection}
 		sourceById={data.sourceById}
+		unitById={data.unitById}
+		onSelect={(s) => (selection = s)}
 		onClose={() => (selection = null)}
 	/>
 
