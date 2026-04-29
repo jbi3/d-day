@@ -405,3 +405,24 @@ primary unit; the front is its boundary) rather than a tactical-map
 choice (front is a line; armies sit on either side). Documented
 here so future iterations know which model the data and layer are
 serving.
+
+### 2026-04-29 — Frontline union + land mask
+After territory polygons rendered, two issues remained: adjacent
+territories crossed instead of merging, and polygons still spilled
+into the Bay because Chaikin smoothing bulges curves outward from
+authored vertices. Both fixed.
+
+- `claude/frontline-union-mask-001` — added `polygon-clipping`
+  (~10 KB) as a web-app dependency. Per-segment polygons are
+  smoothed, then unioned across segments (touching territories
+  merge), then intersected with a hand-traced Normandy land-mask
+  ring (`apps/web/src/lib/layers/normandy-land.ts`, ~30 vertices
+  along the Cotentin + Bessin coast). The mask handles all
+  sea-spillage cases robustly, so segment vertices can be pushed
+  past the coast on purpose to guarantee adjacent territories
+  overlap and merge.
+
+**Tech choice resolved**: `polygon-clipping` (mfogel) chosen for
+boolean polygon ops. Smaller than turf.js (which depends on it
+internally anyway), TypeScript types included, well maintained.
+Used for both union (merge) and intersection (land clip).
