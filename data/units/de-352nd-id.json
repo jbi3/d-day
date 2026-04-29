@@ -1,0 +1,60 @@
+{
+	"$schema": "../../packages/data/schema/unit.schema.json",
+	"unit": {
+		"id": "de-352nd-id",
+		"side": "axis",
+		"country": "DE",
+		"echelon": "division",
+		"branch": "infantry",
+		"name": "352. Infanterie-Division",
+		"shortName": "352. ID",
+		"sources": ["zetterling-2000", "harrison-1951"]
+	},
+	"movement": {
+		"unitId": "de-352nd-id",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.95, 49.30],
+				"sources": ["zetterling-2000"],
+				"disputedBy": [
+					{
+						"source": "harrison-1951",
+						"claim": "Allied intelligence prior to D-Day placed only 716. ID on the Omaha bluffs; the forward deployment of 352. ID — including 916 IR holding the cliff line — was a significant intelligence failure documented by Zetterling against pre-invasion Allied estimates."
+					}
+				],
+				"note": "Defensive deployment: 916 IR forward on the Omaha bluffs (Vierville–Colleville–Sainte-Honorine); 914 IR west toward Pointe-du-Hoc / Grandcamp; 915 IR (Kampfgruppe Meyer) inland reserve. HQ at Littry / Saint-Lô. Position is a rough division centroid behind the bluffs."
+			},
+			{
+				"time": "1944-06-06T06:30:00Z",
+				"position": [-0.93, 49.32],
+				"sources": ["zetterling-2000", "harrison-1951"],
+				"note": "H-Hour: 916 IR engages first US assault waves from the bluff line; defensive positions intact along most of Omaha frontage."
+			},
+			{
+				"time": "1944-06-06T10:00:00Z",
+				"position": [-0.92, 49.32],
+				"sources": ["zetterling-2000"],
+				"disputedBy": [
+					{
+						"source": "beevor-2009",
+						"claim": "Sources disagree on the exact timing and direction of Kampfgruppe Meyer's commitment. Meyer was first ordered east against airborne reports near the Orne, then redirected to Bayeux/Omaha — arriving too late to influence the bluff line. Zetterling and Beevor differ on the sequence of orders."
+					}
+				],
+				"note": "Kampfgruppe Meyer (915 IR + supports) ordered east toward British airborne reports, then redirected toward Omaha/Bayeux."
+			},
+			{
+				"time": "1944-06-06T14:00:00Z",
+				"position": [-0.90, 49.34],
+				"sources": ["zetterling-2000"],
+				"note": "Bluff line breached at multiple points; 916 IR forward positions overrun or pinned. Division begins falling back toward Formigny / Trévières."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.85, 49.33],
+				"sources": ["zetterling-2000"],
+				"note": "End of MVP window: defensive line collapsing on the Omaha frontage; no successful counterattack delivered. Centroid approximate behind the receding line."
+			}
+		]
+	}
+}
