@@ -42,8 +42,10 @@ export function buildUnitLayers({ tracks, isoTime }: BuildUnitLayersOptions): La
 			data: points,
 			getPosition: (d) => d.position,
 			getIcon: (d) => d.icon,
-			getSize: 56,
-			sizeUnits: 'pixels',
+			getSize: 6000,
+			sizeUnits: 'meters',
+			sizeMinPixels: 28,
+			sizeMaxPixels: 72,
 			pickable: true
 		}),
 		new TextLayer<UnitMarker>({
@@ -51,14 +53,15 @@ export function buildUnitLayers({ tracks, isoTime }: BuildUnitLayersOptions): La
 			data: points,
 			getPosition: (d) => d.position,
 			getText: (d) => d.label,
-			getSize: 12,
-			getColor: [240, 240, 240, 230],
-			getPixelOffset: [0, 36],
-			fontFamily: 'system-ui, sans-serif',
+			getSize: 13,
+			getColor: [240, 240, 240, 240],
+			getPixelOffset: [0, 44],
+			fontFamily: 'Arial, Helvetica, sans-serif',
 			fontWeight: 600,
-			outlineColor: [0, 0, 0, 200],
-			outlineWidth: 2,
-			fontSettings: { sdf: true }
+			background: true,
+			getBackgroundColor: [20, 20, 20, 190],
+			backgroundPadding: [5, 2, 5, 2],
+			fontSettings: { sdf: false }
 		})
 	];
 }
