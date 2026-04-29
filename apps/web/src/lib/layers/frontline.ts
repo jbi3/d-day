@@ -10,21 +10,24 @@ interface BuildFrontlineLayersOptions {
 	currentEpoch: number;
 }
 
-interface FrontlinePolygon {
+interface OccupationPolygon {
 	id: string;
 	contour: Position[][];
 }
 
 const SMOOTH_ITERATIONS = 3;
-const FILL_ALPHA = 38;
-const STROKE_ALPHA = 150;
-const ALLIED_BLUE: [number, number, number] = [80, 150, 230];
+const FELDGRAU: [number, number, number] = [60, 70, 55];
+const VEIL_ALPHA = 95;
 
 /**
- * Allied-held territory polygons. Each segment is interpolated +
- * smoothed, then all segments are unioned (touching territories merge
- * into one shape, no crossing outlines), then intersected with a
- * Normandy land mask so polygons never spill onto the sea.
+ * Renders the German occupation as a feldgrau veil over the Normandy
+ * land mask, with Allied-held territory cut out as holes. As the
+ * Allies expand, the veil recedes — the visual reading is
+ * "occupation being chipped away", not "Allied bubbles appearing".
+ *
+ * Active Allied segments are interpolated at the current time,
+ * smoothed (Chaikin), unioned, and then subtracted from the land
+ * mask. The remaining multipolygon is the still-occupied land.
  *
  * Geometries approximate per CLAUDE.md sourcing posture; primary
  * sources cited on the data file are harrison-1951 and us-na-aar.
@@ -46,32 +49,30 @@ export function buildFrontlineLayers({
 		segmentRings.push(toRing(smoothed));
 	}
 
-	if (segmentRings.length === 0) return [];
-
-	// Union all active territories.
-	const wrapped = segmentRings.map<PCPolygon[]>((ring) => [[ring]]);
-	const merged = polygonClipping.union(wrapped[0], ...wrapped.slice(1));
-
-	// Clip to land.
 	const landMP: PCPolygon[] = [[toRing(NORMANDY_LAND_RING)]];
-	const clipped = polygonClipping.intersection(merged, landMP);
 
-	const polys: FrontlinePolygon[] = clipped.map((polygon, i) => ({
-		id: `frontline-${i}`,
+	let occupied: PCPolygon[];
+	if (segmentRings.length === 0) {
+		occupied = landMP;
+	} else {
+		const wrapped = segmentRings.map<PCPolygon[]>((ring) => [[ring]]);
+		const merged = polygonClipping.union(wrapped[0], ...wrapped.slice(1));
+		const allied = polygonClipping.intersection(merged, landMP);
+		occupied = polygonClipping.difference(landMP, allied);
+	}
+
+	const polys: OccupationPolygon[] = occupied.map((polygon, i) => ({
+		id: `occupied-${i}`,
 		contour: polygon.map((ring) => ring.map(([x, y]) => [x, y] as Position))
 	}));
 
 	return [
-		new PolygonLayer<FrontlinePolygon>({
-			id: 'frontline-territory',
+		new PolygonLayer<OccupationPolygon>({
+			id: 'occupation-veil',
 			data: polys,
 			getPolygon: (d) => d.contour,
-			getFillColor: [...ALLIED_BLUE, FILL_ALPHA],
-			getLineColor: [...ALLIED_BLUE, STROKE_ALPHA],
-			lineWidthUnits: 'pixels',
-			getLineWidth: 2,
-			lineWidthMinPixels: 1,
-			stroked: true,
+			getFillColor: [...FELDGRAU, VEIL_ALPHA],
+			stroked: false,
 			filled: true,
 			pickable: false
 		})
