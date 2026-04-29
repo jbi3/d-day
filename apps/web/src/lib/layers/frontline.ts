@@ -1,44 +1,39 @@
 import { PolygonLayer } from '@deck.gl/layers';
 import type { Layer } from '@deck.gl/core';
+import polygonClipping, { type Polygon as PCPolygon, type Ring as PCRing } from 'polygon-clipping';
 import type { FrontlineSegment, Position } from '@d-day/schema';
+
+import { NORMANDY_LAND_RING } from './normandy-land';
 
 interface BuildFrontlineLayersOptions {
 	segments: FrontlineSegment[];
 	currentEpoch: number;
-	/** Fade-in window when a segment first appears. */
-	fadeInMs?: number;
 }
 
 interface FrontlinePolygon {
 	id: string;
-	contour: Position[];
-	alpha: number; // 0..1
+	contour: Position[][];
 }
 
 const SMOOTH_ITERATIONS = 3;
-const FILL_ALPHA = 36;
+const FILL_ALPHA = 38;
 const STROKE_ALPHA = 150;
 const ALLIED_BLUE: [number, number, number] = [80, 150, 230];
 
 /**
- * The frontline as Allied-controlled territory: France is treated as
- * occupied by default, and each segment is a closed polygon marking
- * a zone the Allies have liberated/established a foothold in.
+ * Allied-held territory polygons. Each segment is interpolated +
+ * smoothed, then all segments are unioned (touching territories merge
+ * into one shape, no crossing outlines), then intersected with a
+ * Normandy land mask so polygons never spill onto the sea.
  *
- * Vertices are interpolated linearly between adjacent keyframes, then
- * smoothed with Chaikin's algorithm so the boundary reads as an
- * organic moving front rather than a fixed angular line.
- *
- * Geometries are approximate per CLAUDE.md sourcing posture (cited:
- * harrison-1951, us-na-aar). Segments fade in over fadeInMs around
- * their first keyframe.
+ * Geometries approximate per CLAUDE.md sourcing posture; primary
+ * sources cited on the data file are harrison-1951 and us-na-aar.
  */
 export function buildFrontlineLayers({
 	segments,
-	currentEpoch,
-	fadeInMs = 30 * 60 * 1000
+	currentEpoch
 }: BuildFrontlineLayersOptions): Layer[] {
-	const polys: FrontlinePolygon[] = [];
+	const segmentRings: PCRing[] = [];
 
 	for (const seg of segments) {
 		const kfs = seg.keyframes;
@@ -46,35 +41,45 @@ export function buildFrontlineLayers({
 		const firstEpoch = Date.parse(kfs[0].time);
 		if (currentEpoch < firstEpoch) continue;
 
-		const fadeIn = Math.min(1, (currentEpoch - firstEpoch) / fadeInMs);
-
 		const interpolated = interpolatePath(kfs, currentEpoch);
 		const smoothed = chaikin(interpolated, SMOOTH_ITERATIONS);
-
-		polys.push({ id: seg.id, contour: smoothed, alpha: fadeIn });
+		segmentRings.push(toRing(smoothed));
 	}
 
-	if (polys.length === 0) return [];
+	if (segmentRings.length === 0) return [];
+
+	// Union all active territories.
+	const wrapped = segmentRings.map<PCPolygon[]>((ring) => [[ring]]);
+	const merged = polygonClipping.union(wrapped[0], ...wrapped.slice(1));
+
+	// Clip to land.
+	const landMP: PCPolygon[] = [[toRing(NORMANDY_LAND_RING)]];
+	const clipped = polygonClipping.intersection(merged, landMP);
+
+	const polys: FrontlinePolygon[] = clipped.map((polygon, i) => ({
+		id: `frontline-${i}`,
+		contour: polygon.map((ring) => ring.map(([x, y]) => [x, y] as Position))
+	}));
 
 	return [
 		new PolygonLayer<FrontlinePolygon>({
 			id: 'frontline-territory',
 			data: polys,
 			getPolygon: (d) => d.contour,
-			getFillColor: (d) => [...ALLIED_BLUE, Math.round(FILL_ALPHA * d.alpha)],
-			getLineColor: (d) => [...ALLIED_BLUE, Math.round(STROKE_ALPHA * d.alpha)],
+			getFillColor: [...ALLIED_BLUE, FILL_ALPHA],
+			getLineColor: [...ALLIED_BLUE, STROKE_ALPHA],
 			lineWidthUnits: 'pixels',
 			getLineWidth: 2,
 			lineWidthMinPixels: 1,
 			stroked: true,
 			filled: true,
-			pickable: false,
-			updateTriggers: {
-				getFillColor: currentEpoch,
-				getLineColor: currentEpoch
-			}
+			pickable: false
 		})
 	];
+}
+
+function toRing(points: Position[]): PCRing {
+	return points.map(([x, y]) => [x, y] as [number, number]);
 }
 
 function interpolatePath(
