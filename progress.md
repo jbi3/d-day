@@ -55,9 +55,10 @@ acceptance review) are user calls.
 - B.6 detail overlays — click any unit or event marker to open a
   right-side panel with metadata, source citations resolved
   through the registry, and full disputed-claim listings.
-- B.7 uncertainty layer — soft warm rings around any unit whose
-  bracketing waypoints carry `disputedBy` and any active disputed
-  event; ring radius scales with claim count.
+- B.7 dispute surfacing — disputed events keep their warmer hue in
+  the events layer; the details panel lists every `disputedBy`
+  claim with its source. (Earlier uncertainty halo around units
+  was removed during the UX review — too noisy.)
 - UX polish — basemap upgraded to OpenFreeMap positron (real
   Normandy detail vs. demotiles); deck.gl `getTooltip` for hover;
   timeline tick labels at D-1 22:00 / D 00:00 / D 06:00 / D 12:00 /
@@ -86,10 +87,22 @@ acceptance review) are user calls.
 - Frontline polyline layer removed — connecting same-side units by
   longitude was visually noisy and historically meaningless before
   H-Hour.
+- New frontline layer (keyframed) — three hand-crafted segments
+  (Cotentin airborne pocket, Omaha beachhead, Utah beachhead) with
+  4 / 4 / 3 keyframes between D 02:30 and D 18:00. Sources:
+  harrison-1951, us-na-aar. New `frontline.schema.json`,
+  `data/frontline.json`, ajv loader integration, and a
+  `frontline-data` vitest suite (vertex-count parity, chronological
+  keyframes, registry containment).
+- Icon size scales with zoom — `sizeUnits: 'meters'`, base 6 km,
+  clamped 28–72 px. Small in overview, larger when zoomed in.
+- Unit labels switched from SDF text to bitmap text on a dark pill
+  background (legible against any basemap).
 - README quick-start added (install / dev / build / test, repo
   layout, sourcing posture pointer).
-- 39/39 schema + registry + unit-data + events-data tests pass on
-  every merge; web app `pnpm check` and `pnpm build` clean.
+- 44/44 schema + registry + unit-data + events-data + frontline-data
+  tests pass on every merge; web app `pnpm check` and `pnpm build`
+  clean.
 
 **Next (user-facing review)**
 - 2.3 Qualitative perf pass — open the dev server, scrub the
@@ -340,3 +353,26 @@ via SSH; main updates need explicit user action or a PR flow.
 political content) over the swastika flag or pre-1935 Reichsflagge.
 Historically authentic for marking Heer divisions on operational
 maps; politically clean.
+
+### 2026-04-29 — UX review round 2: halo gone, zoom-scaled icons, real frontline
+- `claude/no-uncertainty-halo-001` — removed the dispute halo
+  layer entirely; users found it noisy. Dispute info still surfaced
+  in the details panel and via the warmer hue on disputed events.
+  Same branch added zoom-scaled icons (`sizeUnits: 'meters'`,
+  6 km base, 28–72 px clamp) and switched labels from SDF to
+  bitmap text on a dark pill (legibility was the blocker).
+- `claude/frontline-keyframes-001` — replaces the deleted
+  centroid-polyline frontline with a hand-crafted keyframed model.
+  Three segments authored from operational maps: Cotentin airborne
+  pocket (closed perimeter, 4 keyframes), Omaha and Utah
+  beachheads (open polylines, 4 + 3 keyframes). Linear interpolation
+  between adjacent keyframes; segments fade in over 30 min around
+  their first keyframe. Width fixed in pixels so the line stays a
+  quiet hint behind the unit icons rather than dominating.
+
+**Sourcing posture (frontline geometries)**: Geometries are
+intentionally approximate per CLAUDE.md ("light, supported by unit
+positions"). Cited primary sources are harrison-1951 (US Army
+official history with detailed beachhead progression maps) and
+us-na-aar (after-action reports). Bigot-maps and IWM-archives are
+available for refinement if specific positions are challenged.
