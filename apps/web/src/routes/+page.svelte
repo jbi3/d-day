@@ -10,6 +10,7 @@
 	import { buildFrontlineLayers } from '$lib/layers/frontline';
 	import { buildEventLayers } from '$lib/layers/events';
 	import Timeline from '$lib/components/timeline.svelte';
+	import Details, { type Selection } from '$lib/components/details.svelte';
 
 	const data = loadData();
 
@@ -19,6 +20,8 @@
 
 	const currentEpoch = $derived(simStartEpoch + time.simHours * 3_600_000);
 	const currentIso = $derived(new Date(currentEpoch).toISOString());
+
+	let selection = $state<Selection>(null);
 
 	let mapContainer: HTMLDivElement;
 	let map: maplibregl.Map | undefined;
@@ -32,7 +35,23 @@
 			zoom: 9
 		});
 
-		deckOverlay = new MapboxOverlay({ layers: [] });
+		deckOverlay = new MapboxOverlay({
+			layers: [],
+			onClick: ({ object, layer }) => {
+				if (!object || !layer?.id) {
+					selection = null;
+					return true;
+				}
+				if (layer.id === 'units-marker') {
+					const track = data.unitById.get(object.id);
+					if (track) selection = { kind: 'unit', track };
+				} else if (layer.id === 'events') {
+					const event = data.eventById.get(object.id);
+					if (event) selection = { kind: 'event', event };
+				}
+				return true;
+			}
+		});
 		map.addControl(deckOverlay as unknown as maplibregl.IControl);
 
 		return () => {
@@ -68,6 +87,12 @@
 
 <div class="map-wrap">
 	<div bind:this={mapContainer} class="map"></div>
+
+	<Details
+		{selection}
+		sourceById={data.sourceById}
+		onClose={() => (selection = null)}
+	/>
 
 	<Timeline
 		{time}
