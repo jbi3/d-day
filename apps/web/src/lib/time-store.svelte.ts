@@ -9,6 +9,7 @@
 export class TimeStore {
 	simHours = $state(0);
 	playing = $state(false);
+	playRate = $state(0.5);
 
 	#raf = 0;
 	#lastFrame = 0;
@@ -16,9 +17,10 @@ export class TimeStore {
 	constructor(
 		public readonly start: number,
 		public readonly end: number,
-		public readonly playRate = 0.5
+		initialPlayRate = 0.5
 	) {
 		this.simHours = start;
+		this.playRate = initialPlayRate;
 	}
 
 	get t(): number {
@@ -56,5 +58,10 @@ export class TimeStore {
 	toggle(): void {
 		if (this.playing) this.pause();
 		else this.play();
+	}
+
+	reset(): void {
+		this.pause();
+		this.simHours = this.start;
 	}
 }
