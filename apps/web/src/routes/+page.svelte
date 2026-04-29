@@ -9,6 +9,7 @@
 	import { buildUnitLayers } from '$lib/layers/units';
 	import { buildFrontlineLayers } from '$lib/layers/frontline';
 	import { buildEventLayers } from '$lib/layers/events';
+	import { buildUncertaintyLayers } from '$lib/layers/uncertainty';
 	import Timeline from '$lib/components/timeline.svelte';
 	import Details, { type Selection } from '$lib/components/details.svelte';
 
@@ -64,6 +65,12 @@
 		deckOverlay.setProps({
 			layers: [
 				...buildFrontlineLayers({ tracks: data.units, isoTime: currentIso }),
+				...buildUncertaintyLayers({
+					tracks: data.units,
+					events: data.events,
+					isoTime: currentIso,
+					currentEpoch
+				}),
 				...buildEventLayers({ events: data.events, currentEpoch }),
 				...buildUnitLayers({ tracks: data.units, isoTime: currentIso })
 			]
