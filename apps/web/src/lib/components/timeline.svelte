@@ -35,6 +35,23 @@
 		{ hours: 14, label: 'D 12:00' },
 		{ hours: 20, label: 'D 18:00' }
 	];
+
+	let shareLabel = $state('Share');
+
+	async function share() {
+		if (typeof window === 'undefined') return;
+		const url = window.location.href;
+		try {
+			await navigator.clipboard.writeText(url);
+			shareLabel = '✓ Copied';
+		} catch {
+			// Fallback: select and let user copy manually.
+			shareLabel = url;
+		}
+		setTimeout(() => {
+			shareLabel = 'Share';
+		}, 1600);
+	}
 </script>
 
 <div class="hud">
@@ -59,6 +76,14 @@
 		<span class="meta">
 			{unitCount} unit{unitCount === 1 ? '' : 's'} · {visibleEvents.length} event{visibleEvents.length === 1 ? '' : 's'}
 		</span>
+		<button
+			class="secondary"
+			type="button"
+			onclick={share}
+			title="Copy a link to this moment"
+		>
+			{shareLabel}
+		</button>
 	</div>
 
 	<div class="track-wrap">
