@@ -1,0 +1,288 @@
+{
+	"$schema": "../../packages/data/schema/event.schema.json",
+	"version": 1,
+	"events": [
+		{
+			"id": "bbc-resistance-go",
+			"title": "BBC \"Les sanglots longs\" go-signal to Resistance",
+			"description": "Second half of Verlaine's couplet broadcast at 21:15 BST signalling French Resistance to begin sabotage of rail and communications.",
+			"time": "1944-06-05T22:15:00Z",
+			"position": [-1.2, 49.18],
+			"sources": ["harrison-1951"]
+		},
+		{
+			"id": "pathfinders-depart",
+			"title": "IX TCC Pathfinders depart England",
+			"description": "First C-47 Pathfinder serials lift off from North Witham; their job is to mark the airborne DZs/LZs with Eureka beacons and lights.",
+			"time": "1944-06-05T22:30:00Z",
+			"position": [-0.6, 52.85],
+			"sources": ["harrison-1951"]
+		},
+		{
+			"id": "pegasus-bridge-taken",
+			"title": "Pegasus Bridge taken (6th Airborne)",
+			"description": "Coup-de-main by Major Howard's D Coy / 2nd Ox & Bucks LI in 6 Horsa gliders against the Bénouville bridge over the Caen Canal. Held against counterattacks until Lovat's commandos arrived at noon.",
+			"time": "1944-06-06T00:16:00Z",
+			"position": [-0.2741, 49.2421],
+			"involvedUnits": ["uk-6th-airborne"],
+			"sources": ["iwm-archives", "harrison-1951"]
+		},
+		{
+			"id": "horsa-bridge-taken",
+			"title": "Horsa Bridge (Ranville) taken (6th Airborne)",
+			"description": "Companion bridge over the Orne river taken by another Howard glider stick within minutes of Pegasus.",
+			"time": "1944-06-06T00:20:00Z",
+			"position": [-0.2645, 49.2425],
+			"involvedUnits": ["uk-6th-airborne"],
+			"sources": ["iwm-archives"]
+		},
+		{
+			"id": "us-101st-drop-begins",
+			"title": "101st Airborne first sticks over Cotentin",
+			"description": "First 101st Airborne pathfinders, then assault sticks (502 PIR), drop over the Hiesville / Saint-Marie-du-Mont area.",
+			"time": "1944-06-06T00:30:00Z",
+			"position": [-1.260, 49.367],
+			"involvedUnits": ["us-101st-airborne"],
+			"sources": ["harrison-1951"]
+		},
+		{
+			"id": "us-82nd-drop-begins",
+			"title": "82nd Airborne first sticks over DZ-O",
+			"description": "First 82nd sticks (505 PIR) over Sainte-Mère-Église; widely scattered due to weather and AAA, much like the 101st.",
+			"time": "1944-06-06T01:30:00Z",
+			"position": [-1.317, 49.408],
+			"involvedUnits": ["us-82nd-airborne"],
+			"sources": ["harrison-1951"]
+		},
+		{
+			"id": "merville-battery-taken",
+			"title": "Merville Battery silenced (9 Para)",
+			"description": "Lt-Col Otway's 9 Para assault on the Merville coastal battery. Mission accomplished but at very heavy cost; battery proved to be 75mm not the 150mm Allied intel feared.",
+			"time": "1944-06-06T04:45:00Z",
+			"position": [-0.181, 49.272],
+			"sources": ["iwm-archives"]
+		},
+		{
+			"id": "sainte-mere-eglise-taken",
+			"title": "Sainte-Mère-Église taken (3/505 PIR)",
+			"description": "First French town liberated. LtCol Krause hoists the same flag the 505 carried in Naples earlier in the war.",
+			"time": "1944-06-06T04:30:00Z",
+			"position": [-1.317, 49.408],
+			"involvedUnits": ["us-82nd-airborne"],
+			"sources": ["harrison-1951", "us-na-aar"]
+		},
+		{
+			"id": "naval-bombardment-begins",
+			"title": "Naval bombardment opens",
+			"description": "Battleships and cruisers of TF 124 (Omaha) and TF 125 (Utah) open fire on coastal batteries and identified strongpoints.",
+			"time": "1944-06-06T05:30:00Z",
+			"position": [-0.9, 49.45],
+			"sources": ["harrison-1951"]
+		},
+		{
+			"id": "air-bombing-omaha-overshoot",
+			"title": "Heavy bomber strike on Omaha overshoots",
+			"description": "8th AF B-24s release late through cloud to avoid hitting incoming landing craft; bombs fall up to several kilometers inland, missing the bluff defenses.",
+			"time": "1944-06-06T05:55:00Z",
+			"position": [-0.88, 49.36],
+			"sources": ["harrison-1951"],
+			"disputedBy": [
+				{
+					"source": "beevor-2009",
+					"claim": "Sources differ on the exact scale and consequence of the overshoot — Harrison's Green Books note bombs fell '1–3 miles inland'; later analysis (cited in Beevor) suggests some bomb groups did hit closer to the bluff line in places."
+				}
+			]
+		},
+		{
+			"id": "h-hour-omaha",
+			"title": "H-Hour Omaha — first wave touchdown",
+			"description": "Lead waves of 16th RCT (1st ID) at Easy Red/Fox Green and 116th RCT (29th ID) at Dog Green/Dog White touch down. Heavy fire from intact bluff defenses (916 IR / 352. ID).",
+			"time": "1944-06-06T06:30:00Z",
+			"position": [-0.91, 49.378],
+			"involvedUnits": ["us-1st-id", "us-29th-id", "de-352nd-id"],
+			"sources": ["harrison-1951", "us-na-aar"]
+		},
+		{
+			"id": "h-hour-utah",
+			"title": "H-Hour Utah — first wave touchdown",
+			"description": "Lead 8th IR / 4th ID landings; current pushed waves ~2km south of planned aim point — Roosevelt Jr.'s \"we'll start the war from right here\".",
+			"time": "1944-06-06T06:30:00Z",
+			"position": [-1.180, 49.405],
+			"sources": ["harrison-1951"],
+			"disputedBy": [
+				{
+					"source": "beevor-2009",
+					"claim": "Sources give offsets between 1,800 and 2,000 yards south of the planned Tare Green / Uncle Red aim point; the southerly drift turned out to be operationally fortunate (lighter defenses)."
+				}
+			]
+		},
+		{
+			"id": "pointe-du-hoc-landing",
+			"title": "Rangers scale Pointe-du-Hoc",
+			"description": "2nd Ranger Bn (LtCol Rudder) scale the cliffs under fire; objective battery found dummy-emplaced, real guns located inland and destroyed.",
+			"time": "1944-06-06T07:10:00Z",
+			"position": [-0.989, 49.396],
+			"sources": ["harrison-1951"]
+		},
+		{
+			"id": "h-hour-gold",
+			"title": "H-Hour Gold (50th Northumbrian)",
+			"description": "British 50th Division lands at Gold Beach (Le Hamel / La Rivière). Outside MVP geography but within MVP window.",
+			"time": "1944-06-06T07:25:00Z",
+			"position": [-0.5, 49.34],
+			"sources": ["iwm-archives"]
+		},
+		{
+			"id": "h-hour-sword",
+			"title": "H-Hour Sword (3rd British)",
+			"description": "British 3rd Division lands at Sword Beach (Ouistreham / La Brèche). Outside MVP geography but within MVP window.",
+			"time": "1944-06-06T07:25:00Z",
+			"position": [-0.247, 49.298],
+			"sources": ["iwm-archives"]
+		},
+		{
+			"id": "h-hour-juno",
+			"title": "H-Hour Juno (3rd Canadian)",
+			"description": "3rd Canadian Division lands at Juno Beach (Courseulles / Bernières / Saint-Aubin). Outside MVP geography but within MVP window.",
+			"time": "1944-06-06T07:35:00Z",
+			"position": [-0.45, 49.335],
+			"sources": ["iwm-archives"]
+		},
+		{
+			"id": "saint-marie-du-mont-taken",
+			"title": "Saint-Marie-du-Mont taken (1/506 PIR)",
+			"description": "Sink's 506 PIR rallies and clears the village — key inland anchor behind Utah causeways.",
+			"time": "1944-06-06T08:00:00Z",
+			"position": [-1.218, 49.382],
+			"involvedUnits": ["us-101st-airborne"],
+			"sources": ["harrison-1951"]
+		},
+		{
+			"id": "omaha-pinned-seawall",
+			"title": "Omaha first wave pinned at the seawall",
+			"description": "By 08:00 most of 16th and 116th RCT lead companies are pinned along the seawall and shingle, taking artillery and MG-42 fire from the bluffs. Beach exits unopened.",
+			"time": "1944-06-06T08:00:00Z",
+			"position": [-0.90, 49.378],
+			"involvedUnits": ["us-1st-id", "us-29th-id"],
+			"sources": ["harrison-1951", "us-na-aar"]
+		},
+		{
+			"id": "engineer-gap-blow-omaha",
+			"title": "First engineer beach exits blown",
+			"description": "Combat engineers (5th and 6th ESB) blow gaps at E-1 (Saint-Laurent draw) and partial gap at E-3 (Colleville draw), enabling armor and follow-up waves to pass.",
+			"time": "1944-06-06T09:30:00Z",
+			"position": [-0.892, 49.376],
+			"sources": ["harrison-1951", "us-na-aar"]
+		},
+		{
+			"id": "falley-killed",
+			"title": "Generalleutnant Falley killed (91. LL CO)",
+			"description": "91. Luftlande-Division commander killed near Picauville while returning from a Kriegsspiel in Rennes; ambushed by a 508 PIR patrol. Decapitates German Cotentin command early.",
+			"time": "1944-06-06T09:30:00Z",
+			"position": [-1.385, 49.395],
+			"involvedUnits": ["de-91st-709th-elements", "us-82nd-airborne"],
+			"sources": ["zetterling-2000", "harrison-1951"],
+			"disputedBy": [
+				{
+					"source": "beevor-2009",
+					"claim": "The exact time, location, and identifying patrol have been recounted slightly differently by Harrison, Zetterling, and Beevor; the broad facts (CO killed in transit near Picauville) are not disputed."
+				}
+			]
+		},
+		{
+			"id": "bluff-line-breached-omaha",
+			"title": "First bluff-line breach behind Easy Red",
+			"description": "Small-unit infiltration up the bluffs in the gap between strongpoints WN-62 and WN-64 — the first sustained Allied foothold on the Omaha plateau.",
+			"time": "1944-06-06T10:00:00Z",
+			"position": [-0.876, 49.371],
+			"involvedUnits": ["us-1st-id"],
+			"sources": ["harrison-1951"]
+		},
+		{
+			"id": "lovat-pegasus-linkup",
+			"title": "Lord Lovat's commandos relieve Pegasus Bridge",
+			"description": "1st Special Service Brigade marches inland from Sword Beach (piped in by Bill Millin) and links up with Howard's force at Pegasus Bridge.",
+			"time": "1944-06-06T13:30:00Z",
+			"position": [-0.2741, 49.2421],
+			"involvedUnits": ["uk-6th-airborne"],
+			"sources": ["iwm-archives"]
+		},
+		{
+			"id": "vierville-draw-secured",
+			"title": "Vierville draw (D-1) secured",
+			"description": "29th ID elements + Rangers clear the Vierville draw, opening the western Omaha exit for armor and follow-up.",
+			"time": "1944-06-06T13:00:00Z",
+			"position": [-0.926, 49.380],
+			"involvedUnits": ["us-29th-id"],
+			"sources": ["harrison-1951"]
+		},
+		{
+			"id": "merderet-la-fiere-fight",
+			"title": "Battle for La Fière causeway",
+			"description": "82nd Airborne (505 PIR + 507 PIR elements) contests the La Fière bridge over the Merderet against 1057 GR (91. LL). Causeway changes hands repeatedly.",
+			"time": "1944-06-06T14:00:00Z",
+			"position": [-1.353, 49.397],
+			"involvedUnits": ["us-82nd-airborne", "de-91st-709th-elements"],
+			"sources": ["harrison-1951"]
+		},
+		{
+			"id": "21st-panzer-counterattack",
+			"title": "21. Panzer-Division reaches the coast at Lion-sur-Mer",
+			"description": "Only major German armor counterattack to reach the coast on D-Day; brief penetration into the Sword–Juno gap before being blunted and withdrawing under pressure.",
+			"time": "1944-06-06T16:00:00Z",
+			"position": [-0.300, 49.300],
+			"sources": ["zetterling-2000"]
+		},
+		{
+			"id": "utah-causeway-linkup",
+			"title": "4th ID — 101st linkup at Causeway 2",
+			"description": "Lead 4th ID elements moving inland from Utah meet 1/506 PIR holding Causeway 2 (Houdienville–Pouppeville).",
+			"time": "1944-06-06T11:00:00Z",
+			"position": [-1.218, 49.382],
+			"involvedUnits": ["us-101st-airborne"],
+			"sources": ["harrison-1951", "us-na-aar"]
+		},
+		{
+			"id": "saint-laurent-contested",
+			"title": "Saint-Laurent-sur-Mer entered (1st & 29th ID)",
+			"description": "Mixed 1st and 29th ID elements work into Saint-Laurent-sur-Mer from the bluff line; village contested through the afternoon.",
+			"time": "1944-06-06T15:30:00Z",
+			"position": [-0.890, 49.366],
+			"involvedUnits": ["us-1st-id", "us-29th-id", "de-352nd-id"],
+			"sources": ["harrison-1951"]
+		},
+		{
+			"id": "colleville-contested",
+			"title": "Colleville-sur-Mer contested (1st ID)",
+			"description": "16th RCT pushes into Colleville-sur-Mer; village changes hands at least once before nightfall.",
+			"time": "1944-06-06T17:00:00Z",
+			"position": [-0.857, 49.359],
+			"involvedUnits": ["us-1st-id", "de-352nd-id"],
+			"sources": ["harrison-1951"]
+		},
+		{
+			"id": "bayeux-approach",
+			"title": "50th Northumbrian approaches Bayeux",
+			"description": "Lead 50th Division elements reach the outskirts of Bayeux but do not enter the city today (Bayeux liberated 7 June). Outside MVP geography but contextual.",
+			"time": "1944-06-06T17:30:00Z",
+			"position": [-0.703, 49.276],
+			"sources": ["iwm-archives"]
+		},
+		{
+			"id": "end-of-mvp-window",
+			"title": "End of MVP window: tenuous beachhead established",
+			"description": "By 18:00, all five beaches and both US airborne areas have been landed and partially consolidated. Omaha remains the most precarious; the airborne are scattered but holding key inland anchors. None of the planned D-Day objectives (Bayeux, Caen) have been taken yet.",
+			"time": "1944-06-06T18:00:00Z",
+			"position": [-0.85, 49.36],
+			"involvedUnits": [
+				"us-1st-id",
+				"us-29th-id",
+				"us-82nd-airborne",
+				"us-101st-airborne",
+				"de-352nd-id",
+				"de-91st-709th-elements"
+			],
+			"sources": ["harrison-1951"]
+		}
+	]
+}
