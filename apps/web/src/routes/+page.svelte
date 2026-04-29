@@ -3,20 +3,21 @@
 	import maplibregl from 'maplibre-gl';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { MapboxOverlay } from '@deck.gl/mapbox';
-	import { ScatterplotLayer } from '@deck.gl/layers';
-	import { TimeStore } from '$lib/time-store.svelte';
 
-	// MVP simulation window: D-1 22:00 → D 18:00 (20 hours).
-	// Two placeholder waypoints near Omaha for the fake unit until the
-	// data loader (B.2) and unit layer (B.3) wire real cited tracks.
-	const startCoord: [number, number] = [-1.2117, 49.4099];
-	const endCoord: [number, number] = [-1.0747, 49.3411];
+	import { TimeStore } from '$lib/time-store.svelte';
+	import { loadData } from '$lib/data-loader';
+	import { buildUnitLayers } from '$lib/layers/units';
+
+	const data = loadData();
+
+	// MVP simulation window: D-1 22:00 → D 18:00 (20 hours from anchor).
+	const simStartIso = '1944-06-05T22:00:00Z';
+	const simStartEpoch = Date.parse(simStartIso);
 	const time = new TimeStore(0, 20);
 
-	const unitPosition = $derived<[number, number]>([
-		startCoord[0] + (endCoord[0] - startCoord[0]) * time.t,
-		startCoord[1] + (endCoord[1] - startCoord[1]) * time.t
-	]);
+	const currentIso = $derived(
+		new Date(simStartEpoch + time.simHours * 3_600_000).toISOString()
+	);
 
 	let mapContainer: HTMLDivElement;
 	let map: maplibregl.Map | undefined;
@@ -26,7 +27,7 @@
 		map = new maplibregl.Map({
 			container: mapContainer,
 			style: 'https://demotiles.maplibre.org/style.json',
-			center: [-1.15, 49.38],
+			center: [-0.88, 49.37],
 			zoom: 9
 		});
 
@@ -41,21 +42,7 @@
 	$effect(() => {
 		if (!deckOverlay) return;
 		deckOverlay.setProps({
-			layers: [
-				new ScatterplotLayer({
-					id: 'fake-unit',
-					data: [{ position: unitPosition }],
-					getPosition: (d: { position: [number, number] }) => d.position,
-					getRadius: 1500,
-					radiusUnits: 'meters',
-					getFillColor: [0, 100, 200, 200],
-					stroked: true,
-					getLineColor: [255, 255, 255, 255],
-					lineWidthUnits: 'pixels',
-					getLineWidth: 2,
-					pickable: true
-				})
-			]
+			layers: buildUnitLayers({ tracks: data.units, isoTime: currentIso })
 		});
 	});
 
@@ -71,7 +58,7 @@
 </script>
 
 <svelte:head>
-	<title>D-Day map — tech validation</title>
+	<title>D-Day map — MVP</title>
 </svelte:head>
 
 <div class="map-wrap">
@@ -83,6 +70,7 @@
 				{time.playing ? 'Pause' : 'Play'}
 			</button>
 			<span class="time">{formatSimTime(time.simHours)}</span>
+			<span class="meta">{data.units.length} unit{data.units.length === 1 ? '' : 's'}</span>
 		</div>
 		<input
 			type="range"
@@ -129,6 +117,11 @@
 	.time {
 		font-variant-numeric: tabular-nums;
 		font-size: 1.05rem;
+	}
+	.meta {
+		opacity: 0.75;
+		font-size: 0.85rem;
+		margin-left: auto;
 	}
 	button {
 		background: #2a6;
