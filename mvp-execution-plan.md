@@ -102,9 +102,9 @@ Workspaces: pnpm. Test/validation: `vitest` + `ajv` (schema) — fixed in
 
 Per `CLAUDE.md`, the renderer / tile format / app shell / hosting
 choices need explicit sign-off. Proposed (from brief): MapLibre GL JS
-+ deck.gl, Protomaps `.pmtiles`, SvelteKit + TypeScript, Cloudflare
-Pages, pnpm workspaces, vitest + ajv. Record decision in
-`progress.md` log. **Blocks 0.1.**
++ deck.gl, Protomaps `.pmtiles`, SvelteKit + TypeScript, pnpm
+workspaces, vitest + ajv. Hosting deferred to post-MVP (see Phase 2 /
+Out of MVP). Record decision in `progress.md` log. **Blocks 0.1.**
 
 ### 0.1 Scaffold + tech validation
 
@@ -187,12 +187,10 @@ Per-task verify: schema-valid; every position / movement / event has
   across the full window.
 - 2.2 Source citation panel for current selection.
 - 2.3 Qualitative perf pass — scrub feel, pan/zoom feel, bundle weight.
-- 2.4 Cloudflare Pages deploy on push to `main` (only after 0.0
-  sign-off includes hosting).
-- 2.5 MVP acceptance review against `brief.md` success criteria.
+- 2.4 MVP acceptance review against `brief.md` success criteria.
 
-**Out of MVP:** painted basemap. Becomes a post-MVP roadmap item;
-v1 candidate.
+**Out of MVP:** painted basemap and hosting / deploy. Both become
+post-MVP roadmap items; v1 candidates.
 
 ## MVP "done" — verification
 
