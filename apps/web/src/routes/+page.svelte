@@ -8,17 +8,17 @@
 	import { loadData } from '$lib/data-loader';
 	import { buildUnitLayers } from '$lib/layers/units';
 	import { buildFrontlineLayers } from '$lib/layers/frontline';
+	import { buildEventLayers } from '$lib/layers/events';
+	import Timeline from '$lib/components/timeline.svelte';
 
 	const data = loadData();
 
-	// MVP simulation window: D-1 22:00 → D 18:00 (20 hours from anchor).
 	const simStartIso = '1944-06-05T22:00:00Z';
 	const simStartEpoch = Date.parse(simStartIso);
 	const time = new TimeStore(0, 20);
 
-	const currentIso = $derived(
-		new Date(simStartEpoch + time.simHours * 3_600_000).toISOString()
-	);
+	const currentEpoch = $derived(simStartEpoch + time.simHours * 3_600_000);
+	const currentIso = $derived(new Date(currentEpoch).toISOString());
 
 	let mapContainer: HTMLDivElement;
 	let map: maplibregl.Map | undefined;
@@ -45,6 +45,7 @@
 		deckOverlay.setProps({
 			layers: [
 				...buildFrontlineLayers({ tracks: data.units, isoTime: currentIso }),
+				...buildEventLayers({ events: data.events, currentEpoch }),
 				...buildUnitLayers({ tracks: data.units, isoTime: currentIso })
 			]
 		});
@@ -68,22 +69,13 @@
 <div class="map-wrap">
 	<div bind:this={mapContainer} class="map"></div>
 
-	<div class="hud">
-		<div class="row">
-			<button onclick={() => time.toggle()}>
-				{time.playing ? 'Pause' : 'Play'}
-			</button>
-			<span class="time">{formatSimTime(time.simHours)}</span>
-			<span class="meta">{data.units.length} unit{data.units.length === 1 ? '' : 's'}</span>
-		</div>
-		<input
-			type="range"
-			min={time.start}
-			max={time.end}
-			step={0.05}
-			bind:value={time.simHours}
-		/>
-	</div>
+	<Timeline
+		{time}
+		{simStartEpoch}
+		events={data.events}
+		{formatSimTime}
+		unitCount={data.units.length}
+	/>
 </div>
 
 <style>
@@ -98,44 +90,5 @@
 	.map {
 		position: absolute;
 		inset: 0;
-	}
-	.hud {
-		position: absolute;
-		bottom: 1rem;
-		left: 1rem;
-		right: 1rem;
-		background: rgba(20, 20, 20, 0.85);
-		color: #fff;
-		padding: 0.75rem 1rem;
-		border-radius: 6px;
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		backdrop-filter: blur(8px);
-	}
-	.row {
-		display: flex;
-		align-items: center;
-		gap: 1rem;
-	}
-	.time {
-		font-variant-numeric: tabular-nums;
-		font-size: 1.05rem;
-	}
-	.meta {
-		opacity: 0.75;
-		font-size: 0.85rem;
-		margin-left: auto;
-	}
-	button {
-		background: #2a6;
-		color: #fff;
-		border: 0;
-		padding: 0.4rem 1rem;
-		border-radius: 4px;
-		cursor: pointer;
-	}
-	input[type='range'] {
-		width: 100%;
 	}
 </style>
