@@ -87,14 +87,15 @@ acceptance review) are user calls.
 - Frontline polyline layer removed — connecting same-side units by
   longitude was visually noisy and historically meaningless before
   H-Hour.
-- Frontline as occupation veil — Normandy starts fully feldgrau
-  (Wehrmacht grey-green wash); each Allied segment cuts a hole in
-  the veil. Visual reading is "occupation receding", not "Allied
-  bubbles appearing". Active segments are interpolated at the
-  current sim time, Chaikin-smoothed, unioned across segments, then
-  subtracted from a hand-traced Normandy land mask via
-  polygon-clipping difference. The remaining multipolygon is the
-  still-occupied land. Three segments authored (Cotentin airborne
+- Frontline as occupation veil — mainland France starts fully
+  feldgrau (Wehrmacht grey-green wash, alpha 60); each Allied
+  segment cuts a hole in the veil. Visual reading is "occupation
+  receding", not "Allied bubbles appearing". Active segments are
+  interpolated at the current sim time, Chaikin-smoothed, unioned
+  across segments, then subtracted from a hand-traced France land
+  mask (~120 vertices, denser around the Cotentin + Bessin coast)
+  via polygon-clipping difference. The remaining multipolygon is
+  the still-occupied land. Three segments authored (Cotentin airborne
   pocket, Omaha beachhead, Utah beachhead) with 4 / 4 / 3 keyframes
   between D 02:30 and D 18:00; Cotentin and Utah merge into one
   hole by D 12:00 matching the historical causeway linkup. Sources:
@@ -458,3 +459,23 @@ grey-green) chosen on user request over neutral dark grey. Same
 historical-authenticity-without-Nazi-iconography logic as the
 Balkenkreuz badge for unit symbology. Color RGB (60, 70, 55) is a
 desaturated Wehrmacht uniform tone.
+
+### 2026-04-29 — Veil scope extended to all of France
+Veil was previously bounded to a ~30-vertex Normandy land ring; the
+user pointed out this contradicts the conceptual model ("France is
+occupied" should mean *all* of France, not just Normandy).
+
+- `claude/france-veil-001` — replaced `normandy-land.ts` with
+  `france-land.ts`, a ~120-vertex hand-traced approximation of
+  mainland France's boundary. Vertex density is intentionally
+  uneven: ~3–5 km spacing along the Cotentin + Bessin coast (where
+  Allied territory is subtracted from the veil and precision
+  matters), ~30–80 km elsewhere. Veil alpha lowered 95 → 60. Corsica
+  + DOM/TOM excluded as out of MVP scope.
+
+**Tech choice (France polygon)**: Hand-traced over importing a
+Natural Earth or geo-countries dataset. Reasoning: the visualisation
+is conceptual, not cartographically precise; a small embedded
+polygon avoids a runtime fetch and keeps the bundle thin. If a
+future iteration needs accurate national boundaries, switching to a
+Natural Earth 1:50m or 1:10m polygon is a one-file replacement.
