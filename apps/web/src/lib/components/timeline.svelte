@@ -26,6 +26,15 @@
 		const pct = ((hours - time.start) / (time.end - time.start)) * 100;
 		return `${pct}%`;
 	}
+
+	// Tick marks every 6 sim-hours: D-1 22:00, D 00:00, D 06:00, D 12:00, D 18:00.
+	const ticks: { hours: number; label: string }[] = [
+		{ hours: 0, label: 'D-1 22:00' },
+		{ hours: 2, label: 'D 00:00' },
+		{ hours: 8, label: 'D 06:00' },
+		{ hours: 14, label: 'D 12:00' },
+		{ hours: 20, label: 'D 18:00' }
+	];
 </script>
 
 <div class="hud">
@@ -58,6 +67,11 @@
 					title="{formatSimTime(hours)} — {event.title}"
 					onclick={() => time.seek(hours)}
 				></button>
+			{/each}
+		</div>
+		<div class="ticks" aria-hidden="true">
+			{#each ticks as t}
+				<span class="tick" style:left={pinLeft(t.hours)}>{t.label}</span>
 			{/each}
 		</div>
 	</div>
@@ -135,5 +149,19 @@
 	}
 	.pin:hover {
 		filter: brightness(1.2);
+	}
+	.ticks {
+		position: relative;
+		height: 1rem;
+		margin-top: 0.15rem;
+	}
+	.tick {
+		position: absolute;
+		top: 0;
+		transform: translateX(-50%);
+		font-size: 0.72rem;
+		opacity: 0.55;
+		font-variant-numeric: tabular-nums;
+		white-space: nowrap;
 	}
 </style>
