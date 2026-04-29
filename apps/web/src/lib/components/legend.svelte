@@ -28,8 +28,6 @@
 			<dd>Event marker — fires at its time, fades over ~1h</dd>
 			<dt><span class="swatch event-disputed"></span></dt>
 			<dd>Event with <code>disputedBy</code> entries</dd>
-			<dt><span class="swatch uncertainty"></span></dt>
-			<dd>Uncertainty halo — currently disputed position</dd>
 		</dl>
 		<p class="hint">
 			NATO frame: rectangle = friendly, diamond = hostile. Inside: ✕ infantry,
@@ -107,10 +105,6 @@
 	.swatch.event-disputed {
 		background: rgb(240, 130, 70);
 		border-color: rgba(20, 20, 20, 0.7);
-	}
-	.swatch.uncertainty {
-		background: rgba(240, 130, 70, 0.2);
-		border-color: rgba(240, 130, 70, 0.85);
 	}
 	code {
 		font-size: 0.8em;
