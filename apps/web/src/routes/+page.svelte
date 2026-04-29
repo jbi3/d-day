@@ -30,6 +30,28 @@
 	let map: maplibregl.Map | undefined;
 	let deckOverlay: MapboxOverlay | undefined;
 
+	function onKeydown(e: KeyboardEvent) {
+		const target = e.target as HTMLElement | null;
+		if (target && (target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.isContentEditable)) {
+			return;
+		}
+		if (e.key === ' ') {
+			e.preventDefault();
+			time.toggle();
+		} else if (e.key === 'Home') {
+			e.preventDefault();
+			time.reset();
+		} else if (e.key === 'ArrowLeft') {
+			e.preventDefault();
+			time.seek(time.simHours - (e.shiftKey ? 1 : 0.25));
+		} else if (e.key === 'ArrowRight') {
+			e.preventDefault();
+			time.seek(time.simHours + (e.shiftKey ? 1 : 0.25));
+		} else if (e.key === 'Escape') {
+			selection = null;
+		}
+	}
+
 	onMount(() => {
 		map = new maplibregl.Map({
 			container: mapContainer,
@@ -106,6 +128,8 @@
 <svelte:head>
 	<title>D-Day map — MVP</title>
 </svelte:head>
+
+<svelte:window onkeydown={onKeydown} />
 
 <div class="map-wrap">
 	<div bind:this={mapContainer} class="map"></div>
