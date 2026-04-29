@@ -87,8 +87,12 @@ acceptance review) are user calls.
 - Frontline polyline layer removed — connecting same-side units by
   longitude was visually noisy and historically meaningless before
   H-Hour.
-- New frontline layer (keyframed) — three hand-crafted segments
-  (Cotentin airborne pocket, Omaha beachhead, Utah beachhead) with
+- Frontline as Allied-held territory — France is treated as
+  occupied by default; each segment is a closed polygon marking a
+  liberated zone (Cotentin airborne pocket, Omaha beachhead, Utah
+  beachhead). Color is Allied blue (avoids confusion with the Axis
+  hue). Boundaries are smoothed with Chaikin's algorithm so the
+  front reads as a moving organic shape, not a fixed angular line.
   4 / 4 / 3 keyframes between D 02:30 and D 18:00. Sources:
   harrison-1951, us-na-aar. New `frontline.schema.json`,
   `data/frontline.json`, ajv loader integration, and a
@@ -376,3 +380,28 @@ positions"). Cited primary sources are harrison-1951 (US Army
 official history with detailed beachhead progression maps) and
 us-na-aar (after-action reports). Bigot-maps and IWM-archives are
 available for refinement if specific positions are challenged.
+
+### 2026-04-29 — Frontline reframed as Allied territory
+The first frontline implementation (red polylines marking the edge
+of contact) didn't satisfy the user. Reframed on user direction:
+France is occupied by default; each segment is a closed polygon
+marking what the Allies have liberated.
+
+- `claude/frontline-as-territory-001` — switched the renderer from
+  PathLayer to PolygonLayer (translucent fill + outline). Color
+  changed from red (which clashed with the Axis hue) to Allied
+  blue. Chaikin's corner-cutting algorithm (3 iterations) applied
+  after vertex interpolation, so the boundary reads as a smooth
+  moving front rather than a fixed angular line. Geometries pulled
+  inland so polygons no longer spill into the Bay. Omaha and Utah
+  open polylines converted to closed beach-strip polygons (sea
+  edge + inland edge). Data file rewritten; layer rewritten;
+  44/44 tests still pass.
+
+**Conceptual decision (frontline model)**: A "frontline" in this
+project is the *outline of Allied-held ground*, not the edge of
+contact. This is a cartographic-style choice (territory is the
+primary unit; the front is its boundary) rather than a tactical-map
+choice (front is a line; armies sit on either side). Documented
+here so future iterations know which model the data and layer are
+serving.
