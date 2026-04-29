@@ -1,0 +1,60 @@
+{
+	"$schema": "../../packages/data/schema/unit.schema.json",
+	"unit": {
+		"id": "us-101st-airborne",
+		"side": "allied",
+		"country": "US",
+		"echelon": "division",
+		"branch": "airborne",
+		"name": "101st Airborne Division",
+		"shortName": "101st Abn",
+		"sources": ["harrison-1951", "us-na-aar"]
+	},
+	"movement": {
+		"unitId": "us-101st-airborne",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-1.0, 50.65],
+				"sources": ["harrison-1951"],
+				"note": "Pre-jump: aboard IX TCC C-47 serials forming over the south coast. Position approximates the route start."
+			},
+			{
+				"time": "1944-06-06T00:30:00Z",
+				"position": [-1.260, 49.367],
+				"sources": ["harrison-1951"],
+				"disputedBy": [
+					{
+						"source": "beevor-2009",
+						"claim": "101st sticks were similarly scattered: many drops fell well outside DZs A/B/C/D. The DZ-C centroid is the planned aim point, not where most sticks actually came down."
+					}
+				],
+				"note": "First sticks (502nd PIR pathfinders + assault) over the Hiesville / Saint-Marie-du-Mont area. Position is the planned DZ-C centroid; actual stick footprint scattered across the Cotentin interior."
+			},
+			{
+				"time": "1944-06-06T05:00:00Z",
+				"position": [-1.230, 49.378],
+				"sources": ["harrison-1951"],
+				"note": "506th PIR (Sink) and 502nd elements rallying around Saint-Marie-du-Mont; first attempts on Causeway exits 1 and 2 behind Utah."
+			},
+			{
+				"time": "1944-06-06T07:30:00Z",
+				"position": [-1.218, 49.382],
+				"sources": ["harrison-1951"],
+				"note": "Saint-Marie-du-Mont taken; Causeway 2 (Houdienville–Pouppeville) secured by 1/506; first 4th ID elements reach the inland end of the causeways."
+			},
+			{
+				"time": "1944-06-06T13:00:00Z",
+				"position": [-1.255, 49.355],
+				"sources": ["harrison-1951"],
+				"note": "Mid-day: 506th and 501st pushing south toward Saint-Côme-du-Mont and the Carentan road; rear cordon against 6th FJR (German Fallschirmjäger Regiment 6)."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-1.260, 49.358],
+				"sources": ["harrison-1951", "us-na-aar"],
+				"note": "End of MVP window: Utah causeway exits held; Saint-Côme-du-Mont contested. Division centroid approximate."
+			}
+		]
+	}
+}
