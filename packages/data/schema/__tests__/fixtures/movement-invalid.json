@@ -1,0 +1,10 @@
+{
+	"unitId": "us-1st-id",
+	"waypoints": [
+		{
+			"time": "06:30",
+			"position": [-0.8843],
+			"sources": []
+		}
+	]
+}

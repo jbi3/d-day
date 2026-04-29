@@ -1,0 +1,17 @@
+{
+	"unitId": "us-1st-id",
+	"waypoints": [
+		{
+			"time": "1944-06-06T06:30:00Z",
+			"position": [-0.8843, 49.3816],
+			"sources": ["harrison-1951"],
+			"disputedBy": [
+				{
+					"source": "beevor-2009",
+					"claim": "Beevor places the 16th RCT first wave touchdown 5 minutes earlier (06:25) and 200m east of the Green Books grid."
+				}
+			],
+			"note": "H-Hour landing — exact touchdown position contested."
+		}
+	]
+}

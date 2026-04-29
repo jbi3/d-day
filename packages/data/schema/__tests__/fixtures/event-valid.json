@@ -1,0 +1,9 @@
+{
+	"id": "pegasus-bridge-taken",
+	"title": "Pegasus Bridge taken by 6th Airborne",
+	"description": "Glider-borne coup-de-main against the Bénouville bridge over the Caen Canal.",
+	"time": "1944-06-06T00:16:00Z",
+	"position": [-0.2741, 49.2421],
+	"involvedUnits": ["uk-6th-airborne"],
+	"sources": ["harrison-1951"]
+}

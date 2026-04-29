@@ -1,0 +1,44 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "event.schema.json",
+	"title": "Event",
+	"type": "object",
+	"additionalProperties": false,
+	"required": ["id", "title", "time", "position", "sources"],
+	"properties": {
+		"id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+		"title": { "type": "string", "minLength": 1 },
+		"description": { "type": "string" },
+		"time": { "type": "string", "format": "date-time" },
+		"position": {
+			"type": "array",
+			"items": { "type": "number" },
+			"minItems": 2,
+			"maxItems": 2
+		},
+		"involvedUnits": {
+			"type": "array",
+			"items": { "type": "string" }
+		},
+		"sources": {
+			"type": "array",
+			"items": { "type": "string" },
+			"minItems": 1
+		},
+		"disputedBy": {
+			"type": "array",
+			"items": { "$ref": "#/definitions/dispute" }
+		}
+	},
+	"definitions": {
+		"dispute": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["source", "claim"],
+			"properties": {
+				"source": { "type": "string" },
+				"claim": { "type": "string", "minLength": 1 }
+			}
+		}
+	}
+}

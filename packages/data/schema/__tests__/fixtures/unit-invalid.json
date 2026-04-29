@@ -1,0 +1,9 @@
+{
+	"id": "us-1st-id",
+	"side": "neutral",
+	"country": "us",
+	"echelon": "platoon",
+	"branch": "infantry",
+	"name": "1st Infantry Division",
+	"sources": []
+}
