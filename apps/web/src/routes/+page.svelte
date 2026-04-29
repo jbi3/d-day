@@ -10,6 +10,7 @@
 	import { buildFrontlineLayers } from '$lib/layers/frontline';
 	import { buildEventLayers } from '$lib/layers/events';
 	import { buildUncertaintyLayers } from '$lib/layers/uncertainty';
+	import { buildTrailLayers } from '$lib/layers/trails';
 	import Timeline from '$lib/components/timeline.svelte';
 	import Details, { type Selection } from '$lib/components/details.svelte';
 	import Legend from '$lib/components/legend.svelte';
@@ -77,6 +78,7 @@
 		if (!deckOverlay) return;
 		deckOverlay.setProps({
 			layers: [
+				...buildTrailLayers({ tracks: data.units, isoTime: currentIso }),
 				...buildFrontlineLayers({ tracks: data.units, isoTime: currentIso }),
 				...buildUncertaintyLayers({
 					tracks: data.units,
