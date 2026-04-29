@@ -42,7 +42,20 @@
 		<button onclick={() => time.toggle()}>
 			{time.playing ? 'Pause' : 'Play'}
 		</button>
+		<button class="secondary" onclick={() => time.reset()} title="Jump to D-1 22:00">
+			↺
+		</button>
 		<span class="time">{formatSimTime(time.simHours)}</span>
+		<label class="speed">
+			<span>Speed</span>
+			<select bind:value={time.playRate}>
+				<option value={0.25}>0.25×</option>
+				<option value={0.5}>0.5×</option>
+				<option value={1}>1×</option>
+				<option value={2}>2×</option>
+				<option value={4}>4×</option>
+			</select>
+		</label>
 		<span class="meta">
 			{unitCount} unit{unitCount === 1 ? '' : 's'} · {visibleEvents.length} event{visibleEvents.length === 1 ? '' : 's'}
 		</span>
@@ -114,6 +127,27 @@
 		padding: 0.4rem 1rem;
 		border-radius: 4px;
 		cursor: pointer;
+		font: inherit;
+	}
+	button.secondary {
+		background: rgba(255, 255, 255, 0.12);
+		padding: 0.4rem 0.7rem;
+		font-size: 1.1rem;
+		line-height: 1;
+	}
+	.speed {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 0.82rem;
+		opacity: 0.85;
+	}
+	.speed select {
+		background: rgba(255, 255, 255, 0.12);
+		color: #fff;
+		border: 0;
+		border-radius: 4px;
+		padding: 0.25rem 0.5rem;
 		font: inherit;
 	}
 	.track-wrap {
