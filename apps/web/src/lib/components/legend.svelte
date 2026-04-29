@@ -28,8 +28,8 @@
 			<dd>Event marker — fires at its time, fades over ~1h</dd>
 			<dt><span class="swatch event-disputed"></span></dt>
 			<dd>Event with <code>disputedBy</code> entries</dd>
-			<dt><span class="swatch territory"></span></dt>
-			<dd>Allied-held territory (approximate; <code>harrison-1951</code>, <code>us-na-aar</code>)</dd>
+			<dt><span class="swatch occupation"></span></dt>
+			<dd>German-occupied land (recedes as Allies advance; <code>harrison-1951</code>, <code>us-na-aar</code>)</dd>
 		</dl>
 		<p class="hint">
 			NATO frame: rectangle = friendly, diamond = hostile. Inside: ✕ infantry,
@@ -108,11 +108,11 @@
 		background: rgb(240, 130, 70);
 		border-color: rgba(20, 20, 20, 0.7);
 	}
-	.swatch.territory {
-		background: rgba(80, 150, 230, 0.18);
-		border: 1.5px solid rgba(80, 150, 230, 0.7);
-		border-radius: 50%;
-		width: 0.95rem;
+	.swatch.occupation {
+		background: rgba(60, 70, 55, 0.55);
+		border: 1px solid rgba(40, 50, 35, 0.8);
+		border-radius: 2px;
+		width: 1rem;
 		height: 0.7rem;
 	}
 	code {
