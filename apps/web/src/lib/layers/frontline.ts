@@ -3,7 +3,7 @@ import type { Layer } from '@deck.gl/core';
 import polygonClipping, { type Polygon as PCPolygon, type Ring as PCRing } from 'polygon-clipping';
 import type { FrontlineSegment, Position } from '@d-day/schema';
 
-import { FRANCE_LAND_RING } from './france-land';
+import { FRANCE_LAND_MULTIPOLYGON } from './france-land';
 
 interface BuildFrontlineLayersOptions {
 	segments: FrontlineSegment[];
@@ -49,7 +49,7 @@ export function buildFrontlineLayers({
 		segmentRings.push(toRing(smoothed));
 	}
 
-	const landMP: PCPolygon[] = [[toRing(FRANCE_LAND_RING)]];
+	const landMP: PCPolygon[] = FRANCE_LAND_MULTIPOLYGON.map((poly) => poly.map(toRing));
 
 	let occupied: PCPolygon[];
 	if (segmentRings.length === 0) {

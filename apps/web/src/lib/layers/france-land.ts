@@ -1,158 +1,44 @@
+import { feature } from 'topojson-client';
+import type { Topology } from 'topojson-specification';
+import type { FeatureCollection, MultiPolygon, Polygon } from 'geojson';
+import countries50m from 'world-atlas/countries-50m.json';
+
 import type { Position } from '@d-day/schema';
 
+// ISO 3166-1 numeric code for France in Natural Earth.
+const FRANCE_ID = '250';
+
+// Metropolitan France + Corsica bbox. Drops DOM-TOM (Mayotte, Reunion,
+// Martinique, Guadeloupe, French Guiana, etc.) - none of which were
+// German-occupied and all of which are out of MVP scope.
+const EUROPE_BBOX = { minLon: -10, minLat: 35, maxLon: 15, maxLat: 55 };
+
+function ringInsideBbox(ring: number[][]): boolean {
+	for (const [x, y] of ring) {
+		if (x < EUROPE_BBOX.minLon || x > EUROPE_BBOX.maxLon) return false;
+		if (y < EUROPE_BBOX.minLat || y > EUROPE_BBOX.maxLat) return false;
+	}
+	return true;
+}
+
+function loadFranceMultiPolygon(): Position[][][] {
+	const topo = countries50m as unknown as Topology;
+	const fc = feature(topo, topo.objects.countries) as FeatureCollection<Polygon | MultiPolygon>;
+	const france = fc.features.find((f) => String(f.id) === FRANCE_ID);
+	if (!france) throw new Error('france-land: France feature not found in world-atlas');
+
+	const geom = france.geometry;
+	const polys = geom.type === 'Polygon' ? [geom.coordinates] : geom.coordinates;
+
+	return polys
+		.filter((poly) => ringInsideBbox(poly[0]))
+		.map((poly) => poly.map((ring) => ring.map(([x, y]) => [x, y] as Position)));
+}
+
 /**
- * Approximate boundary of mainland France, used as the outer ring of
- * the occupation veil and as a land-clip for Allied territory
- * polygons. Counter-clockwise outer ring (standard GeoJSON winding).
- *
- * Vertex density: deliberately higher around the Cotentin + Bessin
- * coast (where the visualisation lives and the veil's precision
- * matters), looser elsewhere. ~3–5 km vertex spacing along the
- * D-Day beaches; ~30–80 km elsewhere.
- *
- * Corsica and overseas territories are excluded — out of MVP scope.
- *
- * Hand-traced; precision is intentionally low. If a future iteration
- * needs better fidelity, consider importing a Natural Earth
- * 1:50m or 1:10m polygon.
+ * Metropolitan France + Corsica, sourced from Natural Earth 1:50m via
+ * the world-atlas package. Used as the land mask for the occupation
+ * veil; Allied territory is subtracted from this. Overseas territories
+ * are filtered out (out of MVP scope; weren't German-occupied).
  */
-export const FRANCE_LAND_RING: Position[] = [
-	// Atlantic coast, going N from Spanish border
-	[-1.78, 43.35],
-	[-1.55, 43.50],
-	[-1.30, 44.00],
-	[-1.25, 44.65],
-	[-1.10, 45.20],
-	[-1.04, 45.60],
-	[-1.15, 46.15],
-	[-1.78, 46.50],
-	[-2.20, 46.90],
-	[-2.55, 47.30],
-	[-3.00, 47.55],
-	[-3.55, 47.80],
-	[-4.40, 47.80],
-	[-4.78, 48.05],
-	[-4.65, 48.30],
-	[-4.30, 48.55],
-	[-4.00, 48.65],
-	[-3.40, 48.70],
-	[-2.85, 48.65],
-	[-2.30, 48.65],
-	[-1.85, 48.70],
-	[-1.55, 48.75],
-	[-1.55, 49.05],
-	// West Cotentin
-	[-1.65, 49.25],
-	[-1.75, 49.35],
-	[-1.85, 49.45],
-	[-1.93, 49.55],
-	[-1.94, 49.71],
-	// North Cotentin tip
-	[-1.85, 49.74],
-	[-1.65, 49.72],
-	[-1.45, 49.70],
-	[-1.30, 49.68],
-	[-1.27, 49.59],
-	[-1.245, 49.50],
-	[-1.225, 49.46],
-	[-1.205, 49.42],
-	[-1.190, 49.395],
-	[-1.175, 49.37],
-	[-1.150, 49.34],
-	[-1.130, 49.31],
-	// Carentan estuary indentation: dip inland and come back out
-	[-1.180, 49.30],
-	[-1.230, 49.295],
-	[-1.275, 49.295],
-	[-1.310, 49.32],
-	[-1.300, 49.355],
-	[-1.215, 49.38],
-	// Continue east along Bessin coast (Omaha + Gold + Juno + Sword)
-	[-1.130, 49.345],
-	[-1.080, 49.380],
-	[-1.040, 49.395],
-	[-0.990, 49.395],
-	[-0.950, 49.385],
-	[-0.910, 49.380],
-	[-0.880, 49.378],
-	[-0.860, 49.367],
-	[-0.835, 49.360],
-	[-0.780, 49.345],
-	[-0.700, 49.345],
-	[-0.620, 49.340],
-	[-0.500, 49.335],
-	[-0.400, 49.335],
-	[-0.300, 49.310],
-	[-0.230, 49.295],
-	[-0.130, 49.290],
-	[0.000, 49.295],
-	// Seine estuary + Le Havre
-	[0.060, 49.350],
-	[0.105, 49.405],
-	[0.180, 49.485],
-	[0.310, 49.700],
-	[0.530, 49.880],
-	[0.840, 49.940],
-	[1.100, 50.000],
-	[1.380, 50.130],
-	[1.580, 50.380],
-	[1.610, 50.700],
-	[1.700, 50.900],
-	[1.850, 50.950],
-	[2.080, 51.020],
-	[2.550, 51.080],
-	// Belgian / Luxembourg / German border (going inland)
-	[2.850, 50.700],
-	[3.250, 50.500],
-	[3.700, 50.300],
-	[4.200, 49.950],
-	[4.850, 49.800],
-	[5.450, 49.550],
-	[5.880, 49.460],
-	[6.300, 49.180],
-	[6.700, 49.150],
-	[7.250, 49.080],
-	[8.080, 49.020],
-	// Rhine border going S
-	[8.230, 48.960],
-	[7.850, 48.640],
-	[7.660, 48.380],
-	[7.580, 48.000],
-	[7.450, 47.620],
-	[7.030, 47.500],
-	[6.770, 47.250],
-	[6.420, 46.700],
-	[6.250, 46.250],
-	[6.080, 46.140],
-	[6.730, 45.880],
-	[6.860, 45.480],
-	[6.960, 45.020],
-	[7.180, 44.470],
-	[7.500, 44.080],
-	[7.690, 43.780],
-	[7.520, 43.730],
-	// Mediterranean coast going W
-	[7.260, 43.700],
-	[6.870, 43.420],
-	[6.450, 43.180],
-	[6.100, 43.110],
-	[5.700, 43.180],
-	[5.400, 43.250],
-	[5.040, 43.350],
-	[4.500, 43.450],
-	[4.090, 43.560],
-	[3.700, 43.380],
-	[3.450, 43.300],
-	[3.090, 43.130],
-	[2.900, 42.700],
-	[2.910, 42.520],
-	// Pyrenees going W back to start
-	[2.380, 42.460],
-	[1.700, 42.500],
-	[1.000, 42.580],
-	[0.300, 42.700],
-	[-0.450, 42.870],
-	[-1.000, 43.020],
-	[-1.470, 43.150],
-	[-1.730, 43.270]
-];
+export const FRANCE_LAND_MULTIPOLYGON: Position[][][] = loadFranceMultiPolygon();
