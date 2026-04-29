@@ -28,6 +28,8 @@
 			<dd>Event marker — fires at its time, fades over ~1h</dd>
 			<dt><span class="swatch event-disputed"></span></dt>
 			<dd>Event with <code>disputedBy</code> entries</dd>
+			<dt><span class="swatch frontline"></span></dt>
+			<dd>Frontline (approximate, per <code>harrison-1951</code> &amp; <code>us-na-aar</code>)</dd>
 		</dl>
 		<p class="hint">
 			NATO frame: rectangle = friendly, diamond = hostile. Inside: ✕ infantry,
@@ -105,6 +107,13 @@
 	.swatch.event-disputed {
 		background: rgb(240, 130, 70);
 		border-color: rgba(20, 20, 20, 0.7);
+	}
+	.swatch.frontline {
+		background: rgba(200, 60, 50, 0.7);
+		border-color: rgba(200, 60, 50, 0.95);
+		border-radius: 1px;
+		height: 0.3rem;
+		width: 1.1rem;
 	}
 	code {
 		font-size: 0.8em;
