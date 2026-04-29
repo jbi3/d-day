@@ -5,7 +5,7 @@
 	import { MapboxOverlay } from '@deck.gl/mapbox';
 
 	import { TimeStore } from '$lib/time-store.svelte';
-	import { loadData } from '$lib/data-loader';
+	import { loadData, unitPositionAt } from '$lib/data-loader';
 	import { buildUnitLayers } from '$lib/layers/units';
 	import { buildFrontlineLayers } from '$lib/layers/frontline';
 	import { buildEventLayers } from '$lib/layers/events';
@@ -94,6 +94,19 @@
 		return () => {
 			map?.remove();
 		};
+	});
+
+	$effect(() => {
+		if (!map || !selection) return;
+		let center: [number, number] | null = null;
+		if (selection.kind === 'event') {
+			center = selection.event.position;
+		} else {
+			center = unitPositionAt(selection.track, currentIso);
+		}
+		if (center) {
+			map.flyTo({ center, zoom: Math.max(map.getZoom(), 10), duration: 800 });
+		}
 	});
 
 	$effect(() => {
