@@ -60,6 +60,23 @@ acceptance review) are user calls.
 - B.7 uncertainty layer — soft warm rings around any unit whose
   bracketing waypoints carry `disputedBy` and any active disputed
   event; ring radius scales with claim count.
+- UX polish — basemap upgraded to OpenFreeMap positron (real
+  Normandy detail vs. demotiles); deck.gl `getTooltip` for hover;
+  timeline tick labels at D-1 22:00 / D 00:00 / D 06:00 / D 12:00 /
+  D 18:00; Falley death timing corrected and disputedBy widened.
+- Movement trails layer — fading per-unit polylines through passed
+  waypoints, in the side hue family.
+- Legend component — collapsible color-coding cheat sheet (top-left).
+- Playback controls — 0.25× / 0.5× / 1× / 2× / 4× speed selector;
+  reset (↺) jumps to D-1 22:00.
+- Keyboard shortcuts — Space play/pause; ←→ scrub (Shift = ±1h);
+  Home reset; Esc close panel.
+- Camera fly-to — selecting a unit or event smoothly recenters the
+  map.
+- Event ↔ unit cross-links — clickable involvedUnits chips in the
+  details panel switch the selection to the linked unit.
+- README quick-start added (install / dev / build / test, repo
+  layout, sourcing posture pointer).
 - 39/39 schema + registry + unit-data + events-data tests pass on
   every merge; web app `pnpm check` and `pnpm build` clean.
 
@@ -234,3 +251,26 @@ All work merged to `main` via per-task branches.
   needs to open `pnpm dev` and confirm.
 - 39/39 schema + registry + unit-data + events-data tests passing.
 - `pnpm --filter web check` + `pnpm --filter web build` clean.
+
+### 2026-04-29 — Polish pass
+After the MVP-complete snapshot above, ten more polish branches
+landed on `main` to improve the demo experience without changing
+scope. None of these change the schema or the data, so none of them
+need a re-review of the historical content.
+
+- `claude/readme-quickstart-001` — README install/dev/build/test +
+  repo-layout map.
+- `claude/ux-polish-001` — basemap → OpenFreeMap positron; hover
+  tooltips; timeline tick labels; Falley death timing fix.
+- `claude/legend-001` — collapsible legend in the top-left.
+- `claude/trails-001` — fading per-unit movement polylines.
+- `claude/playback-controls-001` — speed dropdown + reset button;
+  TimeStore.playRate becomes a $state.
+- `claude/keyboard-shortcuts-001` — Space/arrows/Home/Esc.
+- `claude/event-unit-links-001` — clickable involvedUnits chips in
+  the event details panel; switching selection to a linked unit.
+- `claude/fly-to-001` — map.flyTo() on selection.
+- `claude/progress-final-001` — this entry.
+
+`pnpm --filter web check` and `pnpm --filter web build` are clean
+after every merge. Schema test suite remains at 39/39.
