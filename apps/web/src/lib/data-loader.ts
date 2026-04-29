@@ -62,6 +62,8 @@ export interface LoadedData {
 	events: MapEvent[];
 	sources: Source[];
 	sourceById: Map<string, Source>;
+	unitById: Map<string, UnitTrack>;
+	eventById: Map<string, MapEvent>;
 }
 
 export function loadData(): LoadedData {
@@ -110,7 +112,10 @@ export function loadData(): LoadedData {
 			assertKnown(d.source, knownIds, `event ${e.id} disputedBy`);
 	}
 
-	return { units, events, sources, sourceById };
+	const unitById = new Map(units.map((u) => [u.unit.id, u]));
+	const eventById = new Map(events.map((e) => [e.id, e]));
+
+	return { units, events, sources, sourceById, unitById, eventById };
 }
 
 function assertKnown(id: string, known: Set<string>, ctx: string): void {

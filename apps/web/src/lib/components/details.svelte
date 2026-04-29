@@ -1,0 +1,228 @@
+<script lang="ts">
+	import type { MapEvent, Source } from '@d-day/schema';
+	import type { UnitTrack } from '$lib/data-loader';
+
+	export type Selection =
+		| { kind: 'unit'; track: UnitTrack }
+		| { kind: 'event'; event: MapEvent }
+		| null;
+
+	interface Props {
+		selection: Selection;
+		sourceById: Map<string, Source>;
+		onClose: () => void;
+	}
+
+	const { selection, sourceById, onClose }: Props = $props();
+
+	function formatTime(iso: string): string {
+		const d = new Date(iso);
+		return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}Z`;
+	}
+	function pad(n: number): string {
+		return String(n).padStart(2, '0');
+	}
+</script>
+
+{#if selection}
+	<aside class="details">
+		<button class="close" type="button" onclick={onClose} aria-label="Close">×</button>
+
+		{#if selection.kind === 'unit'}
+			{@const u = selection.track.unit}
+			{@const m = selection.track.movement}
+			<h2>{u.name}</h2>
+			<dl>
+				<dt>Side</dt>
+				<dd class="side-{u.side}">{u.side}</dd>
+				<dt>Country</dt>
+				<dd>{u.country}</dd>
+				<dt>Echelon</dt>
+				<dd>{u.echelon}</dd>
+				<dt>Branch</dt>
+				<dd>{u.branch}</dd>
+				<dt>Waypoints</dt>
+				<dd>{m.waypoints.length}</dd>
+			</dl>
+
+			<h3>Sources</h3>
+			<ul class="sources">
+				{#each u.sources as id (id)}
+					{@const source = sourceById.get(id)}
+					{#if source}
+						<li>
+							<code>{id}</code>
+							<span class="title">{source.title}</span>
+							{#if source.author}<span class="author">— {source.author}</span>{/if}
+						</li>
+					{/if}
+				{/each}
+			</ul>
+
+			{#if m.waypoints.some((w) => (w.disputedBy?.length ?? 0) > 0)}
+				<h3>Disputed waypoints</h3>
+				<ul class="disputes">
+					{#each m.waypoints as w}
+						{#if (w.disputedBy?.length ?? 0) > 0}
+							<li>
+								<div class="dispute-time">{formatTime(w.time)}</div>
+								{#each w.disputedBy ?? [] as d}
+									<div class="claim">
+										<code>{d.source}</code>: {d.claim}
+									</div>
+								{/each}
+							</li>
+						{/if}
+					{/each}
+				</ul>
+			{/if}
+		{:else}
+			{@const e = selection.event}
+			<h2>{e.title}</h2>
+			<div class="event-time">{formatTime(e.time)}</div>
+			{#if e.description}
+				<p>{e.description}</p>
+			{/if}
+
+			<h3>Sources</h3>
+			<ul class="sources">
+				{#each e.sources as id (id)}
+					{@const source = sourceById.get(id)}
+					{#if source}
+						<li>
+							<code>{id}</code>
+							<span class="title">{source.title}</span>
+							{#if source.author}<span class="author">— {source.author}</span>{/if}
+						</li>
+					{/if}
+				{/each}
+			</ul>
+
+			{#if (e.disputedBy?.length ?? 0) > 0}
+				<h3>Disputed</h3>
+				<ul class="disputes">
+					{#each e.disputedBy ?? [] as d}
+						<li class="claim"><code>{d.source}</code>: {d.claim}</li>
+					{/each}
+				</ul>
+			{/if}
+		{/if}
+	</aside>
+{/if}
+
+<style>
+	.details {
+		position: absolute;
+		top: 1rem;
+		right: 1rem;
+		width: min(28rem, calc(100vw - 2rem));
+		max-height: calc(100vh - 8rem);
+		overflow: auto;
+		background: rgba(20, 20, 20, 0.92);
+		color: #f5f5f5;
+		padding: 1rem 1.25rem 1.25rem;
+		border-radius: 8px;
+		backdrop-filter: blur(10px);
+		font-family: system-ui, sans-serif;
+		font-size: 0.9rem;
+		line-height: 1.4;
+	}
+	.close {
+		position: absolute;
+		top: 0.5rem;
+		right: 0.5rem;
+		background: transparent;
+		color: #f5f5f5;
+		border: 0;
+		font-size: 1.6rem;
+		line-height: 1;
+		cursor: pointer;
+		padding: 0.25rem 0.5rem;
+	}
+	.close:hover {
+		opacity: 0.7;
+	}
+	h2 {
+		margin: 0 2rem 0.5rem 0;
+		font-size: 1.1rem;
+		line-height: 1.2;
+	}
+	h3 {
+		margin: 1rem 0 0.4rem;
+		font-size: 0.85rem;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		opacity: 0.7;
+	}
+	dl {
+		display: grid;
+		grid-template-columns: 7rem 1fr;
+		row-gap: 0.2rem;
+		column-gap: 0.6rem;
+		margin: 0.5rem 0;
+	}
+	dt {
+		opacity: 0.65;
+	}
+	dd {
+		margin: 0;
+	}
+	.side-allied {
+		color: #6db4ec;
+	}
+	.side-axis {
+		color: #e87a7a;
+	}
+	.event-time {
+		font-variant-numeric: tabular-nums;
+		opacity: 0.75;
+		margin-bottom: 0.5rem;
+	}
+	p {
+		margin: 0.5rem 0;
+		opacity: 0.92;
+	}
+	.sources,
+	.disputes {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	.sources li {
+		padding: 0.3rem 0;
+		border-top: 1px solid rgba(255, 255, 255, 0.06);
+	}
+	.sources li:first-child {
+		border-top: 0;
+	}
+	.sources code,
+	.disputes code {
+		display: inline-block;
+		font-size: 0.78rem;
+		opacity: 0.7;
+		margin-right: 0.4rem;
+	}
+	.title {
+		font-weight: 500;
+	}
+	.author {
+		opacity: 0.7;
+		margin-left: 0.25rem;
+	}
+	.disputes li {
+		padding: 0.4rem 0;
+		border-top: 1px solid rgba(255, 255, 255, 0.06);
+	}
+	.disputes li:first-child {
+		border-top: 0;
+	}
+	.dispute-time {
+		font-variant-numeric: tabular-nums;
+		opacity: 0.65;
+		font-size: 0.82rem;
+		margin-bottom: 0.2rem;
+	}
+	.claim {
+		opacity: 0.92;
+	}
+</style>
