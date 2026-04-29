@@ -24,6 +24,10 @@
 			<dd>Uncertainty halo — currently disputed position</dd>
 		</dl>
 		<p class="hint">Click a marker for sources & disputed claims.</p>
+		<p class="hint">
+			<kbd>Space</kbd> play/pause · <kbd>←</kbd> <kbd>→</kbd> scrub
+			(<kbd>Shift</kbd>+arrow = ±1h) · <kbd>Home</kbd> reset · <kbd>Esc</kbd> close
+		</p>
 	{/if}
 </aside>
 
@@ -118,5 +122,13 @@
 		margin: 0.25rem 0 0;
 		font-size: 0.72rem;
 		opacity: 0.65;
+	}
+	kbd {
+		display: inline-block;
+		padding: 0 0.3rem;
+		border-radius: 3px;
+		background: rgba(255, 255, 255, 0.12);
+		font-size: 0.7rem;
+		font-family: ui-monospace, monospace;
 	}
 </style>
