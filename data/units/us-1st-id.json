@@ -1,0 +1,60 @@
+{
+	"$schema": "../../packages/data/schema/unit.schema.json",
+	"unit": {
+		"id": "us-1st-id",
+		"side": "allied",
+		"country": "US",
+		"echelon": "division",
+		"branch": "infantry",
+		"name": "1st Infantry Division",
+		"shortName": "1st ID",
+		"sources": ["harrison-1951", "us-na-aar"]
+	},
+	"movement": {
+		"unitId": "us-1st-id",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.9, 49.45],
+				"sources": ["harrison-1951"],
+				"note": "Embarked, transports forming off Omaha during the run-in. Position approximate (transit area V, Force O)."
+			},
+			{
+				"time": "1944-06-06T06:30:00Z",
+				"position": [-0.8956, 49.3760],
+				"sources": ["harrison-1951", "us-na-aar"],
+				"disputedBy": [
+					{
+						"source": "beevor-2009",
+						"claim": "Beevor notes several 16th RCT first-wave craft were 5–15 minutes late due to cross-current and lost their planned landing points; touchdown was therefore staggered, not simultaneous at H-Hour."
+					}
+				],
+				"note": "16th RCT (spearhead) first wave touches down on Easy Red / Fox Green sectors of Omaha. Position approximates the Easy Red sector centerline."
+			},
+			{
+				"time": "1944-06-06T09:00:00Z",
+				"position": [-0.890, 49.374],
+				"sources": ["harrison-1951"],
+				"note": "Heavy fire pinned the assault at the seawall through the morning; engineer detachments work to clear beach exits E-1 (Saint-Laurent) and E-3 (Colleville)."
+			},
+			{
+				"time": "1944-06-06T12:00:00Z",
+				"position": [-0.880, 49.368],
+				"sources": ["harrison-1951"],
+				"note": "Mid-day: lead elements working up the bluffs behind Easy Red; 18th RCT landing in follow-up waves."
+			},
+			{
+				"time": "1944-06-06T15:00:00Z",
+				"position": [-0.860, 49.362],
+				"sources": ["harrison-1951"],
+				"note": "Bluff line secured at several points; fighting moves into Saint-Laurent-sur-Mer and toward Colleville."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.840, 49.358],
+				"sources": ["harrison-1951", "us-na-aar"],
+				"note": "End of MVP window: shallow beachhead ~1–2km inland; Colleville-sur-Mer contested. Position is approximate division centroid."
+			}
+		]
+	}
+}
