@@ -87,17 +87,20 @@ acceptance review) are user calls.
 - Frontline polyline layer removed — connecting same-side units by
   longitude was visually noisy and historically meaningless before
   H-Hour.
-- Frontline as Allied-held territory — France is treated as
-  occupied by default; each segment is a closed polygon marking a
-  liberated zone (Cotentin airborne pocket, Omaha beachhead, Utah
-  beachhead). Color is Allied blue (avoids confusion with the Axis
-  hue). Boundaries are smoothed with Chaikin's algorithm so the
-  front reads as a moving organic shape, not a fixed angular line.
-  4 / 4 / 3 keyframes between D 02:30 and D 18:00. Sources:
+- Frontline as occupation veil — Normandy starts fully feldgrau
+  (Wehrmacht grey-green wash); each Allied segment cuts a hole in
+  the veil. Visual reading is "occupation receding", not "Allied
+  bubbles appearing". Active segments are interpolated at the
+  current sim time, Chaikin-smoothed, unioned across segments, then
+  subtracted from a hand-traced Normandy land mask via
+  polygon-clipping difference. The remaining multipolygon is the
+  still-occupied land. Three segments authored (Cotentin airborne
+  pocket, Omaha beachhead, Utah beachhead) with 4 / 4 / 3 keyframes
+  between D 02:30 and D 18:00; Cotentin and Utah merge into one
+  hole by D 12:00 matching the historical causeway linkup. Sources:
   harrison-1951, us-na-aar. New `frontline.schema.json`,
   `data/frontline.json`, ajv loader integration, and a
-  `frontline-data` vitest suite (vertex-count parity, chronological
-  keyframes, registry containment).
+  `frontline-data` vitest suite.
 - Icon size scales with zoom — `sizeUnits: 'meters'`, base 6 km,
   clamped 28–72 px. Small in overview, larger when zoomed in.
 - Unit labels switched from SDF text to bitmap text on a dark pill
@@ -426,3 +429,32 @@ authored vertices. Both fixed.
 boolean polygon ops. Smaller than turf.js (which depends on it
 internally anyway), TypeScript types included, well maintained.
 Used for both union (merge) and intersection (land clip).
+
+### 2026-04-29 — Frontline reframed (round 2): occupation veil
+User feedback: separate Allied bubbles don't communicate the right
+narrative. France is occupied by default; D-Day should be visualised
+as the occupation being chipped away, not as Allied territories
+appearing. Three pistes proposed (occupation veil / single Allied
+shape / hybrid); user picked the veil model with a Wehrmacht-inspired
+tint.
+
+- `claude/occupation-veil-001` — flipped the rendering. The whole
+  Normandy land mask is filled feldgrau (RGB 60,70,55, alpha 95);
+  active Allied segments are subtracted from the veil via
+  polygon-clipping `difference`. The hole shows the basemap, which
+  is the visual reward of liberation. No separate Allied rendering.
+  Data adjusted so the Cotentin pocket and Utah beachhead actually
+  overlap by D 12:00 (causeway linkup) and merge into one hole.
+
+**Conceptual decision (frontline model, round 2)**: The frontline
+layer no longer renders Allied territory directly. It renders the
+*absence* of liberation — the veil of occupation that recedes. The
+data model (segments as Allied polygons) is unchanged; only the
+rendering is inverted. This means future work that wants to query
+"what is liberated at time T" still has the same data shape.
+
+**Sourcing posture (occupation tint)**: Feldgrau (Wehrmacht
+grey-green) chosen on user request over neutral dark grey. Same
+historical-authenticity-without-Nazi-iconography logic as the
+Balkenkreuz badge for unit symbology. Color RGB (60, 70, 55) is a
+desaturated Wehrmacht uniform tone.
