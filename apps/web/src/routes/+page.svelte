@@ -4,21 +4,18 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { MapboxOverlay } from '@deck.gl/mapbox';
 	import { ScatterplotLayer } from '@deck.gl/layers';
+	import { TimeStore } from '$lib/time-store.svelte';
 
 	// MVP simulation window: D-1 22:00 → D 18:00 (20 hours).
-	// Two placeholder waypoints near Omaha for the fake unit.
+	// Two placeholder waypoints near Omaha for the fake unit until the
+	// data loader (B.2) and unit layer (B.3) wire real cited tracks.
 	const startCoord: [number, number] = [-1.2117, 49.4099];
 	const endCoord: [number, number] = [-1.0747, 49.3411];
-	const tStart = 0;
-	const tEnd = 20;
+	const time = new TimeStore(0, 20);
 
-	let simHours = $state(0);
-	let playing = $state(false);
-
-	const t = $derived((simHours - tStart) / (tEnd - tStart));
 	const unitPosition = $derived<[number, number]>([
-		startCoord[0] + (endCoord[0] - startCoord[0]) * t,
-		startCoord[1] + (endCoord[1] - startCoord[1]) * t
+		startCoord[0] + (endCoord[0] - startCoord[0]) * time.t,
+		startCoord[1] + (endCoord[1] - startCoord[1]) * time.t
 	]);
 
 	let mapContainer: HTMLDivElement;
@@ -39,24 +36,6 @@
 		return () => {
 			map?.remove();
 		};
-	});
-
-	$effect(() => {
-		if (!playing) return;
-		let last = performance.now();
-		let raf = 0;
-		const step = (now: number) => {
-			const dt = (now - last) / 1000;
-			last = now;
-			simHours = Math.min(tEnd, simHours + dt * 0.5);
-			if (simHours >= tEnd) {
-				playing = false;
-				return;
-			}
-			raf = requestAnimationFrame(step);
-		};
-		raf = requestAnimationFrame(step);
-		return () => cancelAnimationFrame(raf);
 	});
 
 	$effect(() => {
@@ -100,12 +79,18 @@
 
 	<div class="hud">
 		<div class="row">
-			<button onclick={() => (playing = !playing)}>
-				{playing ? 'Pause' : 'Play'}
+			<button onclick={() => time.toggle()}>
+				{time.playing ? 'Pause' : 'Play'}
 			</button>
-			<span class="time">{formatSimTime(simHours)}</span>
+			<span class="time">{formatSimTime(time.simHours)}</span>
 		</div>
-		<input type="range" min={tStart} max={tEnd} step={0.05} bind:value={simHours} />
+		<input
+			type="range"
+			min={time.start}
+			max={time.end}
+			step={0.05}
+			bind:value={time.simHours}
+		/>
 	</div>
 </div>
 
