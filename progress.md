@@ -274,3 +274,29 @@ need a re-review of the historical content.
 
 `pnpm --filter web check` and `pnpm --filter web build` are clean
 after every merge. Schema test suite remains at 39/39.
+
+### 2026-04-29 — Data accuracy fix + URL deep-linking + basemap fallback
+- `claude/data-fixes-001` — 101st PIR ↔ DZ assignment correction.
+  Original event description and unit waypoint note credited 502 PIR
+  with the DZ-C drop. Fixed: 502 → DZ-A, 506 → DZ-C, 501 → DZ-D.
+  The DZ-C centroid still anchors the unit position (it's the
+  divisional middle DZ).
+- `claude/url-state-001` — URL hash carries `t=<simHours>` and
+  `s=<unit:id|event:id>`. On page load, hash state is applied
+  to time + selection. While paused, state changes write back to
+  the hash; while playing, writes are skipped to avoid 60fps
+  history.replaceState churn. Timeline gains a Share button that
+  copies the current URL to clipboard.
+- `claude/basemap-fallback-001` — `map.on('error')` swaps in the
+  MapLibre demotiles style if OpenFreeMap positron is unreachable
+  at runtime, so the app stays usable even if the primary tile
+  host is down.
+
+**Final overnight state**
+- 30+ merged commits on `main`.
+- All MVP "done" criteria satisfied (modulo the smooth-scrub
+  visual gate which needs the user's eyes).
+- 39/39 schema + registry + unit-data + events-data tests passing.
+- `pnpm --filter web check` + `pnpm --filter web build` clean.
+- Local feature branches deleted post-merge; remote branches
+  retained for review (no permission to delete remote).
