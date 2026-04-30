@@ -59,10 +59,11 @@ acceptance review) are user calls.
   the events layer; the details panel lists every `disputedBy`
   claim with its source. (Earlier uncertainty halo around units
   was removed during the UX review — too noisy.)
-- UX polish — basemap upgraded to OpenFreeMap positron (real
-  Normandy detail vs. demotiles); deck.gl `getTooltip` for hover;
-  timeline tick labels at D-1 22:00 / D 00:00 / D 06:00 / D 12:00 /
-  D 18:00; Falley death timing corrected and disputedBy widened.
+- UX polish — deck.gl `getTooltip` for hover; timeline tick labels
+  at D-1 22:00 / D 00:00 / D 06:00 / D 12:00 / D 18:00; Falley
+  death timing corrected and disputedBy widened. (OpenFreeMap
+  positron used as basemap for several rounds, then replaced —
+  see "deck.gl-rendered basemap" entry below.)
 - Movement trails layer — fading per-unit polylines through passed
   waypoints, in the side hue family.
 - Legend component — collapsible color-coding cheat sheet (top-left).
@@ -74,12 +75,24 @@ acceptance review) are user calls.
   map.
 - Event ↔ unit cross-links — clickable involvedUnits chips in the
   details panel switch the selection to the linked unit.
-- NATO unit symbology — Allied = blue rectangle (friendly frame),
-  Axis = red diamond (hostile frame); ✕ infantry / parachute arc
-  airborne; XX echelon mark; national badge (US 1944 flag for US,
-  Balkenkreuz for DE — swastika intentionally avoided). SVG data
-  URIs generated per (side, branch, country), used both on the map
-  via IconLayer and inline in the legend.
+- NATO unit symbology (rework) — Allied = 56×56 square (friendly
+  frame, straight corners), Axis = same square rotated 45° to a
+  diamond (hostile frame). Outline thick (12 px in viewBox units),
+  white for Allied / near-black for Axis, so the icon edge dominates
+  against any basemap colour. "XX" division-echelon mark sits above
+  the frame. Allied fill = stylised US flag (5 stripes + dominant
+  canton + 2×2 dot star grid; the historical 7-stripe flag was
+  unreadable at icon scale). Axis fill = solid colour: Wehrmacht
+  red, SS feldgrau (same palette as the occupation veil). Branch
+  glyph = white X cross at 0.6 opacity drawn as a NATO watermark
+  (both infantry and airborne use the same X — parachute icon was
+  too busy at this scale). Division number centered last, white
+  fill / black halo via paint-order, font 22/16/11 px by length.
+  Whole symbol wrapped in a single SVG drop shadow filter so it
+  lifts off the basemap. New `Unit.axisAffiliation?: 'wehrmacht'
+  | 'ss'` (default wehrmacht) drives the SS variant. SVG data URIs
+  generated per (side, branch, country, number, affiliation), used
+  both on the map via IconLayer and inline in the legend.
 - Progressive graphical disclosure — trails fade per-segment with
   2h half-life on simulation time; events stay hidden until their
   time, highlight for 30 min, then fade with 1h half-life. Removes
@@ -87,6 +100,13 @@ acceptance review) are user calls.
 - Frontline polyline layer removed — connecting same-side units by
   longitude was visually noisy and historically meaningless before
   H-Hour.
+- deck.gl-rendered basemap — coastline drawn from the same Natural
+  Earth 1:10M data as the occupation veil (perfect alignment by
+  construction); MapLibre carries only sea background + camera;
+  curated toponym set (~14 towns + Channel Islands + 2 water
+  labels) rendered via deck.gl `TextLayer`. Eliminates the
+  OpenFreeMap dependency and the residual coastline mismatch
+  between veil and basemap.
 - Frontline as occupation veil — mainland France starts fully
   feldgrau (Wehrmacht grey-green wash, alpha 60); each Allied
   segment cuts a hole in the veil. Visual reading is "occupation
@@ -108,6 +128,61 @@ acceptance review) are user calls.
   background (legible against any basemap).
 - README quick-start added (install / dev / build / test, repo
   layout, sourcing posture pointer).
+- Beach sector markers — the five D-Day landing beaches (Utah,
+  Omaha, Gold, Juno, Sword) marked offshore as a single-word
+  horizontal name ("UTAH", "OMAHA", …) above a flag row or stack,
+  no text background. Sword stacks UK on top with FR Kieffer
+  commando below at ~35% size (177 men vs ~28 000), reflecting
+  relative commitment without erasing the French presence. Flag
+  size scales `sqrt(strength / 25 000)`, clamped 20–40 px. UTAH's
+  anchor sits centered between the Cotentin coast and the
+  UTAH/OMAHA boundary. Sector divisions shown as four dashed
+  lines crossing the coast (UTAH/OMAHA, OMAHA/GOLD, GOLD/JUNO,
+  JUNO/SWORD), tilted 20° clockwise from vertical, 32 short
+  dashes per line, anthracite grey. At zoom ≥10 the four OMAHA
+  subsectors (CHARLIE / DOG / EASY / FOX) appear offshore as
+  ALL-CAPS navy bold labels (same family as the OMAHA name) with
+  thin pointillé separators that extend from the beach into the
+  sea up to the labels. Boundaries + flags appear from zoom 6;
+  names from zoom 8 (Bayeux tier); subsectors from zoom 10.
+  Reference geography only — no unit/event tracks for UK/CA/FR
+  forces. Sources: harrison-1951, us-na-aar, bigot-maps.
+- Zoom-gated visibility for units — IconLayer visible from zoom 8.5
+  (one half-tier after Bayeux at 8). No more text label below the
+  icon: division number lives inside the icon now, full unit detail
+  opens via the click fiche. Hover tooltip retained for quick name
+  lookup.
+- Toponyms expanded — added Londres at the Paris tier (zoom 5);
+  added Isigny-sur-Mer, Saint-Laurent-sur-Mer, Colleville-sur-Mer,
+  La Pointe du Hoc, Quinéville, Saint-Pierre-Église, Douvres-la-
+  Délivrande, Cabourg at the Carentan tier (zoom 9). Carentan
+  promoted to zoom 8 (Bayeux tier). Removed "Baie de la Seine".
+  Each city carries a white dot with a black outline at its exact
+  coordinates, sized by importance tier (small/medium/large). LARGE
+  = Caen, Cherbourg (radius 7, label 18 px). MEDIUM = Bayeux,
+  Coutances, Saint-Lô, Carentan (radius 5, label 16 px). SMALL =
+  everything else (radius 3, label 14 px). Per-tier weight 600 vs
+  500 reinforces the hierarchy. Implementation splits the city
+  TextLayer into three by tier because deck.gl 9.3 only accepts a
+  static fontWeight.
+- Major road axes — `apps/web/src/lib/layers/roads.ts` renders five
+  schematic polylines from zoom 7 with intermediate waypoints for
+  a slightly sinuous read: RN13 coastal (Carentan → Isigny →
+  Trévières → Bayeux → Caen → Lisieux), RN13 Cotentin north
+  (Carentan → Sainte-Mère-Église → Valognes → Cherbourg), RN158
+  (Caen → Falaise), D572 (Bayeux → Saint-Lô), D972 (Saint-Lô →
+  Coutances). No road labels for the MVP. Sources: harrison-1951,
+  bigot-maps.
+- Hydrography — `apps/web/src/lib/layers/rivers.ts` exists with the
+  five Normandy rivers most relevant to the D-Day narrative (Orne,
+  Vire, Douve, Merderet, Dives) but is **currently unwired** in
+  `+page.svelte` per user direction (deferred pending a clearer
+  visual fit). The data + layer code stay in place for quick
+  re-enable. Sources: harrison-1951, bigot-maps.
+- Strength-weighted unit icons — `Unit.strength` (optional) drives
+  `getSize` via `sqrt(strength / 14 000)` so 91./709. (Cotentin
+  combined ~17 k) reads bigger than 101st Abn (~6.6 k jumped on
+  6 June). Pixel clamps unchanged.
 - 44/44 schema + registry + unit-data + events-data + frontline-data
   tests pass on every merge; web app `pnpm check` and `pnpm build`
   clean.
@@ -150,6 +225,162 @@ acceptance review) are user calls.
   `GIT_SSH_COMMAND="ssh" git push` worked. Root cause not yet
   identified — `~/.ssh/config` and Git Bash's `/usr/bin/ssh` both
   resolve `github-perso` correctly. Revisit if it recurs.
+
+### 2026-04-30 — Fix basemap : exclusion antiméridienne (Russie / USA / Fidji)
+- Bug visuel signalé : « URSS visible sur la map ».
+- Cause racine : `ringIntersectsBbox` (`apps/web/src/lib/layers/basemap.ts`)
+  faisait un test bbox-vs-bbox. Les polygones qui traversent
+  l'antiméridien (Russie via Kaliningrad ↔ Tchoukotka, USA via
+  Aléoutiennes, Fidji, Kiribati) ont alors un bbox global en longitude
+  et passaient à tort le filtre fenêtre `-8 / 6` longitude.
+- Fix : remplacer le test par `ringHasPointInBbox` (au moins un vertex
+  doit tomber dans la fenêtre). Les polygones lointains sont
+  correctement écartés ; les pays Western Europe restent inclus.
+- 0 changement de scope ou de données ; impact purement visuel.
+
+### 2026-04-30 — Rivières mises en pause
+- Couche `rivers` (Orne, Vire, Douve, Merderet, Dives) retirée du
+  pipeline `+page.svelte` à la demande de l'utilisateur. Le fichier
+  `apps/web/src/lib/layers/rivers.ts` est conservé tel quel ; remettre
+  l'import + l'appel `buildRiverLayers({ zoom })` suffit à les
+  réactiver. Pas de suppression de données / pas de changement de
+  scope MVP autre que graphique.
+
+### 2026-04-30 — Batch 5: tuning visuel post-review
+- **Unit icons**: border 12 → 7 (les icônes étaient dominées par la
+  bordure, surtout côté allié où le blanc se mélangeait au drapeau).
+  Drop shadow plus marquée et diffuse (dy 2 → 4, std 2 → 4, opacity
+  0.55 → 0.7) — les icônes flottent franchement au-dessus de la
+  carte. `XX` axe en couleur de bordure (noir) avec halo blanc, et
+  positionné plus haut (y=14 au lieu de 22) pour ne plus toucher la
+  pointe haute du losange. Drapeau US repensé : 7 stripes (4 R + 3
+  W), canton occupant les 4 premières stripes à gauche (45 % de la
+  largeur), grille 3×2 de dots étoiles. La trame est maintenant
+  lisible jusqu'à ~28 px à l'écran.
+- **Toponymes**: tier LARGE étendu à Paris, Londres, Le Havre,
+  Rouen, Rennes, Brest, Le Mans (en plus de Caen / Cherbourg).
+  Suppression de Saint-Laurent-sur-Mer. La Pointe du Hoc déplacée
+  sur la falaise (49.388 au lieu de 49.396, qui tombait en mer sur
+  le basemap Natural Earth). Cabourg rapprochée de la côte (49.292
+  au lieu de 49.281).
+- **Rivières**: épaisseur 1.8 → 3 px et couleur `#5078aa` plus
+  saturée pour ne plus être confondues avec les routes. Tracés
+  re-densifiés avec waypoints intermédiaires (méandres Orne /
+  Vire / Douve / Dives), embouchures repoussées légèrement en
+  mer pour traverser franchement le trait de côte du basemap.
+- **Routes**: réseau densifié de 5 → 11 axes — ajout D900
+  (Saint-Lô ↔ Carentan), D513 (Caen ↔ Cabourg), D6 (Bayeux ↔
+  Port-en-Bessin), D971 (Coutances ↔ Avranches), D524 (Saint-Lô
+  ↔ Vire), D511 (Falaise ↔ Lisieux). Donne une vraie maille
+  routière à la zone sans charger inutilement.
+- 44/44 tests pass; `pnpm check` clean.
+
+### 2026-04-30 — Batch 4: bug fixes + tiers villes + réseau routier + rivières
+- Fourth batch of carto polish on `claude/france-natural-earth-001`.
+- **Unit icons (rework)**: bug fix on the diamond fill — the batch-3
+  rotated clip-path was paired with an un-rotated fill rect, leaving
+  the diamond's N/S/E/W corners empty (visible as "white zones around
+  a circle"). Fix: span the fill across the whole viewBox so the
+  clip-path fully determines the silhouette. Frame shrunk to 56×56
+  to leave room for the restored "XX" echelon mark above. Square
+  corners (rx=0). US flag re-styled — 5 stripes instead of 7,
+  dominant 50%×60% canton, 2×2 dot grid suggesting stars; reads as
+  "US flag" down to ~28 px on screen. Number font further reduced
+  (28/20/14 → 22/16/11). Watermark X opacity bumped (0.35 → 0.6),
+  airborne glyph collapsed to the same X cross as infantry. Whole
+  icon wrapped in a single SVG `feDropShadow` filter so it lifts
+  off the basemap.
+- **OMAHA subsector separators**: the batch-3 coords made the
+  Charlie/Dog separator drift ~0.036° east at the label latitude
+  under the 20° tilt, hiding it behind the Dog label. Recomputed
+  start/end so each segment passes through its midpoint AT the
+  label latitude (49.46) rather than at the start latitude.
+- **Toponyms tiers**: introduced a small/medium/large `tier` field
+  on each city. LARGE = Caen, Cherbourg. MEDIUM = Bayeux, Coutances,
+  Saint-Lô, Carentan. SMALL = everything else. Drives both dot size
+  (radius 3 / 5 / 7, white fill + black outline) and label size
+  (14 / 16 / 18 px, weight 500 / 600 / 600). Carentan promoted from
+  zoom 9 to zoom 8 (Bayeux tier). Added Douvres-la-Délivrande and
+  Cabourg at zoom 9. Three TextLayers (one per tier) because deck.gl
+  9.3's TextLayer only accepts a static fontWeight.
+- **Roads**: extended network to five axes with intermediate
+  waypoints — RN13 coastal extended east to Lisieux; new RN13
+  Cotentin north (Carentan → Sainte-Mère-Église → Valognes →
+  Cherbourg); existing Caen-Falaise and Bayeux-Saint-Lô gained
+  intermediate points; new D972 (Saint-Lô → Coutances).
+- **Rivers**: new `rivers.ts` layer with Orne, Vire, Douve,
+  Merderet, Dives — schematic blue polylines from zoom 7, drawn
+  beneath the roads so crossings read as bridges. Wired into
+  `+page.svelte` between frontline and roads.
+- 44/44 tests pass; `pnpm check` clean.
+
+### 2026-04-30 — Icon silhouette polish + OMAHA subsector readability
+- Third batch of carto polish on `claude/france-natural-earth-001`.
+- **Unit icons**: geometry switched to a 64×64 square frame on both
+  sides — Allied keeps the upright square, Axis renders the same
+  square rotated 45° (diamond bbox ~90×90, narrower than the old
+  96×60 rectangle). Border tripled (4 px → 12 px in viewBox units)
+  so the icon edge now dominates the basemap. Division number font
+  scaled down (44/30/22 → 28/20/14) to breathe inside the smaller
+  frame. Axis lost the flag fill: Wehrmacht is now solid red,
+  SS solid feldgrau — flag-on-axis idea dropped to keep the
+  symbol unambiguous at small sizes and avoid a permanently
+  visible Hakenkreuzflagge. Allied keeps the US flag fill.
+- **OMAHA subsectors**: labels moved offshore (lat 49.37 → 49.46,
+  in the sea above the beach) so they read as zone callouts rather
+  than village names dropped on the dunes. Style switched to
+  ALL-CAPS navy bold (same LABEL_COLOR as the beach names),
+  font 12 → 14 px, weight 600 → 700. deck.gl 9.3 TextLayer doesn't
+  expose `fontStyle`, so italic was dropped — the casing + colour
+  + weight differential is enough to distinguish from city
+  toponyms. Boundary segments extended into the sea to reach the
+  labels (start lat 49.36 → end lat 49.49), dash count 12 → 18.
+  Min-zoom lowered 11 → 10 so the subsectors appear as soon as
+  the user approaches OMAHA.
+- 44/44 tests pass; `pnpm check` clean.
+
+### 2026-04-30 — Carto polish + unit-icon rework
+- `claude/france-natural-earth-001` extended with a single themed
+  pass touching toponyms, beach markers, unit icons, and a new
+  roads layer.
+- **Toponyms**: removed `Baie de la Seine`; added `Londres` at the
+  Paris tier; added Isigny-sur-Mer, Saint-Laurent-sur-Mer,
+  Colleville-sur-Mer, La Pointe du Hoc, Quinéville, Saint-Pierre-
+  Église at the Carentan tier; added a `ScatterplotLayer` city-dot
+  layer so labels have an explicit anchor point.
+- **Beach markers**: dash count on the inter-beach boundaries
+  doubled (16 → 32) and recoloured anthracite grey (was steel
+  blue); UTAH's seaAnchor moved east to sit centered between the
+  Cotentin coast and the UTAH/OMAHA boundary; Sword's flag row
+  switched to a stacked layout (UK on top, FR Kieffer at ~35%
+  below) via new optional `flagLayout` / `flagWeights` Beach
+  fields; OMAHA subsector overlay (Charlie / Dog / Easy / Fox)
+  added with thin pointillé separators, gated to zoom ≥11.
+- **Unit icons**: full rework. New anatomy = NATO shape (rectangle
+  for Allied, diamond for Axis) filled with the national flag
+  clipped to the shape, thick outline (white Allied / near-black
+  Axis), branch glyph at low opacity as a watermark, large
+  centered division number on top with paint-order halo. No more
+  echelon "XX" band or separate badge above. New optional
+  `axisAffiliation: 'wehrmacht' | 'ss'` field on `Unit` (defaults
+  wehrmacht) drives an SS feldgrau-panel variant; no MVP unit is
+  SS yet but the rendering is wired and the legend exposes it.
+  Schema (`types.ts` + `unit.schema.json`) updated; cache key for
+  `unitIcon()` now includes the displayNumber and affiliation.
+- **Units layer**: icons appear at zoom 8.5 (was 8) — one half-tier
+  after Bayeux so the place reads first; the per-unit text label
+  below the icon is removed entirely (number lives inside the icon,
+  fiche carries the rest). Hover tooltip retained.
+- **Roads**: new `apps/web/src/lib/layers/roads.ts` with three
+  hardcoded polylines (RN13 coastal, RN158 Caen-Falaise, D572
+  Bayeux-Saint-Lô), gated to zoom ≥7, terre-cuite stroke 2 px.
+  Wired into `+page.svelte` between frontline and toponyms.
+- **Legend**: updated to describe the new icon anatomy and
+  surface a Wehrmacht vs SS sample row.
+- Sourcing posture preserved: every new road/subsector entry
+  carries `harrison-1951` + `bigot-maps`; no narrative claims
+  beyond reference geography.
+- 44/44 tests pass; `pnpm check` clean; `pnpm build` succeeds.
 
 ### 2026-04-29 — MVP execution plan adopted
 - `mvp-execution-plan.md` added at repo root (branch
@@ -479,3 +710,283 @@ is conceptual, not cartographically precise; a small embedded
 polygon avoids a runtime fetch and keeps the bundle thin. If a
 future iteration needs accurate national boundaries, switching to a
 Natural Earth 1:50m or 1:10m polygon is a one-file replacement.
+
+### 2026-04-29 — France land mask: Natural Earth 1:10M
+- `claude/france-natural-earth-001` — `france-land.ts` switched from
+  the hand-traced ~120-vertex outline to Natural Earth 1:10M via the
+  `world-atlas` package (`countries-10m.json`, ISO numeric `250`,
+  Corsica retained, DOM-TOM dropped via a Europe bbox filter).
+  Closes the gap between veil edge and the OpenFreeMap basemap
+  along the actual French coastline. Veil alpha lowered 60 → 40 in
+  a follow-up turn (the user reported the veil was still too dark).
+
+### 2026-04-29 — Basemap unified on Natural Earth (decoupled from OpenFreeMap)
+User flagged a residual coastline mismatch between the veil and the
+OpenFreeMap basemap even after the Natural Earth switch. Root cause:
+OpenFreeMap positron is OSM-derived (sub-metre coastlines), the veil
+is Natural Earth 1:10M (~1 km generalisation). Two paths considered:
+upgrade the veil source to OSM-precision (heavier, build tooling),
+or align the basemap to the same Natural Earth source as the veil
+(lighter, kills the mismatch by construction). User picked the
+second approach — also closer to the brief's eventual "painted
+basemap" direction.
+
+- (branch pending — landed on top of `claude/france-natural-earth-001`)
+  basemap rendered entirely via deck.gl from `world-atlas/countries-10m.json`
+  (same source as the veil), so the coastline drawn under the veil
+  and the coastline used to compute the veil are guaranteed to
+  align. MapLibre keeps only the sea-color background + camera; no
+  external tile host. New `apps/web/src/lib/layers/basemap.ts`
+  (`PolygonLayer`, light parchment fill, soft brown stroke, bbox
+  -8..6 lon × 47..52 lat to include S England, Channel Islands,
+  N France, Belgium, Netherlands). New `toponyms.ts` with a curated
+  list of 12 Norman towns + Jersey + Guernsey + 2 water labels (La
+  Manche, Baie de la Seine), rendered via `TextLayer`; coordinates
+  from Natural Earth 1:10M populated places. OpenFreeMap fallback
+  logic removed.
+
+**Tech choice (basemap source)**: Natural Earth 1:10M via deck.gl
+chosen over OSM-derived coastlines or higher-resolution Natural
+Earth packages (`@geo-maps/countries-coastline-100m`, etc.).
+Reasoning: the project's bottleneck is *alignment* with the veil,
+not absolute precision; matching sources closes the alignment by
+construction. The MVP can ship without perfect-precision coastlines.
+
+**Sourcing posture (toponyms)**: Toponym coordinates cited to
+Natural Earth 1.4.0 populated places (well-known cartographic
+dataset). Toponyms are reference labels, not historical claims —
+they don't trigger the brief's contested-fact handling.
+
+**Scope note**: This is not the post-MVP "painted basemap" — that
+remains a separate polish item (custom textures, terrain shading,
+period-correct cartography). What landed here is the minimal
+deck.gl-rendered basemap that solves the alignment problem and
+removes an external dependency.
+
+### 2026-04-29 — Beach sector markers (Utah / Omaha / Gold / Juno / Sword)
+
+User asked for a light visual marking of the five D-Day landing
+beaches. Negotiated style with the user: not zone fills (would
+compete with the veil and clutter the land), but seaward markings —
+a coast-line stroke per sector, two perpendicular separators, the
+sector name in UPPERCASE, and the 1944 lead-nation flag. Everything
+in the sea, so the land remains fully readable.
+
+- New `apps/web/src/lib/layers/beaches.ts` — curated `Beach[]` (5
+  entries) with name, lead nation, west/east endpoints, sea-direction
+  unit vector, H-Hour, and source IDs. Renders four deck.gl layers:
+  `beaches-coast` (PathLayer, 4px allied-blue strokes), `beaches-separators`
+  (PathLayer, 2px), `beaches-labels` (TextLayer, 17px bold, sdf=false,
+  characterSet auto-extracted, anchored just offshore), `beaches-flags`
+  (IconLayer, 24px, stacked under the label via pixelOffset).
+- New `apps/web/src/lib/layers/national-flags.ts` — 1944-period flag
+  data URIs: US 48-star (1912–1959), UK Union Jack, CA Red Ensign
+  (1921–1957). The Canadian Red Ensign is rendered with a simplified
+  gold shield + three red dots in lieu of the full Royal Coat of
+  Arms (illegible at icon size). Designs are vexillological
+  approximations — recognisable, not pixel-accurate heraldry.
+  `unit-icons.ts` keeps its inline mini-flag for unit badges to
+  avoid touching established code.
+- `apps/web/src/routes/+page.svelte` — `buildBeachLayers()` injected
+  between toponyms and trails in the deck overlay; tooltip handler
+  extended for `beaches-coast` (hover shows "OMAHA — US").
+
+**Scope decision**: MVP slice broadened to include all five beach
+sectors as **visual reference geography**, not as additional unit
+tracks. Brief's MVP slice (Omaha + airborne) remains canonical for
+unit/event datasets — Utah/Gold/Juno/Sword are markers only, no
+tracks for UK/CA forces. Acted on user direction; documented here
+so future fan-out (Phase 1 full forces) doesn't re-litigate.
+
+**Sourcing posture (beach geometry)**: Endpoints from harrison-1951
+(Cross-Channel Attack, US Army Green Books — canonical sector maps)
+and bigot-maps (Allied OVERLORD planning). Both IDs already in the
+source registry. Sources are cited inline in `BEACHES[]` rather than
+through `data-loader`'s registry containment check — the layer is a
+static curated array (toponyms pattern), not a schema-validated data
+file. Acceptable for MVP polish; promote to schema if future
+iteration needs disputed-fact handling on beach data.
+
+**Sourcing posture (national flags)**: Standard vexillological
+representations of 1944-era national flags. No contested historical
+claim. The simplified Canadian Red Ensign (gold shield with three
+red dots in place of the full Royal Coat of Arms) is acknowledged
+as a deliberate simplification; pixel-accurate heraldry is not
+legible at icon size and not load-bearing for the user task
+(identify the lead nation per beach).
+
+### 2026-04-29 — German national badge: Balkenkreuz → Hakenkreuzflagge
+
+User revised the earlier "swastika intentionally avoided" posture. The
+Balkenkreuz on the German unit badge has been replaced with a simplified
+Hakenkreuzflagge (red field, white disc, black swastika rotated 45°).
+
+- `apps/web/src/lib/layers/unit-icons.ts` — `flagBadge('DE', ...)` rewritten:
+  red rect + centred white disc (radius ≈ 42% of badge min-dim) + black
+  swastika drawn as a two-path stroke pair, rotated 45° around the
+  badge centre. Comment header rewritten to reflect the new posture.
+- `apps/web/src/lib/layers/national-flags.ts` — header line "the
+  swastika is excluded by project posture" removed (no longer true).
+- Legend (`apps/web/src/lib/components/legend.svelte`) needs no edit —
+  it already reads "National badge above the frame" without naming
+  the symbol; the embedded SVG updates automatically through
+  `buildSvg(...)`.
+
+**Sourcing posture (reversal)**: Original Balkenkreuz choice was made
+for contemporary sensitivity reasons. The user reversed the call to
+align with the project's historical-accuracy criterion (brief.md #3)
+and with the period-correct UK Union Jack / CA Red Ensign authored
+for the beach layer — leaving the German side neutralised would have
+been inconsistent. The Hakenkreuzflagge was the official state flag
+of Germany 1935–1945; this is the period-correct national-level
+identifier for German Heer divisions on a 1944 operational map.
+
+**Legal note (DE/AT)**: § 86a StGB (DE) and §3 Verbotsgesetz (AT)
+regulate the display of unconstitutional / National Socialist
+symbols. Educational, historical, scientific, and artistic uses are
+expressly exempted (Sozialadäquanzklausel). This project's use is
+educational/historical and falls under the exemption. Documented
+here so a future deployment review can reference the rationale.
+
+**Symbol choice**: Variant (c) per user — simplified Hakenkreuz on
+disc-and-field, not the full Reichskriegsflagge (variant b, too
+dense at icon size). The party flag (variant a) and the simplified
+badge (variant c) are visually identical at this scale.
+
+### 2026-04-29 — Beach polish: zoom rules, vertical names, weighted flags, France Libre, maple leaf
+
+User-driven UX pass on the beach and unit layers (visible-by-default
+overlap problem on the screenshots, ahistorical-but-recognisable
+flag for Canada, French presence at Sword).
+
+- `apps/web/src/lib/layers/beaches.ts` — `Beach` interface rewritten:
+  `nation: Nation` → `flags: Nation[]` (top-to-bottom display stack);
+  `seaDirection: [x,y]` → `seaAnchor: Position` (a curated point in
+  the sea where the flag stack and the vertical name render).
+  Separator endpoints now project from each coastline endpoint
+  toward the seaAnchor — direction follows the actual local
+  coast→sea bearing, fixing the inland markers. Beach names render
+  vertically (`name.split('').join('\n')`, TextLayer respects `\n`),
+  one letter per line under the flag stack. Flag size scales by
+  `sqrt(strength / 25 000)` clamped 18–36 px. Per-beach `strength`
+  added (Utah 23 250, Omaha 34 250, Gold 24 970, Juno 21 400,
+  Sword 28 845; harrison-1951 Chs. IX–XI / us-na-aar). Three
+  zoom thresholds: coast+separators+flags from zoom 7; names from
+  zoom 9.
+- `apps/web/src/lib/layers/units.ts` — `buildUnitLayers` now takes
+  `zoom`. Icon layer `visible` from zoom 6, label layer from zoom 9.
+  `getSize` scaled by `sqrt(strength / 14 000)` against the existing
+  6 km baseline.
+- `packages/data/schema/types.ts` + `unit.schema.json` — optional
+  `strength: integer ≥ 1` on the Unit interface.
+- `data/units/*.json` — added `strength` to the 6 MVP units
+  (1st ID 14 000, 29th ID 14 000, 82nd Abn 10 400, 101st Abn 6 600,
+  352. ID 12 700, 91./709. combined Cotentin elements 17 000).
+  Existing `sources` (harrison-1951, us-na-aar, zetterling-2000)
+  cover the strength figures — they're round nominal /
+  end-of-D-Day approximations from the same operational sources
+  used for waypoints.
+- `apps/web/src/lib/layers/national-flags.ts` — added two flags:
+  `FR_FREE_FRANCE_1944` (tricolore + red Croix de Lorraine on the
+  white band; Forces Françaises Libres pavilion used by the Kieffer
+  commando) and `CA_MAPLE_LEAF` (1965-design red-white-red with red
+  maple leaf). `Nation` extended to `'US' | 'UK' | 'CA' | 'FR'`.
+  `FLAG_BY_NATION['CA']` now points at `CA_MAPLE_LEAF`. Existing
+  `CA_RED_ENSIGN_1944` retained as a named export for future
+  reconstitution. Sword's flag stack: `flags: ['FR', 'UK']` —
+  France Libre on top, UK below.
+- `apps/web/src/routes/+page.svelte` — `zoom` threaded into
+  `buildBeachLayers` and `buildUnitLayers`.
+
+**Sourcing posture (Canada → maple leaf, ahistorical)**: The 1965
+maple-leaf flag did not exist on D-Day; in 1944 Canadian forces
+flew the Red Ensign (still rendered, retained as
+`CA_RED_ENSIGN_1944`). User chose the modern flag because it is
+the symbol modern viewers actually read as "Canada" — the Red
+Ensign at icon size reads as a generic British-empire variant.
+Same legibility rationale as the simplified `feldgrau` veil and
+the simplified Hakenkreuzflagge: visual identifiability over
+period-pixel-accuracy when the heraldry is not load-bearing for
+the user task. Documented here per the brief's sourcing-posture
+discipline; a future "1944-faithful" toggle could swap the asset
+back without further data work.
+
+**Sourcing posture (Free France at Sword)**: 177 men of the 1er BFM
+Commando (Kieffer commando) attached to the British No. 4 Commando
+(1st Special Service Brigade, Lord Lovat) landed at Sword's western
+edge (Colleville-sur-Orne / La Brèche) at H+30. Only French ground
+unit on the beaches. Stack-on-Sword choice (FR above UK) reflects
+the user's brief that minor-faction flags share the beach with the
+lead nation; period registry sources (harrison-1951, bigot-maps)
+already document the Kieffer commando — no new source needed.
+
+### 2026-04-30 — Beach polish round 2: horizontal name, dashed inter-beach boundaries, drop coast stroke
+
+User reverted the previous turn's vertical-text + per-beach
+coastline approach. The vertical letters worked at high zoom but
+the coast strokes drifted inland on oblique sectors and the
+endpoint separators added clutter on top of the basemap
+coastline. New layout:
+
+- `apps/web/src/lib/layers/beaches.ts` — full rewrite. Removed:
+  `endpoints[]`, the `beaches-coast` PathLayer, the per-beach
+  perpendicular separators projected toward `seaAnchor`, and the
+  vertical-text rendering. Added: a top-level `BOUNDARIES[]` of
+  four schematic inter-beach lines (UTAH/OMAHA, OMAHA/GOLD,
+  GOLD/JUNO, JUNO/SWORD), each starting slightly inland and
+  running offshore, rendered as a dashed line via in-data
+  segmentation (PathLayer has no native dash). Beach name now
+  horizontal ("UTAH BEACH" etc.) on a white-ish background pill
+  above a horizontal row of flags. Sword's row is `['UK', 'FR']`
+  side by side. seaAnchor pushed further offshore (≈ y 49.46–49.55)
+  to keep the coastline legible underneath. Beach names switched
+  from "UTAH" to "UTAH BEACH" matching the user's reference
+  panel. Visibility lowered: boundaries + flags from zoom 6,
+  names from zoom 7.
+- `apps/web/src/routes/+page.svelte` — dropped the obsolete
+  `beaches-coast` tooltip handler (layer no longer exists).
+
+**Sourcing posture (boundary geometry)**: The four dashed lines
+are intentionally schematic — sector boundaries varied within
+hundreds of metres depending on which OVERLORD planning map you
+read. The layer marks "different beach" at overview scale, not
+metre-accurate divisions. Sources (harrison-1951, bigot-maps)
+already authorise this reading; no new source needed. The
+previous, more precise per-beach endpoint pairs are dropped from
+the codebase but remain in git history if a future zoomed-in pass
+wants to revive them.
+
+### 2026-04-30 — Beach polish round 3 + Canada flag reverted to Red Ensign
+
+User-driven polish on the layout from round 2, plus a sourcing
+reversal on the Canada flag.
+
+- `apps/web/src/lib/layers/beaches.ts` — single-word beach names
+  ("UTAH" not "UTAH BEACH"), no white text background, font 14 →
+  16 px, dark navy fill (no outline — readable on the light-blue
+  sea). Flag-row gap 4 → 14 px (Sword's UK+FR no longer touch).
+  Name-to-flag gap 6 → 14 px (more breathing room). Sea anchors
+  re-tuned: Utah −1.20/49.55, Omaha −0.83/49.51, Gold −0.55/49.46,
+  Juno −0.37/49.43, Sword −0.22/49.39 — each centred between its
+  tilted boundaries at flag-y, with Juno and Sword pulled a bit
+  south to follow the Calvados coast trend (rough coast→marker
+  offset stays ~0.10–0.15° across all five). Boundaries tilted 20°
+  clockwise from vertical (top shifts east) — gives Utah extra sky
+  and adds visual motion. Dash count 8 → 16 (denser, shorter
+  ticks). `MIN_ZOOM_NAME` 7 → 8 (same tier as Bayeux).
+- `apps/web/src/lib/layers/units.ts` — `MIN_ZOOM_ICON` 6 → 8.
+  Icons now appear at the Bayeux tier per user direction.
+- `apps/web/src/lib/layers/national-flags.ts` —
+  `FLAG_BY_NATION['CA']` reverted to `CA_RED_ENSIGN_1944`. The
+  modern maple-leaf asset (`CA_MAPLE_LEAF`) stays exported but is
+  no longer the default Canadian flag.
+
+**Sourcing posture (Canada → Red Ensign, reverted)**: User reverted
+the prior "modern recognisability" call after seeing the layout in
+context. The Red Ensign is period-correct for D-Day (in service
+1921–1957) and the visible Union-canton + shield reads "British
+Commonwealth force" at icon size, which is what the asset needs to
+convey on the beach row. Reverting realigns the Canada flag with
+the brief's historical-accuracy posture; the maple-leaf asset is
+kept available for any future zoomed-in / educational mode where
+modern legibility matters more than 1944 fidelity.

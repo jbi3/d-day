@@ -19,6 +19,8 @@
 		},
 		"name": { "type": "string", "minLength": 1 },
 		"shortName": { "type": "string" },
+		"strength": { "type": "integer", "minimum": 1 },
+		"axisAffiliation": { "type": "string", "enum": ["wehrmacht", "ss"] },
 		"sources": {
 			"type": "array",
 			"items": { "type": "string" },

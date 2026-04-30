@@ -1,7 +1,7 @@
 import { feature } from 'topojson-client';
 import type { Topology } from 'topojson-specification';
 import type { FeatureCollection, MultiPolygon, Polygon } from 'geojson';
-import countries50m from 'world-atlas/countries-50m.json';
+import countries50m from 'world-atlas/countries-10m.json';
 
 import type { Position } from '@d-day/schema';
 

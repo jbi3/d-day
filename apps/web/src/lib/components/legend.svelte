@@ -1,16 +1,28 @@
 <script lang="ts">
-	import { buildSvg } from '$lib/layers/unit-icons';
+	import { buildSvg, type AxisAffiliation } from '$lib/layers/unit-icons';
 
 	let open = $state(true);
 
-	const samples = [
-		{ side: 'allied' as const, branch: 'infantry' as const, country: 'US', label: 'US infantry division (1st ID, 29th ID)' },
-		{ side: 'allied' as const, branch: 'airborne' as const, country: 'US', label: 'US airborne division (82nd, 101st)' },
-		{ side: 'axis' as const, branch: 'infantry' as const, country: 'DE', label: 'German division (352. ID, 91./709.)' }
+	type Sample = {
+		side: 'allied' | 'axis';
+		branch: 'infantry' | 'airborne';
+		country: string;
+		number: string;
+		axisAffiliation?: AxisAffiliation;
+		label: string;
+	};
+
+	const samples: Sample[] = [
+		{ side: 'allied', branch: 'infantry', country: 'US', number: '29', label: 'US infantry division (1st ID, 29th ID)' },
+		{ side: 'allied', branch: 'airborne', country: 'US', number: '82', label: 'US airborne division (82nd, 101st)' },
+		{ side: 'axis', branch: 'infantry', country: 'DE', number: '352', axisAffiliation: 'wehrmacht', label: 'Wehrmacht division (352. ID, 91./709.)' },
+		{ side: 'axis', branch: 'infantry', country: 'DE', number: 'SS', axisAffiliation: 'ss', label: 'Waffen-SS division (gris feldgrau)' }
 	];
 
-	function svgUri(side: 'allied' | 'axis', branch: 'infantry' | 'airborne', country: string): string {
-		return `data:image/svg+xml;utf8,${encodeURIComponent(buildSvg(side, branch, country))}`;
+	function svgUri(s: Sample): string {
+		return `data:image/svg+xml;utf8,${encodeURIComponent(
+			buildSvg(s.side, s.branch, s.country, s.number, s.axisAffiliation ?? 'wehrmacht')
+		)}`;
 	}
 </script>
 
@@ -21,7 +33,7 @@
 	{#if open}
 		<dl>
 			{#each samples as s (s.label)}
-				<dt><img class="icon" src={svgUri(s.side, s.branch, s.country)} alt="" /></dt>
+				<dt><img class="icon" src={svgUri(s)} alt="" /></dt>
 				<dd>{s.label}</dd>
 			{/each}
 			<dt><span class="swatch event"></span></dt>
@@ -32,9 +44,10 @@
 			<dd>German-occupied land (recedes as Allies advance; <code>harrison-1951</code>, <code>us-na-aar</code>)</dd>
 		</dl>
 		<p class="hint">
-			NATO frame: rectangle = friendly, diamond = hostile. Inside: ✕ infantry,
-			parachute arc airborne. Above: <code>XX</code> = division. National badge
-			above the frame.
+			NATO frame: rectangle = friendly (contour blanc), diamond = hostile (contour
+			noir). Drapeau national en fond, glyph de branche (✕ infanterie / parachute
+			aéroportée) en filigrane, numéro de division par-dessus. SS = fond gris
+			feldgrau au lieu de la Hakenkreuzflagge.
 		</p>
 		<p class="hint">Click a marker for sources & disputed claims.</p>
 		<p class="hint">

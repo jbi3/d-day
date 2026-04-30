@@ -17,7 +17,7 @@ interface OccupationPolygon {
 
 const SMOOTH_ITERATIONS = 3;
 const FELDGRAU: [number, number, number] = [60, 70, 55];
-const VEIL_ALPHA = 60;
+const VEIL_ALPHA = 40;
 
 /**
  * Renders the German occupation as a feldgrau veil over the Normandy

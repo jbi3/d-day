@@ -10,6 +10,10 @@
 	import { buildEventLayers } from '$lib/layers/events';
 	import { buildTrailLayers } from '$lib/layers/trails';
 	import { buildFrontlineLayers } from '$lib/layers/frontline';
+	import { buildBasemapLayers } from '$lib/layers/basemap';
+	import { buildToponymLayers } from '$lib/layers/toponyms';
+	import { buildBeachLayers } from '$lib/layers/beaches';
+	import { buildRoadLayers } from '$lib/layers/roads';
 	import Timeline from '$lib/components/timeline.svelte';
 	import Details, { type Selection } from '$lib/components/details.svelte';
 	import Legend from '$lib/components/legend.svelte';
@@ -24,6 +28,7 @@
 	const currentIso = $derived(new Date(currentEpoch).toISOString());
 
 	let selection = $state<Selection>(null);
+	let zoom = $state(8.5);
 
 	let mapContainer: HTMLDivElement;
 	let map: maplibregl.Map | undefined;
@@ -95,27 +100,27 @@
 		if (initial.simHours !== undefined) time.seek(initial.simHours);
 		if (initial.selection) selection = initial.selection;
 
-		// OpenFreeMap positron — free vector basemap, no API key, no rate
-		// limit. Placeholder until the painted basemap (post-MVP). If the
-		// service is unreachable, fall back to MapLibre demotiles so the
-		// app stays usable.
-		const primaryStyle = 'https://tiles.openfreemap.org/styles/positron';
-		const fallbackStyle = 'https://demotiles.maplibre.org/style.json';
+		// Basemap is rendered entirely via deck.gl (see buildBasemapLayers)
+		// from the same Natural Earth 1:10M source as the occupation veil,
+		// so coastlines align by construction. MapLibre carries only the
+		// sea-color background and the camera; no tiles, no external host.
+		const blankStyle: maplibregl.StyleSpecification = {
+			version: 8,
+			sources: {},
+			layers: [
+				{ id: 'sea', type: 'background', paint: { 'background-color': '#c8d6dd' } }
+			]
+		};
 
 		map = new maplibregl.Map({
 			container: mapContainer,
-			style: primaryStyle,
+			style: blankStyle,
 			center: [-0.95, 49.4],
 			zoom: 8.5
 		});
 
-		map.on('error', (e) => {
-			const err = e?.error as { message?: string } | undefined;
-			const msg = err?.message ?? '';
-			if (msg.includes('openfreemap') || msg.includes('Failed to fetch')) {
-				console.warn('[basemap] primary unreachable, falling back to demotiles:', msg);
-				map?.setStyle(fallbackStyle);
-			}
+		map.on('zoom', () => {
+			if (map) zoom = map.getZoom();
 		});
 
 		deckOverlay = new MapboxOverlay({
@@ -180,10 +185,14 @@
 		if (!deckOverlay) return;
 		deckOverlay.setProps({
 			layers: [
+				...buildBasemapLayers(),
 				...buildFrontlineLayers({ segments: data.frontlineSegments, currentEpoch }),
+				...buildRoadLayers({ zoom }),
+				...buildToponymLayers({ zoom }),
+				...buildBeachLayers({ zoom }),
 				...buildTrailLayers({ tracks: data.units, isoTime: currentIso }),
 				...buildEventLayers({ events: data.events, currentEpoch }),
-				...buildUnitLayers({ tracks: data.units, isoTime: currentIso })
+				...buildUnitLayers({ tracks: data.units, isoTime: currentIso, zoom })
 			]
 		});
 	});
@@ -239,5 +248,11 @@
 	.map {
 		position: absolute;
 		inset: 0;
+		z-index: 0;
+	}
+	.map-wrap :global(.legend),
+	.map-wrap :global(.details),
+	.map-wrap :global(.hud) {
+		z-index: 10;
 	}
 </style>

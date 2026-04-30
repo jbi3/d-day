@@ -44,6 +44,10 @@ export interface Unit {
 	branch: Branch;
 	name: string;
 	shortName?: string;
+	/** Approximate troop count engaged on D-Day. Used to scale icon size. */
+	strength?: number;
+	/** For axis units, distinguishes Wehrmacht (default) from Waffen-SS for icon styling. */
+	axisAffiliation?: 'wehrmacht' | 'ss';
 	sources: SourceID[];
 }
 
