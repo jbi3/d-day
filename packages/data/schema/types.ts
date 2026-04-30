@@ -44,6 +44,10 @@ export interface Unit {
 	branch: Branch;
 	name: string;
 	shortName?: string;
+	/** Approximate troop count engaged on D-Day. Used to scale icon size. */
+	strength?: number;
+	/** For axis units, distinguishes Wehrmacht (default) from Waffen-SS for icon styling. */
+	axisAffiliation?: 'wehrmacht' | 'ss';
 	sources: SourceID[];
 }
 
@@ -58,6 +62,23 @@ export interface Waypoint {
 export interface Movement {
 	unitId: UnitID;
 	waypoints: Waypoint[];
+}
+
+export interface FrontlineKeyframe {
+	time: string; // ISO-8601
+	path: Position[];
+}
+
+export interface FrontlineSegment {
+	id: string;
+	label?: string;
+	closed?: boolean;
+	keyframes: FrontlineKeyframe[];
+	sources: SourceID[];
+}
+
+export interface FrontlineFile {
+	segments: FrontlineSegment[];
 }
 
 export interface MapEvent {

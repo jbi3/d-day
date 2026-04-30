@@ -8,6 +8,7 @@
 		"branch": "infantry",
 		"name": "29th Infantry Division",
 		"shortName": "29th ID",
+		"strength": 14000,
 		"sources": ["harrison-1951", "us-na-aar"]
 	},
 	"movement": {

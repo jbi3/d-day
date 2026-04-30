@@ -8,6 +8,7 @@
 		"branch": "airborne",
 		"name": "82nd Airborne Division",
 		"shortName": "82nd Abn",
+		"strength": 10400,
 		"sources": ["harrison-1951", "us-na-aar"]
 	},
 	"movement": {

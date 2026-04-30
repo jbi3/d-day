@@ -5,10 +5,13 @@ import {
 	movementSchema,
 	eventSchema,
 	sourceSchema,
+	frontlineSchema,
 	type Unit,
 	type Movement,
 	type MapEvent,
-	type Source
+	type Source,
+	type FrontlineFile,
+	type FrontlineSegment
 } from '@d-day/schema';
 
 const ajv = new Ajv({ allErrors: true, strict: false });
@@ -17,6 +20,7 @@ const validateUnit = ajv.compile(unitSchema) as ValidateFunction<Unit>;
 const validateMovement = ajv.compile(movementSchema) as ValidateFunction<Movement>;
 const validateEvent = ajv.compile(eventSchema) as ValidateFunction<MapEvent>;
 const validateSource = ajv.compile(sourceSchema) as ValidateFunction<Source>;
+const validateFrontline = ajv.compile(frontlineSchema) as ValidateFunction<FrontlineFile>;
 
 interface UnitFile {
 	unit: Unit;
@@ -43,6 +47,11 @@ const registryGlob = import.meta.glob<RegistryFile>('../../../../data/sources/re
 	import: 'default'
 });
 
+const frontlineGlob = import.meta.glob<FrontlineFile>('../../../../data/frontline.json', {
+	eager: true,
+	import: 'default'
+});
+
 function expect<T>(value: ValidateFunction<T>, data: unknown, ctx: string): T {
 	if (!value(data)) {
 		throw new Error(
@@ -61,6 +70,7 @@ export interface LoadedData {
 	units: UnitTrack[];
 	events: MapEvent[];
 	sources: Source[];
+	frontlineSegments: FrontlineSegment[];
 	sourceById: Map<string, Source>;
 	unitById: Map<string, UnitTrack>;
 	eventById: Map<string, MapEvent>;
@@ -112,10 +122,27 @@ export function loadData(): LoadedData {
 			assertKnown(d.source, knownIds, `event ${e.id} disputedBy`);
 	}
 
+	const frontlineSegments: FrontlineSegment[] = [];
+	for (const [path, file] of Object.entries(frontlineGlob)) {
+		expect(validateFrontline, file, path);
+		for (const seg of file.segments) {
+			const v0 = seg.keyframes[0]?.path.length ?? 0;
+			for (let i = 1; i < seg.keyframes.length; i++) {
+				if (seg.keyframes[i].path.length !== v0) {
+					throw new Error(
+						`[data-loader] frontline segment ${seg.id}: keyframe ${i} has ${seg.keyframes[i].path.length} vertices, expected ${v0} (vertex count must match across keyframes for interpolation)`
+					);
+				}
+			}
+			for (const id of seg.sources) assertKnown(id, knownIds, `frontline segment ${seg.id}`);
+			frontlineSegments.push(seg);
+		}
+	}
+
 	const unitById = new Map(units.map((u) => [u.unit.id, u]));
 	const eventById = new Map(events.map((e) => [e.id, e]));
 
-	return { units, events, sources, sourceById, unitById, eventById };
+	return { units, events, sources, frontlineSegments, sourceById, unitById, eventById };
 }
 
 function assertKnown(id: string, known: Set<string>, ctx: string): void {

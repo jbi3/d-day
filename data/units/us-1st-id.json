@@ -8,6 +8,7 @@
 		"branch": "infantry",
 		"name": "1st Infantry Division",
 		"shortName": "1st ID",
+		"strength": 14000,
 		"sources": ["harrison-1951", "us-na-aar"]
 	},
 	"movement": {
