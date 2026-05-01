@@ -7,10 +7,9 @@
 		simStartEpoch: number;
 		events: MapEvent[];
 		formatSimTime: (h: number) => string;
-		unitCount: number;
 	}
 
-	const { time, simStartEpoch, events, formatSimTime, unitCount }: Props = $props();
+	const { time, simStartEpoch, events, formatSimTime }: Props = $props();
 
 	function eventOffsetHours(e: MapEvent): number {
 		return (Date.parse(e.time) - simStartEpoch) / 3_600_000;
@@ -36,30 +35,50 @@
 		{ hours: 20, label: 'D 18:00' }
 	];
 
-	let shareLabel = $state('Share');
+	const HIDE_DELAY_MS = 2500;
+	let visible = $state(true);
+	let hideTimer: ReturnType<typeof setTimeout> | null = null;
 
-	async function share() {
-		if (typeof window === 'undefined') return;
-		const url = window.location.href;
-		try {
-			await navigator.clipboard.writeText(url);
-			shareLabel = '✓ Copied';
-		} catch {
-			// Fallback: select and let user copy manually.
-			shareLabel = url;
+	function clearHideTimer() {
+		if (hideTimer !== null) {
+			clearTimeout(hideTimer);
+			hideTimer = null;
 		}
-		setTimeout(() => {
-			shareLabel = 'Share';
-		}, 1600);
+	}
+
+	function armHideTimer() {
+		clearHideTimer();
+		hideTimer = setTimeout(() => {
+			visible = false;
+			hideTimer = null;
+		}, HIDE_DELAY_MS);
+	}
+
+	$effect(() => {
+		if (time.playing) {
+			visible = true;
+			armHideTimer();
+		} else {
+			clearHideTimer();
+			visible = true;
+		}
+	});
+
+	function onWindowMouseMove() {
+		if (!time.playing) return;
+		visible = true;
+		armHideTimer();
 	}
 </script>
 
-<div class="hud">
+<svelte:window onmousemove={onWindowMouseMove} />
+
+<div class="hud" class:hidden={!visible}>
 	<div class="row">
-		<button onclick={() => time.toggle()}>
-			{time.playing ? 'Pause' : 'Play'}
+		<button class="play" onclick={() => time.toggle()} aria-label={time.playing ? 'Pause' : 'Play'}>
+			{time.playing ? '❚❚' : '▶'}
 		</button>
-		<button class="secondary" onclick={() => time.reset()} title="Jump to D-1 22:00">
+		<button class="secondary" onclick={() => time.reset()} title="Jump to D-1 22:00" aria-label="Reset">
 			↺
 		</button>
 		<span class="time">{formatSimTime(time.simHours)}</span>
@@ -73,17 +92,6 @@
 				<option value={4}>4×</option>
 			</select>
 		</label>
-		<span class="meta">
-			{unitCount} unit{unitCount === 1 ? '' : 's'} · {visibleEvents.length} event{visibleEvents.length === 1 ? '' : 's'}
-		</span>
-		<button
-			class="secondary"
-			type="button"
-			onclick={share}
-			title="Copy a link to this moment"
-		>
-			{shareLabel}
-		</button>
 	</div>
 
 	<div class="track-wrap">
@@ -121,63 +129,73 @@
 		bottom: 1rem;
 		left: 1rem;
 		right: 1rem;
-		background: rgba(20, 20, 20, 0.85);
+		background: rgba(20, 20, 20, 0.55);
 		color: #fff;
-		padding: 0.75rem 1rem;
-		border-radius: 6px;
+		padding: 0.55rem 0.85rem;
+		border-radius: 8px;
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
-		backdrop-filter: blur(8px);
+		gap: 0.4rem;
+		backdrop-filter: blur(12px);
 		font-family: system-ui, sans-serif;
+		transition: opacity 250ms ease, transform 250ms ease;
+	}
+	.hud.hidden {
+		opacity: 0;
+		transform: translateY(8px);
+		pointer-events: none;
 	}
 	.row {
 		display: flex;
 		align-items: center;
-		gap: 1rem;
+		gap: 0.85rem;
 	}
 	.time {
 		font-variant-numeric: tabular-nums;
-		font-size: 1.05rem;
-	}
-	.meta {
-		opacity: 0.75;
-		font-size: 0.85rem;
-		margin-left: auto;
+		font-size: 1rem;
 	}
 	button {
-		background: #2a6;
+		background: rgba(255, 255, 255, 0.18);
 		color: #fff;
 		border: 0;
-		padding: 0.4rem 1rem;
+		padding: 0.35rem 0.7rem;
 		border-radius: 4px;
 		cursor: pointer;
 		font: inherit;
 	}
-	button.secondary {
-		background: rgba(255, 255, 255, 0.12);
-		padding: 0.4rem 0.7rem;
-		font-size: 1.1rem;
+	button.play {
+		font-size: 0.95rem;
 		line-height: 1;
+		min-width: 2.4rem;
+	}
+	button.secondary {
+		background: rgba(255, 255, 255, 0.1);
+		padding: 0.35rem 0.6rem;
+		font-size: 1.05rem;
+		line-height: 1;
+	}
+	button:hover {
+		background: rgba(255, 255, 255, 0.28);
 	}
 	.speed {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.4rem;
-		font-size: 0.82rem;
-		opacity: 0.85;
+		font-size: 0.78rem;
+		opacity: 0.7;
+		margin-left: auto;
 	}
 	.speed select {
 		background: rgba(255, 255, 255, 0.12);
 		color: #fff;
 		border: 0;
 		border-radius: 4px;
-		padding: 0.25rem 0.5rem;
+		padding: 0.2rem 0.45rem;
 		font: inherit;
 	}
 	.track-wrap {
 		position: relative;
-		padding-top: 0.6rem;
+		padding-top: 0.5rem;
 	}
 	.scrub {
 		width: 100%;
@@ -212,14 +230,14 @@
 	.ticks {
 		position: relative;
 		height: 1rem;
-		margin-top: 0.15rem;
+		margin-top: 0.1rem;
 	}
 	.tick {
 		position: absolute;
 		top: 0;
 		transform: translateX(-50%);
-		font-size: 0.72rem;
-		opacity: 0.55;
+		font-size: 0.68rem;
+		opacity: 0.45;
 		font-variant-numeric: tabular-nums;
 		white-space: nowrap;
 	}

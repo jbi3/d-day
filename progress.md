@@ -6,13 +6,15 @@ place. Bottom section is an append-only dated log.
 
 ## Current state
 
-**Phase:** MVP feature-complete pending user review. All Phase 0
+**Phase:** **MVP accepted by the user (2026-05-01).** All Phase 0
 foundations, the 1.V vertical slice, the 1.A dataset fan-out (6
-formations + events), and the 1.B renderer fan-out (frontline,
-timeline pins, details, uncertainty) are merged on `main`. Phase 2.1
-(integration) and 2.2 (source citations) effectively land with the
-renderer fan-out. Phase 2.3 (qualitative perf pass) and 2.4 (MVP
-acceptance review) are user calls.
+formations + events), the 1.B renderer fan-out (frontline, timeline
+pins, details, uncertainty), 2.1 (integration), 2.2 (source
+citations), 2.3 (qualitative perf pass), and 2.4 (MVP acceptance
+review) are now closed. Project pivots to **post-MVP** decisions —
+v1 scope (full Normandy, all beaches, German OOB), painted basemap,
+hosting, and the deferred mixed-granularity LOD work all become
+addressable per `brief.md` roadmap items 3–6.
 
 **Done**
 - `brief.md`, `README.md`, `CLAUDE.md`, `mvp-execution-plan.md`,
@@ -66,7 +68,16 @@ acceptance review) are user calls.
   see "deck.gl-rendered basemap" entry below.)
 - Movement trails layer — fading per-unit polylines through passed
   waypoints, in the side hue family.
-- Legend component — collapsible color-coding cheat sheet (top-left).
+- Legend component — collapsed by default (small pill « ▦ Légende »
+  top-left, very transparent). Click expands to a compact panel with
+  the 4 NATO symbol samples + 3 color swatches and a × close button;
+  no verbose NATO description or keyboard-shortcut block (those are
+  power-user surface, dropped from the visible chrome).
+- Timeline — auto-hides 2.5 s into playback and reappears on any
+  mouse move; visible whenever paused. Lighter chrome
+  (`rgba(20,20,20,0.55)`, blur 12 px), de-saturated Play button (no
+  teal accent — let the map carry the focus). Share button removed
+  (URL hash deep-linking still works — users can copy the URL bar).
 - Playback controls — 0.25× / 0.5× / 1× / 2× / 4× speed selector;
   reset (↺) jumps to D-1 22:00.
 - Keyboard shortcuts — Space play/pause; ←→ scrub (Shift = ±1h);
@@ -187,14 +198,21 @@ acceptance review) are user calls.
   tests pass on every merge; web app `pnpm check` and `pnpm build`
   clean.
 
-**Next (user-facing review)**
-- 2.3 Qualitative perf pass — open the dev server, scrub the
-  timeline, pan/zoom, look for jank. (Needs human eyes.)
-- 2.4 MVP acceptance review against `brief.md` success criteria.
-- A.1–A.6 historical-data sanity check: positions are
-  division-centroid approximations from operational maps; the user
-  may want to refine specific waypoints or add more disputedBy
-  entries before treating the data as canonical.
+**Next (post-MVP — awaiting user direction)**
+- v1 scope kickoff (`brief.md` §Roadmap step 3): broaden geography
+  to full Normandy, add UK/CA beach data tracks (currently only
+  reference geography), German OOB beyond 352./91./709.
+- Painted basemap exploration (`brief.md` §Visual direction) — was
+  deferred during MVP in favour of the deck.gl-rendered Natural
+  Earth coastline; revisit now that the slice is locked.
+- Hosting decision (Cloudflare Pages vs Netlify) — deferred in
+  Phase 0; needed before any public deploy.
+- Mixed-granularity LOD (regiment / battalion at higher zoom in
+  selected sectors) — flagged in `brief.md` as ~half the project's
+  effort; user call on when to take this on.
+- A.1–A.6 historical-data refinement — division-centroid
+  approximations are good enough for division-level MVP but will
+  need tightening if v1 surfaces regiment/battalion granularity.
 
 **Open questions / unresolved**
 - None blocking. Painted basemap, hosting, mixed-granularity LOD,
@@ -225,6 +243,33 @@ acceptance review) are user calls.
   `GIT_SSH_COMMAND="ssh" git push` worked. Root cause not yet
   identified — `~/.ssh/config` and Git Bash's `/usr/bin/ssh` both
   resolve `github-perso` correctly. Revisit if it recurs.
+
+### 2026-04-30 — PR #1 mergée : carto polish sur main
+- `gh` CLI installé via `winget install GitHub.cli` (v2.92.0) et
+  authentifié interactivement par l'utilisateur (compte `jbi3`,
+  scopes `repo`, `read:org`, `gist`, `admin:public_key`).
+- Branche `claude/france-natural-earth-001` poussée puis ouverte en
+  PR #1 (`https://github.com/jbi3/d-day/pull/1`) avec titre "Carto
+  polish + NATO unit symbology rework".
+- Merge commit `40ca73d` sur `main` à 2026-04-30 00:34:31 UTC,
+  stratégie merge classique (cohérent avec les `2b2e730` /
+  `92b4479` / `8000d82` historiques).
+- Le blocker tooling (`gh` absent + non auth) est désormais cleared
+  pour les futures itérations PR/merge depuis Claude Code.
+
+### 2026-04-30 — Blocker tooling : pas de PR/merge depuis Claude Code
+- Branche `claude/france-natural-earth-001` poussée sur `origin`
+  (commit `32553c8` — "Carto polish + NATO unit symbology rework").
+- Demande utilisateur d'ouvrir une PR vers `main` puis de merger
+  depuis Claude Code : non exécutable. `gh` CLI absent du PATH,
+  aucun `GH_TOKEN` / `GITHUB_TOKEN` exposé. `curl` + `git`
+  disponibles mais sans token l'API REST GitHub n'est pas atteignable.
+- Workarounds proposés à l'utilisateur : ouverture manuelle via
+  l'URL `compare` de GitHub, install `gh` + `gh auth login`, ou
+  passage d'un token via env var.
+- Pas de changement de scope ; juste une lacune d'outillage à
+  combler si on veut automatiser le cycle PR/merge dans cette
+  config Windows.
 
 ### 2026-04-30 — Fix basemap : exclusion antiméridienne (Russie / USA / Fidji)
 - Bug visuel signalé : « URSS visible sur la map ».
@@ -990,3 +1035,92 @@ convey on the beach row. Reverting realigns the Canada flag with
 the brief's historical-accuracy posture; the maple-leaf asset is
 kept available for any future zoomed-in / educational mode where
 modern legibility matters more than 1944 fidelity.
+
+### 2026-05-01 — UI immersion pass: legend collapsed-by-default, timeline auto-hide, Share retiré
+
+Refonte UX dirigée par l'utilisateur. Objectif : la carte est la
+figure, l'UI est le fond. Trois piliers psy : data-ink reduction
+(Tufte), progressive disclosure, désincarnation pendant l'immersion
+(idiome lecteur vidéo plein-écran).
+
+- **Legend (`apps/web/src/lib/components/legend.svelte`)** — `open`
+  default flipped `true` → `false`. État fermé = pill discrète
+  « ▦ Légende » (fond `rgba(20,20,20,0.45)`, blur 12 px, border-radius
+  999) au lieu d'un toggle. État ouvert allégé (fond 0.65 au lieu de
+  0.9, padding réduit, bouton × en haut-droite). Suppression nette
+  des trois `<p class="hint">` : description NATO verbeuse, hint
+  d'interaction, et bloc raccourcis clavier. Ne reste que les 4
+  symboles NATO + 3 swatches couleur.
+- **Timeline (`apps/web/src/lib/components/timeline.svelte`)** —
+  auto-hide pendant lecture (Netflix/YouTube) : la barre disparaît
+  2.5 s après le début de lecture et réapparaît au moindre mouvement
+  souris (`<svelte:window onmousemove>` gated par `time.playing`).
+  Allègement visuel : fond `rgba(20,20,20,0.55)` au lieu de 0.85,
+  blur 12 px, padding 0.55/0.85. Bouton Play dé-saturé du teal
+  `#2a6` vers `rgba(255,255,255,0.18)` avec icônes `▶/❚❚` — l'œil
+  va à la carte, plus au CTA. Suppression du bouton Share, de la
+  fonction `share()` (clipboard) et du compteur « N units · M events ».
+  Ticks plus fins (0.68 rem, opacité 0.45).
+- **Page shell (`apps/web/src/routes/+page.svelte`)** — `unitCount`
+  prop retirée de l'invocation `<Timeline>` (plus consommée).
+  L'auto-hide est self-contained dans `Timeline.svelte`, aucun
+  handler ajouté au shell.
+
+**Choix UX résolus** (3 questions posées à l'utilisateur, 1 réponse
+chacune) :
+- Comportement timeline : auto-hide pendant lecture (vs
+  always-faint / compact-expand-on-hover). Coût discoverability
+  accepté : tout mouvement souris ramène les contrôles.
+- Forme legend fermée : pill texte « Légende » (vs icône seule /
+  header-strip allégé). Découvrable mais empreinte minimale.
+- Densité legend : tout supprimer hors symboles + swatches.
+
+**Feature retirée** : bouton Share + `navigator.clipboard.writeText`.
+Le hash URL `#t=<simHours>&s=<...>` reste géré et copiable via la
+barre d'adresse ; le bouton n'apportait pas assez de valeur pour
+justifier sa présence permanente dans la chrome.
+
+**Verification status** : `pnpm --filter web check` clean (0 errors,
+0 warnings). Validation visuelle (rendu navigateur, comportement
+auto-hide en action) reste à charge de l'utilisateur — Claude n'a
+pas d'œil sur le DOM.
+
+### 2026-05-01 — MVP accepté par l'utilisateur
+- L'utilisateur clôt formellement le MVP : « Je considère le MVP
+  comme terminé ». Phases 2.3 (perf qualitatif) et 2.4 (acceptance
+  review) actées côté utilisateur — Claude n'a pas d'œil sur le
+  rendu, donc l'acceptation visuelle reste un appel utilisateur, et
+  il a été fait.
+- Périmètre livré (récapitulatif synthétique, détails dans les
+  entrées Batch 1–5 et précédentes) :
+  - Slice MVP `brief.md` couverte : Omaha + airborne US, niveau
+    division, fenêtre D-1 22:00 → D 18:00.
+  - 6 formations tracées (US 1st ID, US 29th ID, US 82nd Abn, US
+    101st Abn, DE 352., DE 91./709. combinées) + 30 événements
+    horodatés couvrant Pegasus Bridge, drops US, Sainte-Mère-Église,
+    H-Hour 5 plages, Pointe-du-Hoc, La Fière, contre-attaque 21.
+    Panzer.
+  - Veil d'occupation feldgrau qui se rétracte par segments
+    (Cotentin, Omaha, Utah) avec lissage Chaikin et différence
+    polygonale contre un masque France hand-traced.
+  - Symbologie NATO retravaillée (carrés alliés / losanges Axe,
+    drapeau US lisible jusqu'à ~28 px, "XX" division, ombre portée).
+  - Toponymes par tier (small/medium/large), 5 secteurs de plages
+    avec drapeaux pondérés, sous-secteurs OMAHA au zoom 10, réseau
+    routier 11 axes, rivières disponibles mais désactivées.
+  - Citations de sources résolues via le registre, disputedBy
+    surfacé sur timeline pins + carte + fiche détail.
+  - Timeline avec auto-hide, sélecteur de vitesse, raccourcis
+    clavier, fly-to caméra, cross-links event ↔ unit.
+  - 44/44 tests vitest pass, `pnpm check` et `pnpm build` clean.
+- Le projet bascule officiellement en **post-MVP**. Les chantiers
+  v1 (Normandy complète, OOB allemand étendu, données UK/CA/FR
+  réelles), painted basemap, choix d'hébergement, et LOD
+  multi-granularité redeviennent activables — chacun nécessitera
+  une décision utilisateur explicite avant implémentation, par
+  `brief.md` §"Tech stack" et §"Risks".
+- Pas de blocker connu. Pas de PR ouverte côté `claude/france-
+  natural-earth-001` (la branche locale a des modifs non
+  committées sur `legend.svelte`, `timeline.svelte`,
+  `+page.svelte`, `progress.md` — l'utilisateur tranchera commit
+  / PR / merge à part).

@@ -232,7 +232,6 @@
 		{simStartEpoch}
 		events={data.events}
 		{formatSimTime}
-		unitCount={data.units.length}
 	/>
 </div>
 
