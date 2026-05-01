@@ -6,12 +6,14 @@ place. Bottom section is an append-only dated log.
 
 ## Current state
 
-**Phase:** **M2 exécuté en autonomie (2026-05-01) — branche
-`claude/m2-schemas-001` prête à PR.** Les 7 lots techniques du
-plan §5.1 (recherche structurée absorbée dans lots 2-4)
-commités séquentiellement : `9c170c0` → `a47fa62`. Build vert,
-89 tests pass (72 schémas + 17 apps/web), `pnpm format:check`,
-`pnpm lint`, `pnpm check`, `pnpm build` propres.
+**Phase:** **M2 mergé sur main (2026-05-01) — PR #6 close, merge
+commit `8da94f4`.** CI Actions vert, 89 tests pass (72 schémas +
+17 apps/web). M3 est désormais en gate de scope §10.9 : le plan
+exige un sign-off utilisateur sur le périmètre avant de lancer
+le code. Cinq lots possibles dans §6.1 (esquisse) : naval, air,
+extension D+1→D+6, UX timeline étendue (170 h vs 20 h
+aujourd'hui), painted basemap optionnel. Pas d'engagement
+prématuré.
 
 État du dataset après M2 :
 - **13 unités** (vs 7 en M1) : us-1st, us-29th, us-82nd, us-101st,
@@ -319,6 +321,17 @@ selon plan §6.2).
 ---
 
 ## Log
+
+### 2026-05-01 — PR #6 mergée : M2 sur main
+
+- Branche `claude/m2-schemas-001` (8 commits, `9c170c0` →
+  `e999dca`) mergée via `gh pr merge 6 --merge`.
+- Merge commit `8da94f4` sur `main`.
+- CI Actions vert (~36 s), build statique servable inclut
+  désormais `build/data/manifest.json` + 13 unités JSON.
+- M2 clos côté code. Gate §10.9 en attente : scope M3 à définir
+  par l'utilisateur avant démarrage (naval / air / D+1→D+6 /
+  timeline étendue / painted basemap).
 
 ### 2026-05-01 — M2 exécuté en autonomie (lots 5, 6, 2, 3, 4, 7, 8)
 
