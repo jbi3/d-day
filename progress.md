@@ -6,21 +6,29 @@ place. Bottom section is an append-only dated log.
 
 ## Current state
 
-**Phase:** **M1 mergé sur main (2026-05-01) — PR #5 close, merge
-commit `4fec991`.** Les 9 lots du plan §4.1 ont été exécutés en
-autonomie sur `claude/m1-adapter-static-001`, le CI Actions a
-tourné vert sur la PR, le merge est fait. Build statique
-servable en local proprement, conformément à §10.1 (hosting
-toujours deferred). 64/64 tests passent (48 schémas + 16
-apps/web), `pnpm format:check`, `pnpm lint`, `pnpm check` et
-`pnpm build` sont verts. QA visuelle desktop / mobile / erreur
-simulée à l'appréciation de l'utilisateur sans bloquer le merge.
-Lighthouse, OG preview et URL publique restent reportés au jour
-du déploiement (post-décision §10.1). M1 est clos côté code ;
-prochain pas = sign-off explicite utilisateur avant de démarrer
-M2 (audit §5 du plan stratégique : 7 nouvelles unités UK/CA/DE,
-events ~30 → 55-65, frontline 5 plages, schémas enrichis,
-fetch-runtime des données).
+**Phase:** **M2 prêt à démarrer (2026-05-01) — décisions §10.6-8
+actées, M1 mergé (commit `4fec991`).** Sign-off utilisateur sur
+les 3 décisions pré-M2 :
+- **§10.6 — `unit.casualties`** : structure `{ total: number,
+  byPhase?: Array<{ phase, killed?, wounded?, missing?, captured? }> }`.
+  `total` obligatoire, `byPhase` optionnel — couvre les besoins
+  éditoriaux sans imposer la phase à chaque unité.
+- **§10.7 — Filtre événements UI** : panneau intégré à la légende
+  (~30 lignes), pas de nouvelle UI dédiée. Évite le doublon avec
+  le sélecteur de secteur (lot 8 M2) et reste là où l'utilisateur
+  cherche les contrôles visuels.
+- **§10.8 — Ordre d'ajout des unités** : effort croissant tel
+  qu'esquissé en §5.1.2 du plan : 4th ID → 716. → 21. Panzer →
+  uk-50th + uk-3rd → ca-3rd. (uk-6th-airborne déjà ajoutée en M1
+  via §10.4, donc 6 nouvelles unités au lieu de 7.)
+
+M2 vise la v1 du brief (5 plages, OOB allemand complet, niveau
+division). Effort estimé 6-10 semaines, principalement recherche
+historique + saisie data. Code change peu, sauf lot 6 (fetch
+runtime) et lots 7-8 (UI filtre + sélecteur de secteur). Prochain
+pas concret : créer la branche `claude/m2-schemas-001` (lot 5 =
+schémas enrichis), puis enchaîner lots 6 (fetch runtime), 2 (6
+unités), 3 (events), 4 (frontline), 7 (filtre UI), 8 (sélecteur).
 
 **Done**
 - `brief.md`, `README.md`, `CLAUDE.md`, `mvp-execution-plan.md`,
@@ -296,6 +304,30 @@ fetch-runtime des données).
 ---
 
 ## Log
+
+### 2026-05-01 — Décisions §10.6-8 actées : M2 prêt à démarrer
+
+Sign-off utilisateur sur les 3 décisions du plan stratégique
+gating M2 (recommandations seniors validées telles quelles) :
+
+- **§10.6 `unit.casualties`** : `{ total: number, byPhase?:
+  Array<{ phase, killed?, wounded?, missing?, captured? }> }`.
+  Reason : `total` obligatoire couvre la fiche minimale ;
+  `byPhase` optionnel évite d'imposer une recherche horaire à
+  chaque unité quand les sources ne le permettent pas
+  (Zetterling sur le côté allemand, Harrison sur le côté allié).
+- **§10.7 filtre événements UI** : panneau intégré à la légende.
+  Reason : doublon évité avec le sélecteur de secteur (lot 8) ;
+  la légende est déjà l'endroit où l'utilisateur cherche les
+  contrôles visuels (samples, swatches).
+- **§10.8 ordre d'ajout des unités** : effort croissant. Reason :
+  uk-6th-Abn déjà fait en M1, on enchaîne par les unités les
+  mieux sourcées (4th ID via Harrison, 716. via Zetterling) avant
+  d'attaquer les contestés (21. Panzer commitment, link-ups
+  UK/CA). Limite le risque de blocage en début de M2.
+
+Conséquence : 6 unités à ajouter (et non 7) puisque uk-6th-Abn
+a été avancée en M1.
 
 ### 2026-05-01 — PR #5 mergée : M1 sur main
 
