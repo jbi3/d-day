@@ -6,18 +6,17 @@ place. Bottom section is an append-only dated log.
 
 ## Current state
 
-**Phase:** **M3a (naval) exécuté en autonomie (2026-05-01) —
-branche `claude/m3a-naval-001` prête à PR.** Sign-off utilisateur
-sur scope M3 = M3a uniquement (naval). Air, extension D+1→D+6,
-timeline étendue, painted basemap restent reportés à des jalons
-ultérieurs.
+**Phase:** **M3a mergé sur main (2026-05-01) — PR #7 close, merge
+commit `88500df`.** CI Actions vert, 179 tests pass. Trois jalons
+post-MVP livrés (M1 prod-grade, M2 v1 Normandie, M3a naval) ;
+le périmètre v2 du brief est partiellement couvert (naval livré,
+air toujours hors scope).
 
-Quatre lots techniques : `fd5616f` schémas + sources NHHC/Roskill ;
-`(commit hash)` 22 vessels ; `27e2d02` couche naval + intégration
-UI ; `8fcec3f` 10 bombardment events. Total monorepo passe à
-**179 tests verts** (160 schémas dont 88 nouveaux pour les
-22 vessels × 4 sub-tests + 19 apps/web). `pnpm format:check`,
-`pnpm lint`, `pnpm check`, `pnpm build` propres.
+Sign-off utilisateur sur scope M3 = M3a uniquement (naval). Air,
+extension D+1→D+6, timeline étendue, painted basemap restent
+reportés à des jalons ultérieurs. Choix utilisateur en cours
+sur la suite (recommandation = hosting + premier déploiement
+public §10.1).
 
 État dataset après M3a :
 - **22 navires** ajoutés au registre (Force C/A/K/E/D — Texas,
@@ -346,6 +345,20 @@ selon plan §6.2).
 ---
 
 ## Log
+
+### 2026-05-01 — PR #7 mergée : M3a sur main
+
+- Branche `claude/m3a-naval-001` (5 commits, `fd5616f` →
+  `24123dc`) mergée via `gh pr merge 7 --merge`.
+- Merge commit `88500df` sur `main`.
+- CI Actions vert (~36 s).
+- Trois jalons livrés post-MVP : M1 (prod-grade), M2 (v1
+  Normandie), M3a (naval).
+- Prochain pas = décision utilisateur sur la suite. Pistes
+  possibles : (1) hosting + premier deploy public §10.1
+  (recommandé), (2) painted basemap (dette visuelle du brief),
+  (3) M3b air (couloirs airborne + B-24 streams), (4) extension
+  D+1→D+6 (le plus lourd), ou pause.
 
 ### 2026-05-01 — M3a exécuté en autonomie (4 lots, naval seul)
 
