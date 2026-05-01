@@ -19,6 +19,10 @@
 						"type": "boolean",
 						"description": "If true, the path is treated as a closed loop (perimeter of a pocket)."
 					},
+					"confidence": {
+						"type": "string",
+						"enum": ["established", "estimated", "contested"]
+					},
 					"keyframes": {
 						"type": "array",
 						"minItems": 1,
