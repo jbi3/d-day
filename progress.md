@@ -6,15 +6,17 @@ place. Bottom section is an append-only dated log.
 
 ## Current state
 
-**Phase:** **MVP accepted by the user (2026-05-01).** All Phase 0
-foundations, the 1.V vertical slice, the 1.A dataset fan-out (6
-formations + events), the 1.B renderer fan-out (frontline, timeline
-pins, details, uncertainty), 2.1 (integration), 2.2 (source
-citations), 2.3 (qualitative perf pass), and 2.4 (MVP acceptance
-review) are now closed. Project pivots to **post-MVP** decisions —
-v1 scope (full Normandy, all beaches, German OOB), painted basemap,
-hosting, and the deferred mixed-granularity LOD work all become
-addressable per `brief.md` roadmap items 3–6.
+**Phase:** **MVP accepted (2026-05-01) — post-MVP plan committed
+(2026-05-01).** Le plan stratégique production est désormais sous
+contrôle de version dans `docs/production-plan.md` ; il sert de
+référence pour M1 (prod-grade MVP), M2 (v1 Normandie complète), M3
+(naval/air + extension D+1→D+6). Décisions structurantes prises avec
+l'utilisateur : (a) plan séquencé en trois jalons avec sign-off entre
+chacun, (b) hosting laissé ouvert dans le plan, à trancher à l'entrée
+M1, (c) **desktop-only assumé**, mobile bloqué proprement (pas de
+responsive bâclé). LOD multi-granularité reste deferred par décision
+explicite. Prochain pas concret : décisions §10 du plan (5 questions
+avant de démarrer M1).
 
 **Done**
 - `brief.md`, `README.md`, `CLAUDE.md`, `mvp-execution-plan.md`,
@@ -1124,3 +1126,44 @@ pas d'œil sur le DOM.
   committées sur `legend.svelte`, `timeline.svelte`,
   `+page.svelte`, `progress.md` — l'utilisateur tranchera commit
   / PR / merge à part).
+
+### 2026-05-01 — Plan stratégique post-MVP committé (`docs/production-plan.md`)
+- Trois audits Explore (architecture technique, données /
+  couverture historique, surface UX) menés en parallèle. Synthèse
+  inscrite dans le plan §2.
+- Plan rédigé en endossant trois rôles seniors (architecte, dev,
+  UX) à la demande de l'utilisateur. Structure : contexte → audit
+  synthèse → architecture cible (recommandations) → trois jalons
+  M1/M2/M3 → ce qu'on ne fait pas → risques → vérification →
+  décisions à prendre → fichiers critiques → règle de mise à jour.
+- **Décisions structurantes prises (loggées dans le plan §1) :**
+  - Plan séquencé en trois jalons (M1 prod-grade MVP, M2 v1
+    Normandie, M3 naval/air + D+6) avec point de décision entre
+    chacun. Pas d'engagement prématuré sur M3.
+  - Cible hosting **laissée ouverte** dans le plan : Cloudflare
+    Pages recommandé senior (cohérent `brief.md`, bandwidth
+    illimitée, edge), à comparer formellement avec Vercel /
+    Netlify / GitHub Pages à l'entrée M1. **Pas de lock tech
+    avant sign-off explicite** (per `CLAUDE.md` §"Tech stack").
+  - **Desktop-only** confirmé pour la prod : détecter mobile et
+    afficher un écran "use desktop", pas de responsive/tactile.
+    Élimine la dette `mousemove`-only de la timeline.
+- **Décisions deferred par choix explicite, pas par oubli :**
+  - LOD multi-granularité (regiment/battalion par zoom). `brief.md`
+    le flag comme ~½ de l'effort total — reste hors scope M1/M2/M3.
+  - Painted basemap au sens du brief — le rendu Natural Earth +
+    deck.gl actuel suffit jusqu'en M2.
+  - PMTiles / Protomaps — reportés à M2 ou M3 selon évolution.
+- **Cinq décisions à prendre avant de démarrer M1** (plan §10) :
+  hosting, mode SSG/SSR, sort de `rivers.ts` (wirer ou
+  supprimer), correctif unité fantôme `uk-6th-airborne`, scope
+  i18n FR-only vs FR+EN. Aucune ne bloque tant que M1 n'est pas
+  démarré ; toutes doivent être tranchées avant.
+- Plan vivant : §12 fixe les règles de mise à jour. Les jalons
+  clos seront annotés `[clos] Mn le 2026-XX-XX, voir progress.md`,
+  les risques §8 mis à jour quand ils se matérialisent ou se
+  closent, et les recommandations §3 invalidées par les faits du
+  terrain plutôt qu'écrasées silencieusement.
+- `progress.md` reste le journal chronologique (ce fichier) ;
+  `docs/production-plan.md` est l'horizon stratégique. Les deux
+  sont sources complémentaires, pas redondantes.
