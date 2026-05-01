@@ -21,9 +21,13 @@ choisir de cible ni déployer ; §10.2 SSG (`adapter-static` +
 `prerender = true`) ; §10.3 `rivers.ts` supprimé ; §10.4 unité
 `uk-6th-airborne` ajoutée (élargissement scope flanc Est UK
 assumé) ; §10.5 i18n FR-only en M1, pas de lib i18n.
-Prochain pas concret : démarrer M1 (lot 1 = adapter-static +
-prerender + structure CI locale ; lots 2–9 du plan §4.1
-exécutables en parallèle ou en séquence selon préférence).
+Décisions §10.1–5 packagées dans la PR #4
+(`claude/m1-decisions-001`, commit `837eb86`) — en attente de merge.
+Prochain pas concret : merge #4, puis démarrer M1 (lot 1 =
+adapter-static + prerender + structure CI locale ; lots 2–9 du
+plan §4.1 exécutables en parallèle ou en séquence selon
+préférence). M1 peut tourner en autonomie sans arbitrage
+utilisateur restant.
 
 **Done**
 - `brief.md`, `README.md`, `CLAUDE.md`, `mvp-execution-plan.md`,
@@ -1201,6 +1205,17 @@ pas d'œil sur le DOM.
   `uk-6th-airborne`, i18n).
 - Aucun code modifié dans ce tour. Modifs limitées à
   `docs/production-plan.md` §10.1 + §1 et `progress.md`.
+
+### 2026-05-01 — PR #4 ouverte : §10.1–5 packagées
+- Branche `claude/m1-decisions-001`, commit `837eb86`.
+- URL : https://github.com/jbi3/d-day/pull/4
+- Contenu : annotations plan §10 + §1, snapshot progress.md
+  réécrit + 5 entrées datées, `data/units/uk-6th-airborne.json`
+  créé, `apps/web/src/lib/layers/rivers.ts` supprimé.
+- État : tests 48/48, `pnpm --filter web check` clean.
+- Intention : checkpoint avant M1 pour figer les arbitrages
+  utilisateur. Une fois mergée, M1 lot 1 démarrable en
+  autonomie. Aucune décision §10.6–9 n'est requise avant M2/M3.
 
 ### 2026-05-01 — Décision §10.5 actée : i18n FR-only en M1
 - **Choix** : FR-only en M1, pas de lib i18n. Tous les strings UI
