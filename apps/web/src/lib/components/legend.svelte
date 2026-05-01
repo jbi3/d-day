@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { buildSvg, type AxisAffiliation } from '$lib/layers/unit-icons';
 
-	let open = $state(true);
+	let open = $state(false);
 
 	type Sample = {
 		side: 'allied' | 'axis';
@@ -26,11 +26,19 @@
 	}
 </script>
 
-<aside class="legend" class:collapsed={!open}>
-	<button class="toggle" type="button" onclick={() => (open = !open)}>
-		{open ? '−' : '+'} Legend
+{#if !open}
+	<button class="pill" type="button" onclick={() => (open = true)}>
+		<span class="pill-glyph" aria-hidden="true">▦</span>
+		<span>Légende</span>
 	</button>
-	{#if open}
+{:else}
+	<aside class="legend">
+		<button
+			class="close"
+			type="button"
+			aria-label="Close legend"
+			onclick={() => (open = false)}
+		>×</button>
 		<dl>
 			{#each samples as s (s.label)}
 				<dt><img class="icon" src={svgUri(s)} alt="" /></dt>
@@ -41,55 +49,76 @@
 			<dt><span class="swatch event-disputed"></span></dt>
 			<dd>Event with <code>disputedBy</code> entries</dd>
 			<dt><span class="swatch occupation"></span></dt>
-			<dd>German-occupied land (recedes as Allies advance; <code>harrison-1951</code>, <code>us-na-aar</code>)</dd>
+			<dd>German-occupied land (recedes as Allies advance)</dd>
 		</dl>
-		<p class="hint">
-			NATO frame: rectangle = friendly (contour blanc), diamond = hostile (contour
-			noir). Drapeau national en fond, glyph de branche (✕ infanterie / parachute
-			aéroportée) en filigrane, numéro de division par-dessus. SS = fond gris
-			feldgrau au lieu de la Hakenkreuzflagge.
-		</p>
-		<p class="hint">Click a marker for sources & disputed claims.</p>
-		<p class="hint">
-			<kbd>Space</kbd> play/pause · <kbd>←</kbd> <kbd>→</kbd> scrub
-			(<kbd>Shift</kbd>+arrow = ±1h) · <kbd>Home</kbd> reset · <kbd>Esc</kbd> close
-		</p>
-	{/if}
-</aside>
+	</aside>
+{/if}
 
 <style>
+	.pill {
+		position: absolute;
+		top: 1rem;
+		left: 1rem;
+		z-index: 10;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		background: rgba(20, 20, 20, 0.45);
+		color: #f5f5f5;
+		padding: 0.3rem 0.7rem;
+		border: 0;
+		border-radius: 999px;
+		backdrop-filter: blur(12px);
+		font-family: system-ui, sans-serif;
+		font-size: 0.72rem;
+		opacity: 0.85;
+		cursor: pointer;
+		transition: background 150ms ease, opacity 150ms ease;
+	}
+	.pill:hover {
+		background: rgba(20, 20, 20, 0.7);
+		opacity: 1;
+	}
+	.pill-glyph {
+		font-size: 0.85rem;
+		line-height: 1;
+	}
 	.legend {
 		position: absolute;
 		top: 1rem;
 		left: 1rem;
 		max-width: 18rem;
-		background: rgba(20, 20, 20, 0.9);
+		background: rgba(20, 20, 20, 0.65);
 		color: #f5f5f5;
-		padding: 0.6rem 0.85rem;
+		padding: 0.5rem 0.7rem 0.55rem 0.7rem;
 		border-radius: 6px;
-		backdrop-filter: blur(8px);
+		backdrop-filter: blur(12px);
 		font-family: system-ui, sans-serif;
 		font-size: 0.78rem;
-		line-height: 1.35;
+		line-height: 1.3;
 	}
-	.legend.collapsed {
-		padding: 0.4rem 0.6rem;
-	}
-	.toggle {
+	.close {
+		position: absolute;
+		top: 0.2rem;
+		right: 0.35rem;
 		background: transparent;
 		border: 0;
 		color: #f5f5f5;
-		font: inherit;
-		font-weight: 600;
+		font-size: 1.1rem;
+		line-height: 1;
+		padding: 0.1rem 0.35rem;
 		cursor: pointer;
-		padding: 0;
+		opacity: 0.7;
+	}
+	.close:hover {
+		opacity: 1;
 	}
 	dl {
 		display: grid;
 		grid-template-columns: 2rem 1fr;
 		row-gap: 0.4rem;
 		column-gap: 0.5rem;
-		margin: 0.5rem 0 0.4rem;
+		margin: 0.2rem 0 0;
 		align-items: center;
 	}
 	dt {
@@ -131,18 +160,5 @@
 	code {
 		font-size: 0.8em;
 		opacity: 0.9;
-	}
-	.hint {
-		margin: 0.35rem 0 0;
-		font-size: 0.72rem;
-		opacity: 0.7;
-	}
-	kbd {
-		display: inline-block;
-		padding: 0 0.3rem;
-		border-radius: 3px;
-		background: rgba(255, 255, 255, 0.12);
-		font-size: 0.7rem;
-		font-family: ui-monospace, monospace;
 	}
 </style>
