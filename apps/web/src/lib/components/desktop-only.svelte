@@ -26,8 +26,8 @@
 		<div class="card">
 			<h1>Cette carte est conçue pour un grand écran</h1>
 			<p>
-				L'expérience repose sur le survol, le scroll précis du temps et la lecture de
-				symboles fins. Reviens depuis un ordinateur (écran ≥ 1024 px, souris ou trackpad).
+				L'expérience repose sur le survol, le scroll précis du temps et la lecture de symboles fins.
+				Reviens depuis un ordinateur (écran ≥ 1024 px, souris ou trackpad).
 			</p>
 			<p class="hint">
 				Mobile et tactile sont volontairement non supportés pour ne pas dégrader la lecture

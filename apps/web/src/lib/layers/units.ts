@@ -1,8 +1,8 @@
-import { IconLayer } from '@deck.gl/layers';
-import type { Layer } from '@deck.gl/core';
-import type { Branch, Side } from '@d-day/schema';
-
 import { unitPositionAt, type UnitTrack } from '$lib/data-loader';
+import type { Branch, Side } from '@d-day/schema';
+import type { Layer } from '@deck.gl/core';
+import { IconLayer } from '@deck.gl/layers';
+
 import { unitIcon, type AxisAffiliation, type UnitIconSpec } from './unit-icons';
 
 interface BuildUnitLayersOptions {
@@ -60,8 +60,7 @@ export function buildUnitLayers({ tracks, isoTime, zoom }: BuildUnitLayersOption
 		const position = unitPositionAt(track, isoTime);
 		if (!position) continue;
 		const displayNumber = extractDivisionNumber(track.unit.shortName ?? track.unit.name);
-		const axisAffiliation: AxisAffiliation =
-			track.unit.axisAffiliation ?? 'wehrmacht';
+		const axisAffiliation: AxisAffiliation = track.unit.axisAffiliation ?? 'wehrmacht';
 		points.push({
 			id: track.unit.id,
 			side: track.unit.side,

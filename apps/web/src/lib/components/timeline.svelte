@@ -106,10 +106,19 @@
 
 <div class="hud" class:hidden={!visible}>
 	<div class="row">
-		<button class="play" onclick={() => time.toggle()} aria-label={time.playing ? 'Pause' : 'Lecture'}>
+		<button
+			class="play"
+			onclick={() => time.toggle()}
+			aria-label={time.playing ? 'Pause' : 'Lecture'}
+		>
 			{time.playing ? '❚❚' : '▶'}
 		</button>
-		<button class="secondary" onclick={() => time.reset()} title="Revenir à D-1 22:00" aria-label="Réinitialiser">
+		<button
+			class="secondary"
+			onclick={() => time.reset()}
+			title="Revenir à D-1 22:00"
+			aria-label="Réinitialiser"
+		>
 			↺
 		</button>
 		<span class="time">{formatSimTime(time.simHours)}</span>
@@ -123,7 +132,12 @@
 				<option value={4}>4×</option>
 			</select>
 		</label>
-		<button class="secondary copy" type="button" onclick={copyLink} aria-label="Copier le lien partageable">
+		<button
+			class="secondary copy"
+			type="button"
+			onclick={copyLink}
+			aria-label="Copier le lien partageable"
+		>
 			{copied ? '✓ Copié' : '⎘ Lien'}
 		</button>
 	</div>
@@ -151,7 +165,7 @@
 			{/each}
 		</div>
 		<div class="ticks" aria-hidden="true">
-			{#each ticks as t}
+			{#each ticks as t (t.hours)}
 				<span class="tick" style:left={pinLeft(t.hours)}>{t.label}</span>
 			{/each}
 		</div>
@@ -173,7 +187,9 @@
 		gap: 0.4rem;
 		backdrop-filter: blur(12px);
 		font-family: system-ui, sans-serif;
-		transition: opacity 250ms ease, transform 250ms ease;
+		transition:
+			opacity 250ms ease,
+			transform 250ms ease;
 	}
 	.hud.hidden {
 		opacity: 0;

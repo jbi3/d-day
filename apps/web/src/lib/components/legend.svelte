@@ -19,10 +19,36 @@
 	};
 
 	const samples: Sample[] = [
-		{ side: 'allied', branch: 'infantry', country: 'US', number: '29', label: "Division d'infanterie US (1st ID, 29th ID)" },
-		{ side: 'allied', branch: 'airborne', country: 'US', number: '82', label: 'Division aéroportée US (82nd, 101st)' },
-		{ side: 'axis', branch: 'infantry', country: 'DE', number: '352', axisAffiliation: 'wehrmacht', label: 'Division Wehrmacht (352. ID, 91./709.)' },
-		{ side: 'axis', branch: 'infantry', country: 'DE', number: 'SS', axisAffiliation: 'ss', label: 'Division Waffen-SS (gris feldgrau)' }
+		{
+			side: 'allied',
+			branch: 'infantry',
+			country: 'US',
+			number: '29',
+			label: "Division d'infanterie US (1st ID, 29th ID)"
+		},
+		{
+			side: 'allied',
+			branch: 'airborne',
+			country: 'US',
+			number: '82',
+			label: 'Division aéroportée US (82nd, 101st)'
+		},
+		{
+			side: 'axis',
+			branch: 'infantry',
+			country: 'DE',
+			number: '352',
+			axisAffiliation: 'wehrmacht',
+			label: 'Division Wehrmacht (352. ID, 91./709.)'
+		},
+		{
+			side: 'axis',
+			branch: 'infantry',
+			country: 'DE',
+			number: 'SS',
+			axisAffiliation: 'ss',
+			label: 'Division Waffen-SS (gris feldgrau)'
+		}
 	];
 
 	function svgUri(s: Sample): string {
@@ -46,8 +72,8 @@
 			class="close"
 			type="button"
 			aria-label="Fermer la légende"
-			onclick={() => (open = false)}
-		>×</button>
+			onclick={() => (open = false)}>×</button
+		>
 		<dl>
 			{#each samples as s (s.label)}
 				<dt><img class="icon" src={svgUri(s)} alt="" /></dt>
@@ -82,7 +108,9 @@
 		font-size: 0.72rem;
 		opacity: 0.85;
 		cursor: pointer;
-		transition: background 150ms ease, opacity 150ms ease;
+		transition:
+			background 150ms ease,
+			opacity 150ms ease;
 	}
 	.pill:hover {
 		background: rgba(20, 20, 20, 0.7);

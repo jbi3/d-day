@@ -1,5 +1,3 @@
-import Ajv, { type ValidateFunction } from 'ajv';
-import addFormats from 'ajv-formats';
 import {
 	unitSchema,
 	movementSchema,
@@ -13,6 +11,8 @@ import {
 	type FrontlineFile,
 	type FrontlineSegment
 } from '@d-day/schema';
+import Ajv, { type ValidateFunction } from 'ajv';
+import addFormats from 'ajv-formats';
 
 const ajv = new Ajv({ allErrors: true, strict: false });
 addFormats(ajv);
@@ -126,8 +126,7 @@ export function loadData(): LoadedData {
 	}
 	for (const e of events) {
 		for (const id of e.sources) assertKnown(id, knownIds, `event ${e.id}`);
-		for (const d of e.disputedBy ?? [])
-			assertKnown(d.source, knownIds, `event ${e.id} disputedBy`);
+		for (const d of e.disputedBy ?? []) assertKnown(d.source, knownIds, `event ${e.id} disputedBy`);
 	}
 
 	const frontlineSegments: FrontlineSegment[] = [];

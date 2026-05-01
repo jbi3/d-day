@@ -1,7 +1,6 @@
-import { TextLayer, ScatterplotLayer } from '@deck.gl/layers';
-import type { Layer } from '@deck.gl/core';
-
 import type { Position } from '@d-day/schema';
+import type { Layer } from '@deck.gl/core';
+import { TextLayer, ScatterplotLayer } from '@deck.gl/layers';
 
 type Kind = 'city' | 'water';
 type Tier = 'small' | 'medium' | 'large';

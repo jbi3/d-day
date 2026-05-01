@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { MapEvent, Source } from '@d-day/schema';
 	import type { UnitTrack } from '$lib/data-loader';
+	import type { MapEvent, Source } from '@d-day/schema';
 
 	export type Selection =
 		| { kind: 'unit'; track: UnitTrack }
@@ -27,7 +27,9 @@
 		}
 		// Focus the panel on open so Tab cycles inside; remember the prior
 		// focus to restore it when the panel closes.
-		previouslyFocused = (typeof document !== 'undefined' ? document.activeElement : null) as HTMLElement | null;
+		previouslyFocused = (
+			typeof document !== 'undefined' ? document.activeElement : null
+		) as HTMLElement | null;
 		queueMicrotask(() => panel?.focus());
 		return () => {
 			previouslyFocused?.focus?.();
@@ -132,11 +134,11 @@
 			{#if m.waypoints.some((w) => (w.disputedBy?.length ?? 0) > 0)}
 				<h3>Étapes contestées</h3>
 				<ul class="disputes">
-					{#each m.waypoints as w}
+					{#each m.waypoints as w (w.time)}
 						{#if (w.disputedBy?.length ?? 0) > 0}
 							<li>
 								<div class="dispute-time">{formatTime(w.time)}</div>
-								{#each w.disputedBy ?? [] as d}
+								{#each w.disputedBy ?? [] as d (d.source + d.claim)}
 									<div class="claim">
 										<code>{d.source}</code> : {d.claim}
 									</div>
@@ -193,7 +195,7 @@
 			{#if (e.disputedBy?.length ?? 0) > 0}
 				<h3>Faits contestés</h3>
 				<ul class="disputes">
-					{#each e.disputedBy ?? [] as d}
+					{#each e.disputedBy ?? [] as d (d.source + d.claim)}
 						<li class="claim"><code>{d.source}</code> : {d.claim}</li>
 					{/each}
 				</ul>

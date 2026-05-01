@@ -1,23 +1,22 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import maplibregl from 'maplibre-gl';
-	import 'maplibre-gl/dist/maplibre-gl.css';
-	import { MapboxOverlay } from '@deck.gl/mapbox';
-
-	import { TimeStore } from '$lib/time-store.svelte';
-	import { loadData, unitPositionAt, type LoadedData } from '$lib/data-loader';
-	import { buildUnitLayers } from '$lib/layers/units';
-	import { buildEventLayers } from '$lib/layers/events';
-	import { buildTrailLayers } from '$lib/layers/trails';
-	import { buildFrontlineLayers } from '$lib/layers/frontline';
-	import { buildBasemapLayers } from '$lib/layers/basemap';
-	import { buildToponymLayers } from '$lib/layers/toponyms';
-	import { buildBeachLayers } from '$lib/layers/beaches';
-	import { buildRoadLayers } from '$lib/layers/roads';
-	import Timeline from '$lib/components/timeline.svelte';
-	import Details, { type Selection } from '$lib/components/details.svelte';
-	import Legend from '$lib/components/legend.svelte';
 	import DesktopOnly from '$lib/components/desktop-only.svelte';
+	import Details, { type Selection } from '$lib/components/details.svelte';
+	import 'maplibre-gl/dist/maplibre-gl.css';
+	import Legend from '$lib/components/legend.svelte';
+	import Timeline from '$lib/components/timeline.svelte';
+	import { loadData, unitPositionAt, type LoadedData } from '$lib/data-loader';
+	import { buildBasemapLayers } from '$lib/layers/basemap';
+	import { buildBeachLayers } from '$lib/layers/beaches';
+	import { buildEventLayers } from '$lib/layers/events';
+	import { buildFrontlineLayers } from '$lib/layers/frontline';
+	import { buildRoadLayers } from '$lib/layers/roads';
+	import { buildToponymLayers } from '$lib/layers/toponyms';
+	import { buildTrailLayers } from '$lib/layers/trails';
+	import { buildUnitLayers } from '$lib/layers/units';
+	import { TimeStore } from '$lib/time-store.svelte';
+	import { MapboxOverlay } from '@deck.gl/mapbox';
+	import maplibregl from 'maplibre-gl';
+	import { onMount } from 'svelte';
 
 	const loadResult: { data: LoadedData | null; error: Error | null } = (() => {
 		try {
@@ -86,7 +85,10 @@
 
 	function onKeydown(e: KeyboardEvent) {
 		const target = e.target as HTMLElement | null;
-		if (target && (target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.isContentEditable)) {
+		if (
+			target &&
+			(target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.isContentEditable)
+		) {
 			return;
 		}
 		if (e.key === ' ') {
@@ -119,9 +121,7 @@
 		const blankStyle: maplibregl.StyleSpecification = {
 			version: 8,
 			sources: {},
-			layers: [
-				{ id: 'sea', type: 'background', paint: { 'background-color': '#c8d6dd' } }
-			]
+			layers: [{ id: 'sea', type: 'background', paint: { 'background-color': '#c8d6dd' } }]
 		};
 
 		map = new maplibregl.Map({
@@ -260,12 +260,7 @@
 			onClose={() => (selection = null)}
 		/>
 
-		<Timeline
-			{time}
-			{simStartEpoch}
-			events={data.events}
-			{formatSimTime}
-		/>
+		<Timeline {time} {simStartEpoch} events={data.events} {formatSimTime} />
 	</div>
 {/if}
 

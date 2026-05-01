@@ -1,6 +1,6 @@
-import { ScatterplotLayer } from '@deck.gl/layers';
-import type { Layer } from '@deck.gl/core';
 import type { MapEvent } from '@d-day/schema';
+import type { Layer } from '@deck.gl/core';
+import { ScatterplotLayer } from '@deck.gl/layers';
 
 interface BuildEventLayerOptions {
 	events: MapEvent[];
@@ -79,10 +79,7 @@ export function buildEventLayers({
 			radiusUnits: 'meters',
 			radiusMinPixels: 3,
 			radiusMaxPixels: 14,
-			getFillColor: (d) =>
-				d.disputed
-					? [240, 130, 70, d.alpha]
-					: [240, 200, 30, d.alpha],
+			getFillColor: (d) => (d.disputed ? [240, 130, 70, d.alpha] : [240, 200, 30, d.alpha]),
 			stroked: true,
 			getLineColor: (d) => [20, 20, 20, Math.min(220, d.alpha)],
 			lineWidthUnits: 'pixels',

@@ -21,7 +21,10 @@ export default defineConfig({
 					groups: [
 						{ name: 'maplibre', test: /[\\/]node_modules[\\/].*maplibre-gl[\\/]/ },
 						{ name: 'deck', test: /[\\/]node_modules[\\/].*@deck\.gl[\\/]/ },
-						{ name: 'geo', test: /[\\/]node_modules[\\/].*(polygon-clipping|topojson-client|world-atlas)[\\/]/ }
+						{
+							name: 'geo',
+							test: /[\\/]node_modules[\\/].*(polygon-clipping|topojson-client|world-atlas)[\\/]/
+						}
 					]
 				}
 			}

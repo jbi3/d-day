@@ -184,7 +184,12 @@ function spec(id: string, svg: string, w: number, h: number): FlagSpec {
 
 export const US_1944: FlagSpec = spec('flag-us-1944', buildUS1944(), 50, 26);
 export const UK: FlagSpec = spec('flag-uk', buildUK(), 60, 30);
-export const CA_RED_ENSIGN_1944: FlagSpec = spec('flag-ca-red-ensign-1944', buildCARedEnsign1944(), 60, 30);
+export const CA_RED_ENSIGN_1944: FlagSpec = spec(
+	'flag-ca-red-ensign-1944',
+	buildCARedEnsign1944(),
+	60,
+	30
+);
 export const CA_MAPLE_LEAF: FlagSpec = spec('flag-ca-maple-leaf', buildCAMapleLeaf(), 60, 30);
 export const FR_FREE_FRANCE_1944: FlagSpec = spec(
 	'flag-fr-free-france-1944',
