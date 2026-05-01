@@ -83,7 +83,7 @@ function toRing(points: Position[]): PCRing {
 	return points.map(([x, y]) => [x, y] as [number, number]);
 }
 
-function interpolatePath(
+export function interpolatePath(
 	keyframes: { time: string; path: Position[] }[],
 	currentEpoch: number
 ): Position[] {
@@ -112,7 +112,7 @@ function interpolatePath(
 }
 
 /** Chaikin's corner-cutting algorithm on a closed polygon. */
-function chaikin(points: Position[], iterations: number): Position[] {
+export function chaikin(points: Position[], iterations: number): Position[] {
 	let curr = points;
 	for (let it = 0; it < iterations; it++) {
 		const n = curr.length;

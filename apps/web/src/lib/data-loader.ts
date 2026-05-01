@@ -247,8 +247,15 @@ function assertKnown(id: string, known: Set<string>, ctx: string): void {
 	}
 }
 
-export function unitPositionAt(track: UnitTrack, isoTime: string): [number, number] | null {
-	const { waypoints } = track.movement;
+export interface TimedWaypoint {
+	time: string;
+	position: [number, number];
+}
+
+export function interpolateWaypointsAt(
+	waypoints: TimedWaypoint[],
+	isoTime: string
+): [number, number] | null {
 	if (waypoints.length === 0) return null;
 	const t = Date.parse(isoTime);
 	if (Number.isNaN(t)) return null;
@@ -270,4 +277,8 @@ export function unitPositionAt(track: UnitTrack, isoTime: string): [number, numb
 		}
 	}
 	return null;
+}
+
+export function unitPositionAt(track: UnitTrack, isoTime: string): [number, number] | null {
+	return interpolateWaypointsAt(track.movement.waypoints, isoTime);
 }
