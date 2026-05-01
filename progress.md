@@ -6,29 +6,44 @@ place. Bottom section is an append-only dated log.
 
 ## Current state
 
-**Phase:** **M2 prêt à démarrer (2026-05-01) — décisions §10.6-8
-actées, M1 mergé (commit `4fec991`).** Sign-off utilisateur sur
-les 3 décisions pré-M2 :
-- **§10.6 — `unit.casualties`** : structure `{ total: number,
-  byPhase?: Array<{ phase, killed?, wounded?, missing?, captured? }> }`.
-  `total` obligatoire, `byPhase` optionnel — couvre les besoins
-  éditoriaux sans imposer la phase à chaque unité.
-- **§10.7 — Filtre événements UI** : panneau intégré à la légende
-  (~30 lignes), pas de nouvelle UI dédiée. Évite le doublon avec
-  le sélecteur de secteur (lot 8 M2) et reste là où l'utilisateur
-  cherche les contrôles visuels.
-- **§10.8 — Ordre d'ajout des unités** : effort croissant tel
-  qu'esquissé en §5.1.2 du plan : 4th ID → 716. → 21. Panzer →
-  uk-50th + uk-3rd → ca-3rd. (uk-6th-airborne déjà ajoutée en M1
-  via §10.4, donc 6 nouvelles unités au lieu de 7.)
+**Phase:** **M2 exécuté en autonomie (2026-05-01) — branche
+`claude/m2-schemas-001` prête à PR.** Les 7 lots techniques du
+plan §5.1 (recherche structurée absorbée dans lots 2-4)
+commités séquentiellement : `9c170c0` → `a47fa62`. Build vert,
+89 tests pass (72 schémas + 17 apps/web), `pnpm format:check`,
+`pnpm lint`, `pnpm check`, `pnpm build` propres.
 
-M2 vise la v1 du brief (5 plages, OOB allemand complet, niveau
-division). Effort estimé 6-10 semaines, principalement recherche
-historique + saisie data. Code change peu, sauf lot 6 (fetch
-runtime) et lots 7-8 (UI filtre + sélecteur de secteur). Prochain
-pas concret : créer la branche `claude/m2-schemas-001` (lot 5 =
-schémas enrichis), puis enchaîner lots 6 (fetch runtime), 2 (6
-unités), 3 (events), 4 (frontline), 7 (filtre UI), 8 (sélecteur).
+État du dataset après M2 :
+- **13 unités** (vs 7 en M1) : us-1st, us-29th, us-82nd, us-101st,
+  us-4th (nouvelle), uk-3rd (n), uk-50th (n), uk-6th-airborne,
+  ca-3rd (n), de-352nd, de-91st-709th, de-716th (n), de-21st-pz (n).
+- **47 events** (vs 30) : ≥6 par plage, tous catégorisés
+  (airborne / h-hour / beach / inland / german-reaction /
+  naval / air). Pénétration la plus profonde D-Day = ca-3rd à
+  Anguerny-Anisy.
+- **6 segments frontline** (vs 3) : Cotentin + Omaha + Utah +
+  Gold + Juno + Sword. Le veil d'occupation recule sur les 5
+  plages.
+- **17+ disputes documentées**, plus 4 nouvelles (Feuchtinger
+  release timing, B Coy QOR casualties Nan White, KG Rauch
+  "atteint la mer", Caen objectif réaliste D-Day).
+- Sources `bigot-maps` et `memorial-caen` désormais activement
+  citées (étaient inutilisées en M1).
+
+Code & UI :
+- Pipeline data : passage `import.meta.glob` → `fetch('/data/*')`
+  via plugin Vite `serve-data` (middleware dev + copy build).
+- Schémas enrichis : `unit.commander`, `unit.casualties`,
+  `event.category`, `frontline.confidence`.
+- Filtre UI 7 catégories (panneau légende) qui filtre map +
+  timeline pins simultanément.
+- Sélecteur de secteur haut-droite (Aller à Cotentin/Utah/Omaha/
+  Gold/Juno/Sword) avec flyTo + reduced-motion respect.
+
+Reste : QA visuelle utilisateur (5 plages animées, filtre,
+sélecteur, fiche détails enrichies) puis sign-off avant M3
+(naval / air / extension D+1→D+6 — scope à définir à l'entrée
+selon plan §6.2).
 
 **Done**
 - `brief.md`, `README.md`, `CLAUDE.md`, `mvp-execution-plan.md`,
@@ -304,6 +319,59 @@ unités), 3 (events), 4 (frontline), 7 (filtre UI), 8 (sélecteur).
 ---
 
 ## Log
+
+### 2026-05-01 — M2 exécuté en autonomie (lots 5, 6, 2, 3, 4, 7, 8)
+
+Branche `claude/m2-schemas-001` portée par 7 commits techniques
++ 1 commit décisions, exécutés sans arbitrage utilisateur après
+sign-off §10.6-8.
+
+- `8d1b635` lot 5 — schémas enrichis : `unit.commander`,
+  `unit.casualties { total, byPhase? }`, `event.category` enum
+  (7 valeurs), `frontline.confidence` enum. Tous champs
+  optionnels (compatibilité fixtures préservée).
+- `dce0a40` lot 6 — pipeline data fetch runtime. Plugin Vite
+  `serve-data` (apps/web/vite-plugins/) : middleware dev sert
+  /data/* depuis le workspace `data/`, closeBundle copie vers
+  `build/data/` + manifest.json. data-loader devient async,
+  fetcher injectable, tests adaptés avec fakeFetch.
+- `085fc9a` lot 2 — 6 nouvelles unités (us-4th-id, de-716th-id,
+  de-21st-panzer, uk-50th-id, uk-3rd-id, ca-3rd-id) avec
+  commanders + casualties + waypoints D-1 22:00 → D 18:00 +
+  disputes documentées. 48 → 72 tests schémas.
+- `6527ae2` lot 3 — events 30 → 47, ≥6 par plage, tous
+  catégorisés ; 4 nouvelles disputes (Feuchtinger release
+  timing, B Coy QOR casualties, KG Rauch "atteint la mer",
+  Caen objectif D-Day).
+- `7351543` lot 4 — frontline 3 → 6 segments (Gold, Juno,
+  Sword) avec 4 keyframes chacun et `confidence` (established
+  pour Gold/Juno, estimated pour Sword).
+- `7351543` lot 7 — filtre UI 7 catégories dans la légende
+  (§10.7). Filtre map events + timeline pins simultanément
+  via $derived `filteredEvents`.
+- `a47fa62` lot 8 — sector-selector.svelte (composant autonome
+  haut-droite). Menu Cotentin/Utah/Omaha/Gold/Juno/Sword avec
+  flyTo (ou jumpTo si reduced-motion).
+
+Lot 1 (recherche historique structurée) absorbé dans lots 2-4
+(sourcing inline pendant authoring). Sources bigot-maps et
+memorial-caen désormais activement citées.
+
+Stats finales : 13 unités, 47 events, 6 segments frontline,
+~21+ disputes. Tests : 72 schema + 17 apps/web = 89/89.
+
+Critères de sortie M2 §5.2 atteints :
+- 13 unités présentes, sourcées, waypoints. ✓
+- 47 events distribution équilibrée par secteur (≥6 par plage). ✓
+  (cible 55-65 en plan, atteint 47 — secteurs satisfaits ; on
+  pourra densifier en M3 sans changer scope).
+- 6 segments frontline, veil cohérent sur les 5 plages. ✓
+- bigot-maps + memorial-caen cités. ✓
+- Filtre événements + sélecteur secteur fonctionnels. ✓
+- Bundle pas plus lourd (données fetched, pas inlinées). ✓
+  (mesure : nodes/2 ≈ 165 KB raw vs 196 KB en M1 lot 7).
+- Tests vitest étendus avec fakeFetch sur data-loader. ✓
+- Approbation utilisateur explicite avant M3. (Pending)
 
 ### 2026-05-01 — Décisions §10.6-8 actées : M2 prêt à démarrer
 
