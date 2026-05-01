@@ -4,6 +4,8 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import Legend from '$lib/components/legend.svelte';
 	import Timeline from '$lib/components/timeline.svelte';
+	import type { EventCategory } from '@d-day/schema';
+
 	import { loadData, unitPositionAt, type LoadedData } from '$lib/data-loader';
 	import { buildBasemapLayers } from '$lib/layers/basemap';
 	import { buildBeachLayers } from '$lib/layers/beaches';
@@ -20,6 +22,25 @@
 
 	let data = $state<LoadedData | null>(null);
 	let dataError = $state<Error | null>(null);
+
+	let categoryFilter = $state<Record<EventCategory, boolean>>({
+		airborne: true,
+		'h-hour': true,
+		beach: true,
+		inland: true,
+		'german-reaction': true,
+		naval: true,
+		air: true
+	});
+
+	function toggleCategory(cat: EventCategory) {
+		categoryFilter = { ...categoryFilter, [cat]: !categoryFilter[cat] };
+	}
+
+	const filteredEvents = $derived.by(() => {
+		if (!data) return [];
+		return data.events.filter((e) => !e.category || categoryFilter[e.category]);
+	});
 
 	const simStartIso = '1944-06-05T22:00:00Z';
 	const simStartEpoch = Date.parse(simStartIso);
@@ -224,7 +245,7 @@
 				...buildToponymLayers({ zoom }),
 				...buildBeachLayers({ zoom }),
 				...buildTrailLayers({ tracks: data.units, isoTime: currentIso }),
-				...buildEventLayers({ events: data.events, currentEpoch }),
+				...buildEventLayers({ events: filteredEvents, currentEpoch }),
 				...buildUnitLayers({ tracks: data.units, isoTime: currentIso, zoom })
 			]
 		});
@@ -263,7 +284,7 @@
 	<div class="map-wrap">
 		<div bind:this={mapContainer} class="map"></div>
 
-		<Legend />
+		<Legend {categoryFilter} onCategoryToggle={toggleCategory} />
 
 		{#if data}
 			<Details
@@ -274,7 +295,7 @@
 				onClose={() => (selection = null)}
 			/>
 
-			<Timeline {time} {simStartEpoch} events={data.events} {formatSimTime} />
+			<Timeline {time} {simStartEpoch} events={filteredEvents} {formatSimTime} />
 		{:else}
 			<div class="loading" role="status" aria-live="polite">
 				<div class="loading-card">Chargement des données…</div>
