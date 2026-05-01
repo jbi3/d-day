@@ -6,23 +6,21 @@ place. Bottom section is an append-only dated log.
 
 ## Current state
 
-**Phase:** **M1 exécuté en autonomie (2026-05-01) — branche
-`claude/m1-adapter-static-001` prête à PR.** Les 9 lots du plan
-§4.1 sont commités séquentiellement sur cette branche
-(`7ad837c` → `fa6bd60`). Le build statique est servable en local
-proprement, conformément au critère §10.1 (hosting toujours
-deferred — pas de déploiement public ni d'OG image générée à
-ce stade). 64/64 tests passent (48 schémas + 16 apps/web),
-`pnpm format:check`, `pnpm lint`, `pnpm check` et `pnpm build`
-sont verts. Reste pour clore M1 : (a) approbation utilisateur
-visuelle (Chrome/Firefox/Safari récents — desktop-only assumé),
-(b) test manuel de l'écran de blocage mobile (resize <1024 px),
-(c) test erreur simulée (corrompre `data/events/d-day.json`
-localement → vérifier que l'error boundary FR s'affiche).
-Lighthouse, OG preview et URL publique sont reportés au jour du
-déploiement (post-décision §10.1). Une fois M1 mergé sur main,
-sign-off utilisateur explicite avant de démarrer M2 (audit §5
-du plan stratégique).
+**Phase:** **M1 mergé sur main (2026-05-01) — PR #5 close, merge
+commit `4fec991`.** Les 9 lots du plan §4.1 ont été exécutés en
+autonomie sur `claude/m1-adapter-static-001`, le CI Actions a
+tourné vert sur la PR, le merge est fait. Build statique
+servable en local proprement, conformément à §10.1 (hosting
+toujours deferred). 64/64 tests passent (48 schémas + 16
+apps/web), `pnpm format:check`, `pnpm lint`, `pnpm check` et
+`pnpm build` sont verts. QA visuelle desktop / mobile / erreur
+simulée à l'appréciation de l'utilisateur sans bloquer le merge.
+Lighthouse, OG preview et URL publique restent reportés au jour
+du déploiement (post-décision §10.1). M1 est clos côté code ;
+prochain pas = sign-off explicite utilisateur avant de démarrer
+M2 (audit §5 du plan stratégique : 7 nouvelles unités UK/CA/DE,
+events ~30 → 55-65, frontline 5 plages, schémas enrichis,
+fetch-runtime des données).
 
 **Done**
 - `brief.md`, `README.md`, `CLAUDE.md`, `mvp-execution-plan.md`,
@@ -298,6 +296,20 @@ du plan stratégique).
 ---
 
 ## Log
+
+### 2026-05-01 — PR #5 mergée : M1 sur main
+
+- Branche `claude/m1-adapter-static-001` (10 commits, `7ad837c` →
+  `c1fffa0`) mergée via `gh pr merge 5 --merge`.
+- Merge commit `4fec991` sur `main`.
+- CI Actions sur la PR : 1 job `ci` (format:check + lint + check
+  + test + build) passé en ~36 s.
+- M1 clos côté code. QA visuelle utilisateur reste à faire mais
+  ne bloque plus le merge — décision prise de pousser maintenant.
+- Pas de blocker pour démarrer M2, sous réserve de sign-off
+  explicite utilisateur (cf. plan §10.6-9 : décisions
+  granularité casualties, UI filtre événements, ordre d'ajout
+  des unités, scope M3).
 
 ### 2026-05-01 — M1 exécuté en autonomie (lots 1→9)
 
