@@ -17,6 +17,49 @@
 
 	const { selection, sourceById, unitById, onSelect, onClose }: Props = $props();
 
+	let panel: HTMLElement | undefined = $state();
+	let previouslyFocused: HTMLElement | null = null;
+
+	$effect(() => {
+		if (!selection) {
+			previouslyFocused = null;
+			return;
+		}
+		// Focus the panel on open so Tab cycles inside; remember the prior
+		// focus to restore it when the panel closes.
+		previouslyFocused = (typeof document !== 'undefined' ? document.activeElement : null) as HTMLElement | null;
+		queueMicrotask(() => panel?.focus());
+		return () => {
+			previouslyFocused?.focus?.();
+		};
+	});
+
+	function focusable(): HTMLElement[] {
+		if (!panel) return [];
+		return Array.from(
+			panel.querySelectorAll<HTMLElement>(
+				'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+			)
+		);
+	}
+
+	function onWindowKeydown(e: KeyboardEvent) {
+		if (e.key !== 'Tab' || !panel) return;
+		const active = document.activeElement as HTMLElement | null;
+		if (!active || !panel.contains(active)) return;
+		const items = focusable();
+		if (items.length === 0) return;
+		const first = items[0];
+		const last = items[items.length - 1];
+		if (e.shiftKey && (active === first || active === panel)) {
+			e.preventDefault();
+			last.focus();
+		} else if (!e.shiftKey && active === last) {
+			e.preventDefault();
+			first.focus();
+		}
+	}
+
 	function selectUnit(id: string) {
 		const track = unitById.get(id);
 		if (track) onSelect({ kind: 'unit', track });
@@ -49,8 +92,10 @@
 	}
 </script>
 
+<svelte:window onkeydown={onWindowKeydown} />
+
 {#if selection}
-	<aside class="details">
+	<aside class="details" bind:this={panel} tabindex="-1" aria-label="Fiche de détail">
 		<button class="close" type="button" onclick={onClose} aria-label="Fermer">×</button>
 
 		{#if selection.kind === 'unit'}
@@ -199,7 +244,7 @@
 		font-size: 0.85rem;
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
-		opacity: 0.7;
+		opacity: 0.85;
 	}
 	dl {
 		display: grid;
@@ -209,7 +254,7 @@
 		margin: 0.5rem 0;
 	}
 	dt {
-		opacity: 0.65;
+		opacity: 0.85;
 	}
 	dd {
 		margin: 0;
@@ -222,7 +267,7 @@
 	}
 	.event-time {
 		font-variant-numeric: tabular-nums;
-		opacity: 0.75;
+		opacity: 0.9;
 		margin-bottom: 0.5rem;
 	}
 	p {
@@ -246,14 +291,14 @@
 	.disputes code {
 		display: inline-block;
 		font-size: 0.78rem;
-		opacity: 0.7;
+		opacity: 0.85;
 		margin-right: 0.4rem;
 	}
 	.title {
 		font-weight: 500;
 	}
 	.author {
-		opacity: 0.7;
+		opacity: 0.85;
 		margin-left: 0.25rem;
 	}
 	.disputes li {
@@ -265,7 +310,7 @@
 	}
 	.dispute-time {
 		font-variant-numeric: tabular-nums;
-		opacity: 0.65;
+		opacity: 0.85;
 		font-size: 0.82rem;
 		margin-bottom: 0.2rem;
 	}
@@ -300,11 +345,17 @@
 		border-left: 3px solid #e87a7a;
 	}
 	.unit-link.missing {
-		opacity: 0.55;
+		opacity: 0.75;
 		font-size: 0.78rem;
 		padding: 0.25rem 0.5rem;
 	}
 	.unit-link.missing span {
-		opacity: 0.7;
+		opacity: 0.85;
+	}
+	.details:focus-visible,
+	.close:focus-visible,
+	.unit-link:focus-visible {
+		outline: 2px solid #5ec3ff;
+		outline-offset: 2px;
 	}
 </style>

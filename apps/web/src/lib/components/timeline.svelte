@@ -38,6 +38,16 @@
 	const HIDE_DELAY_MS = 2500;
 	let visible = $state(true);
 	let hideTimer: ReturnType<typeof setTimeout> | null = null;
+	let reduceMotion = $state(false);
+
+	$effect(() => {
+		if (typeof window === 'undefined' || !window.matchMedia) return;
+		const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+		reduceMotion = mq.matches;
+		const onChange = (e: MediaQueryListEvent) => (reduceMotion = e.matches);
+		mq.addEventListener('change', onChange);
+		return () => mq.removeEventListener('change', onChange);
+	});
 
 	function clearHideTimer() {
 		if (hideTimer !== null) {
@@ -55,6 +65,11 @@
 	}
 
 	$effect(() => {
+		if (reduceMotion) {
+			clearHideTimer();
+			visible = true;
+			return;
+		}
 		if (time.playing) {
 			visible = true;
 			armHideTimer();
@@ -65,6 +80,7 @@
 	});
 
 	function onWindowMouseMove() {
+		if (reduceMotion) return;
 		if (!time.playing) return;
 		visible = true;
 		armHideTimer();
@@ -238,8 +254,23 @@
 		top: 0;
 		transform: translateX(-50%);
 		font-size: 0.68rem;
-		opacity: 0.45;
+		opacity: 0.7;
 		font-variant-numeric: tabular-nums;
 		white-space: nowrap;
+	}
+	button:focus-visible,
+	.scrub:focus-visible,
+	.speed select:focus-visible {
+		outline: 2px solid #5ec3ff;
+		outline-offset: 2px;
+	}
+	.pin:focus-visible {
+		outline: 2px solid #5ec3ff;
+		outline-offset: 1px;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.hud {
+			transition: none;
+		}
 	}
 </style>

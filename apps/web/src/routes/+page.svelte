@@ -188,7 +188,15 @@
 			center = unitPositionAt(selection.track, currentIso);
 		}
 		if (center) {
-			map.flyTo({ center, zoom: Math.max(map.getZoom(), 10), duration: 800 });
+			const reduceMotion =
+				typeof window !== 'undefined' &&
+				window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+			const targetZoom = Math.max(map.getZoom(), 10);
+			if (reduceMotion) {
+				map.jumpTo({ center, zoom: targetZoom });
+			} else {
+				map.flyTo({ center, zoom: targetZoom, duration: 800 });
+			}
 		}
 	});
 

@@ -3,6 +3,12 @@
 
 	let open = $state(false);
 
+	function onWindowKeydown(e: KeyboardEvent) {
+		if (e.key === 'Escape' && open) {
+			open = false;
+		}
+	}
+
 	type Sample = {
 		side: 'allied' | 'axis';
 		branch: 'infantry' | 'airborne';
@@ -25,6 +31,8 @@
 		)}`;
 	}
 </script>
+
+<svelte:window onkeydown={onWindowKeydown} />
 
 {#if !open}
 	<button class="pill" type="button" onclick={() => (open = true)}>
@@ -168,5 +176,11 @@
 		border-radius: 2px;
 		width: 1rem;
 		height: 0.7rem;
+	}
+	.pill:focus-visible,
+	.close:focus-visible {
+		outline: 2px solid #5ec3ff;
+		outline-offset: 2px;
+		opacity: 1;
 	}
 </style>
