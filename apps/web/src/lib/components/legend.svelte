@@ -2,13 +2,16 @@
 	import type { EventCategory } from '@d-day/schema';
 
 	import { buildSvg, type AxisAffiliation } from '$lib/layers/unit-icons';
+	import { vesselIconUri } from '$lib/layers/vessel-icons';
 
 	interface Props {
 		categoryFilter: Record<EventCategory, boolean>;
 		onCategoryToggle: (cat: EventCategory) => void;
+		navalVisible: boolean;
+		onNavalToggle: () => void;
 	}
 
-	const { categoryFilter, onCategoryToggle }: Props = $props();
+	const { categoryFilter, onCategoryToggle, navalVisible, onNavalToggle }: Props = $props();
 
 	let open = $state(false);
 
@@ -98,6 +101,10 @@
 				<dt><img class="icon" src={svgUri(s)} alt="" /></dt>
 				<dd>{s.label}</dd>
 			{/each}
+			<dt>
+				<img class="icon vessel" src={vesselIconUri('battleship', 'US')} alt="" />
+			</dt>
+			<dd>Navire bombardier (cuirassé / croiseur / monitor)</dd>
 			<dt><span class="swatch event"></span></dt>
 			<dd>Événement — apparaît à son heure, s'estompe en ~1 h</dd>
 			<dt><span class="swatch event-disputed"></span></dt>
@@ -105,6 +112,13 @@
 			<dt><span class="swatch occupation"></span></dt>
 			<dd>Territoire occupé par l'Axe (recule à mesure de l'avance alliée)</dd>
 		</dl>
+
+		<div class="layer-toggles">
+			<label>
+				<input type="checkbox" checked={navalVisible} onchange={onNavalToggle} />
+				<span>Afficher la flotte alliée</span>
+			</label>
+		</div>
 
 		<fieldset class="filter">
 			<legend>Filtrer les événements</legend>
@@ -215,6 +229,28 @@
 		width: 1.9rem;
 		height: 1.9rem;
 		display: block;
+	}
+	.icon.vessel {
+		height: 1rem;
+		width: 2rem;
+	}
+	.layer-toggles {
+		margin: 0.6rem -0.2rem 0;
+		padding: 0.5rem 0.4rem 0;
+		border-top: 1px solid rgba(255, 255, 255, 0.12);
+	}
+	.layer-toggles label {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 0.78rem;
+		cursor: pointer;
+	}
+	.layer-toggles input[type='checkbox'] {
+		margin: 0;
+		width: 0.85rem;
+		height: 0.85rem;
+		accent-color: #5ec3ff;
 	}
 	.swatch {
 		display: inline-block;

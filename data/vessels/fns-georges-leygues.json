@@ -1,0 +1,35 @@
+{
+	"$schema": "../../packages/data/schema/vessel.schema.json",
+	"vessel": {
+		"id": "fns-georges-leygues",
+		"name": "FNS Georges Leygues",
+		"country": "FR",
+		"kind": "light-cruiser",
+		"force": "O",
+		"displacement": 7600,
+		"sources": ["roskill-1961", "memorial-caen"]
+	},
+	"track": {
+		"vesselId": "fns-georges-leygues",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.85, 49.515],
+				"sources": ["roskill-1961"],
+				"note": "Free French Naval Forces ; on station with Montcalm off Omaha."
+			},
+			{
+				"time": "1944-06-06T05:50:00Z",
+				"position": [-0.85, 49.505],
+				"sources": ["roskill-1961"],
+				"note": "Opens fire 06:50 on Longues-sur-Mer coastal battery and Pointe-du-Hoc area."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.85, 49.505],
+				"sources": ["roskill-1961", "memorial-caen"],
+				"note": "Continues call-fire support."
+			}
+		]
+	}
+}

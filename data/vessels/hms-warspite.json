@@ -1,0 +1,40 @@
+{
+	"$schema": "../../packages/data/schema/vessel.schema.json",
+	"vessel": {
+		"id": "hms-warspite",
+		"name": "HMS Warspite",
+		"country": "UK",
+		"kind": "battleship",
+		"force": "S",
+		"pennantNumber": "03",
+		"displacement": 33410,
+		"commander": {
+			"name": "Maitland W. S. Boucher",
+			"rank": "Captain"
+		},
+		"sources": ["roskill-1961", "iwm-archives"]
+	},
+	"track": {
+		"vesselId": "hms-warspite",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.3, 49.45],
+				"sources": ["roskill-1961"],
+				"note": "Bombarding Force D, Sword sector. Veteran of Jutland (1916), Cape Matapan, Salerno."
+			},
+			{
+				"time": "1944-06-06T05:30:00Z",
+				"position": [-0.3, 49.43],
+				"sources": ["roskill-1961", "iwm-archives"],
+				"note": "Opens 15-inch fire on the Villerville battery and other coastal heavy guns east of the Orne mouth."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.3, 49.43],
+				"sources": ["roskill-1961"],
+				"note": "Continues call-fire support ; engages targets of opportunity inland through the afternoon."
+			}
+		]
+	}
+}

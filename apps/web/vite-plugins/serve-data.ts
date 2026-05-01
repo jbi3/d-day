@@ -17,21 +17,24 @@ function* walk(dir: string): Generator<string> {
 
 interface Manifest {
 	units: string[];
+	vessels: string[];
 	events: string[];
 	sources: string;
 	frontline: string;
 }
 
+function listJson(dir: string): string[] {
+	if (!existsSync(dir)) return [];
+	return readdirSync(dir)
+		.filter((f) => f.endsWith('.json'))
+		.sort();
+}
+
 function buildManifest(): Manifest {
-	const units = readdirSync(join(dataRoot, 'units'))
-		.filter((f) => f.endsWith('.json'))
-		.sort();
-	const events = readdirSync(join(dataRoot, 'events'))
-		.filter((f) => f.endsWith('.json'))
-		.sort();
 	return {
-		units: units.map((f) => `units/${f}`),
-		events: events.map((f) => `events/${f}`),
+		units: listJson(join(dataRoot, 'units')).map((f) => `units/${f}`),
+		vessels: listJson(join(dataRoot, 'vessels')).map((f) => `vessels/${f}`),
+		events: listJson(join(dataRoot, 'events')).map((f) => `events/${f}`),
 		sources: 'sources/registry.json',
 		frontline: 'frontline.json'
 	};

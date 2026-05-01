@@ -53,6 +53,21 @@
 			"year": 2009,
 			"kind": "book",
 			"notes": "Narrative cross-check, not a primary source per CLAUDE.md sourcing posture. Useful for second-opinion timing and disputedBy entries."
+		},
+		{
+			"id": "nhhc",
+			"title": "Naval History and Heritage Command — D-Day records and ship histories",
+			"kind": "archive",
+			"url": "https://www.history.navy.mil/",
+			"notes": "Primary US naval source: ship action reports, deck logs, captain's reports for Western Naval Task Force vessels at Omaha and Utah. Authoritative for USN OOB, bombardment timing, and damage."
+		},
+		{
+			"id": "roskill-1961",
+			"title": "The War at Sea, 1939–1945, Vol. III, Part II: The Offensive",
+			"author": "Stephen Roskill",
+			"year": 1961,
+			"kind": "book",
+			"notes": "Royal Navy official history series. Authoritative for Eastern Naval Task Force (Forces G/J/S) bombardment, escort, and minesweeping operations. Primary RN/Commonwealth naval source."
 		}
 	]
 }

@@ -1,0 +1,35 @@
+{
+	"$schema": "../../packages/data/schema/vessel.schema.json",
+	"vessel": {
+		"id": "fns-montcalm",
+		"name": "FNS Montcalm",
+		"country": "FR",
+		"kind": "light-cruiser",
+		"force": "O",
+		"displacement": 7600,
+		"sources": ["roskill-1961", "memorial-caen"]
+	},
+	"track": {
+		"vesselId": "fns-montcalm",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.86, 49.51],
+				"sources": ["roskill-1961"],
+				"note": "Free French Naval Forces ; takes station with sister Georges Leygues for Omaha bombardment. First major French naval combat operation in home waters since 1940."
+			},
+			{
+				"time": "1944-06-06T05:50:00Z",
+				"position": [-0.86, 49.5],
+				"sources": ["roskill-1961"],
+				"note": "Opens fire on coastal batteries 06:50 (152 mm guns)."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.86, 49.5],
+				"sources": ["roskill-1961", "memorial-caen"],
+				"note": "Continues call-fire support through the day."
+			}
+		]
+	}
+}

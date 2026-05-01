@@ -19,19 +19,19 @@ function makeFakeFetch(): typeof fetch {
 		const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
 		const path = url.replace(/^https?:\/\/[^/]+/, '');
 		if (path === '/data/manifest.json') {
-			const { readdirSync } = await import('node:fs');
-			const units = readdirSync(join(dataRoot, 'units'))
-				.filter((f) => f.endsWith('.json'))
-				.sort()
-				.map((f) => `units/${f}`);
-			const events = readdirSync(join(dataRoot, 'events'))
-				.filter((f) => f.endsWith('.json'))
-				.sort()
-				.map((f) => `events/${f}`);
+			const { readdirSync, existsSync } = await import('node:fs');
+			const list = (sub: string) =>
+				existsSync(join(dataRoot, sub))
+					? readdirSync(join(dataRoot, sub))
+							.filter((f) => f.endsWith('.json'))
+							.sort()
+							.map((f) => `${sub}/${f}`)
+					: [];
 			return new Response(
 				JSON.stringify({
-					units,
-					events,
+					units: list('units'),
+					vessels: list('vessels'),
+					events: list('events'),
 					sources: 'sources/registry.json',
 					frontline: 'frontline.json'
 				})
@@ -84,6 +84,25 @@ describe('loadData', () => {
 			for (const id of e.involvedUnits ?? []) {
 				expect(data.unitById.has(id), `event "${e.id}" involves unknown unit "${id}"`).toBe(true);
 			}
+		}
+	});
+
+	it('every event involvedVessel references a known vessel (no phantom IDs)', async () => {
+		const data = await loadData(makeFakeFetch());
+		for (const e of data.events) {
+			for (const id of e.involvedVessels ?? []) {
+				expect(data.vesselById.has(id), `event "${e.id}" involves unknown vessel "${id}"`).toBe(
+					true
+				);
+			}
+		}
+	});
+
+	it('vessels round-trip through vesselById', async () => {
+		const data = await loadData(makeFakeFetch());
+		expect(data.vessels.length).toBeGreaterThan(0);
+		for (const v of data.vessels) {
+			expect(data.vesselById.get(v.vessel.id)).toBe(v);
 		}
 	});
 

@@ -1,0 +1,36 @@
+{
+	"$schema": "../../packages/data/schema/vessel.schema.json",
+	"vessel": {
+		"id": "hms-diadem",
+		"name": "HMS Diadem",
+		"country": "UK",
+		"kind": "light-cruiser",
+		"force": "J",
+		"pennantNumber": "84",
+		"displacement": 5770,
+		"sources": ["roskill-1961"]
+	},
+	"track": {
+		"vesselId": "hms-diadem",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.43, 49.45],
+				"sources": ["roskill-1961"],
+				"note": "Bombarding Force E (Juno) station, with HMS Belfast."
+			},
+			{
+				"time": "1944-06-06T05:30:00Z",
+				"position": [-0.43, 49.43],
+				"sources": ["roskill-1961"],
+				"note": "Opens 5.25-inch fire ; supports Canadian 3rd Division landings."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.43, 49.43],
+				"sources": ["roskill-1961"],
+				"note": "Continues call-fire support."
+			}
+		]
+	}
+}

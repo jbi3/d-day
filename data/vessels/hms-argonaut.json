@@ -1,0 +1,36 @@
+{
+	"$schema": "../../packages/data/schema/vessel.schema.json",
+	"vessel": {
+		"id": "hms-argonaut",
+		"name": "HMS Argonaut",
+		"country": "UK",
+		"kind": "light-cruiser",
+		"force": "G",
+		"pennantNumber": "61",
+		"displacement": 5770,
+		"sources": ["roskill-1961"]
+	},
+	"track": {
+		"vesselId": "hms-argonaut",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.58, 49.43],
+				"sources": ["roskill-1961"],
+				"note": "Bombarding Force K, Gold sector."
+			},
+			{
+				"time": "1944-06-06T05:50:00Z",
+				"position": [-0.58, 49.42],
+				"sources": ["roskill-1961"],
+				"note": "Engages Le Hamel area strongpoints with 5.25-inch DP main battery."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.58, 49.42],
+				"sources": ["roskill-1961"],
+				"note": "Continues call-fire support."
+			}
+		]
+	}
+}

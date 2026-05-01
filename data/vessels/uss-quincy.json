@@ -1,0 +1,36 @@
+{
+	"$schema": "../../packages/data/schema/vessel.schema.json",
+	"vessel": {
+		"id": "uss-quincy",
+		"name": "USS Quincy",
+		"country": "US",
+		"kind": "heavy-cruiser",
+		"force": "U",
+		"pennantNumber": "CA-71",
+		"displacement": 13600,
+		"sources": ["nhhc"]
+	},
+	"track": {
+		"vesselId": "uss-quincy",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-1.24, 49.54],
+				"sources": ["nhhc"],
+				"note": "Bombarding Force A station off Utah."
+			},
+			{
+				"time": "1944-06-06T05:50:00Z",
+				"position": [-1.23, 49.53],
+				"sources": ["nhhc"],
+				"note": "Opens 8-inch fire on the Crisbecq battery and inland defences."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-1.23, 49.52],
+				"sources": ["nhhc"],
+				"note": "Continues call-fire support."
+			}
+		]
+	}
+}

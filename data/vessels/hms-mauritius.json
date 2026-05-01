@@ -1,0 +1,36 @@
+{
+	"$schema": "../../packages/data/schema/vessel.schema.json",
+	"vessel": {
+		"id": "hms-mauritius",
+		"name": "HMS Mauritius",
+		"country": "UK",
+		"kind": "light-cruiser",
+		"force": "S",
+		"pennantNumber": "80",
+		"displacement": 8530,
+		"sources": ["roskill-1961"]
+	},
+	"track": {
+		"vesselId": "hms-mauritius",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.26, 49.44],
+				"sources": ["roskill-1961"],
+				"note": "Bombarding Force D station off Sword."
+			},
+			{
+				"time": "1944-06-06T05:30:00Z",
+				"position": [-0.26, 49.42],
+				"sources": ["roskill-1961"],
+				"note": "Opens 6-inch fire on the Riva-Bella / Ouistreham strongpoints in support of the Sword landings."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.26, 49.42],
+				"sources": ["roskill-1961"],
+				"note": "Continues call-fire."
+			}
+		]
+	}
+}

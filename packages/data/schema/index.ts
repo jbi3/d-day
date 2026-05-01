@@ -20,7 +20,13 @@ export type {
 	FrontlineKeyframe,
 	FrontlineConfidence,
 	FrontlineSegment,
-	FrontlineFile
+	FrontlineFile,
+	VesselID,
+	VesselKind,
+	BombardmentForce,
+	Vessel,
+	VesselWaypoint,
+	VesselTrack
 } from './types.ts';
 
 export {
@@ -28,5 +34,7 @@ export {
 	unitSchema,
 	movementSchema,
 	eventSchema,
-	frontlineSchema
+	frontlineSchema,
+	vesselSchema,
+	vesselTrackSchema
 } from './schemas.ts';

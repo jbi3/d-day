@@ -113,7 +113,47 @@ export interface MapEvent {
 	time: string; // ISO-8601
 	position: Position;
 	involvedUnits?: UnitID[];
+	involvedVessels?: VesselID[];
 	category?: EventCategory;
 	sources: SourceID[];
 	disputedBy?: Dispute[];
+}
+
+export type VesselID = string;
+
+export type VesselKind =
+	| 'battleship'
+	| 'monitor'
+	| 'heavy-cruiser'
+	| 'light-cruiser'
+	| 'cruiser'
+	| 'destroyer'
+	| 'destroyer-escort'
+	| 'frigate';
+
+export type BombardmentForce = 'O' | 'U' | 'G' | 'J' | 'S';
+
+export interface Vessel {
+	id: VesselID;
+	name: string;
+	country: string;
+	kind: VesselKind;
+	force?: BombardmentForce;
+	pennantNumber?: string;
+	displacement?: number;
+	commander?: Commander;
+	sources: SourceID[];
+}
+
+export interface VesselWaypoint {
+	time: string;
+	position: Position;
+	sources: SourceID[];
+	disputedBy?: Dispute[];
+	note?: string;
+}
+
+export interface VesselTrack {
+	vesselId: VesselID;
+	waypoints: VesselWaypoint[];
 }

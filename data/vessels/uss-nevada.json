@@ -1,0 +1,40 @@
+{
+	"$schema": "../../packages/data/schema/vessel.schema.json",
+	"vessel": {
+		"id": "uss-nevada",
+		"name": "USS Nevada",
+		"country": "US",
+		"kind": "battleship",
+		"force": "U",
+		"pennantNumber": "BB-36",
+		"displacement": 27500,
+		"commander": {
+			"name": "Powell M. Rhea",
+			"rank": "Captain"
+		},
+		"sources": ["nhhc", "harrison-1951"]
+	},
+	"track": {
+		"vesselId": "uss-nevada",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-1.25, 49.55],
+				"sources": ["nhhc"],
+				"note": "Bombarding Force A flagship (Adm Deyo). Pearl Harbor survivor returning to combat ; assigned to Utah and the Saint-Marcouf battery."
+			},
+			{
+				"time": "1944-06-06T05:50:00Z",
+				"position": [-1.25, 49.54],
+				"sources": ["nhhc"],
+				"note": "Opens fire 05:50 on the Saint-Marcouf battery (Crisbecq) at maximum range with 14-inch main battery."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-1.24, 49.53],
+				"sources": ["nhhc"],
+				"note": "Continues call-fire support inland through the day ; targets retreating 91. Luftlande / 709. ID concentrations."
+			}
+		]
+	}
+}

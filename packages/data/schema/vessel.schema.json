@@ -1,0 +1,47 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "vessel.schema.json",
+	"title": "Vessel",
+	"type": "object",
+	"additionalProperties": false,
+	"required": ["id", "name", "country", "kind", "sources"],
+	"properties": {
+		"id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+		"name": { "type": "string", "minLength": 1 },
+		"country": { "type": "string", "pattern": "^[A-Z]{2,3}$" },
+		"kind": {
+			"type": "string",
+			"enum": [
+				"battleship",
+				"monitor",
+				"heavy-cruiser",
+				"light-cruiser",
+				"cruiser",
+				"destroyer",
+				"destroyer-escort",
+				"frigate"
+			]
+		},
+		"force": {
+			"type": "string",
+			"enum": ["O", "U", "G", "J", "S"],
+			"description": "Bombardment force assignment: O Omaha, U Utah, G Gold, J Juno, S Sword."
+		},
+		"pennantNumber": { "type": "string" },
+		"displacement": { "type": "integer", "minimum": 1 },
+		"commander": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["name", "rank"],
+			"properties": {
+				"name": { "type": "string", "minLength": 1 },
+				"rank": { "type": "string", "minLength": 1 }
+			}
+		},
+		"sources": {
+			"type": "array",
+			"items": { "type": "string" },
+			"minItems": 1
+		}
+	}
+}

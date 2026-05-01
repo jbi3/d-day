@@ -1,0 +1,36 @@
+{
+	"$schema": "../../packages/data/schema/vessel.schema.json",
+	"vessel": {
+		"id": "hms-arethusa",
+		"name": "HMS Arethusa",
+		"country": "UK",
+		"kind": "light-cruiser",
+		"force": "S",
+		"pennantNumber": "26",
+		"displacement": 5220,
+		"sources": ["roskill-1961"]
+	},
+	"track": {
+		"vesselId": "hms-arethusa",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.25, 49.44],
+				"sources": ["roskill-1961"],
+				"note": "Bombarding Force D ; carried HM King George VI on a visit to the beachhead 16 June."
+			},
+			{
+				"time": "1944-06-06T05:30:00Z",
+				"position": [-0.25, 49.42],
+				"sources": ["roskill-1961"],
+				"note": "Opens 6-inch fire on Sword sector strongpoints and inland targets."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.25, 49.42],
+				"sources": ["roskill-1961"],
+				"note": "Continues call-fire."
+			}
+		]
+	}
+}

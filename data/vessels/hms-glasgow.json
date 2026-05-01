@@ -1,0 +1,36 @@
+{
+	"$schema": "../../packages/data/schema/vessel.schema.json",
+	"vessel": {
+		"id": "hms-glasgow",
+		"name": "HMS Glasgow",
+		"country": "UK",
+		"kind": "light-cruiser",
+		"force": "O",
+		"pennantNumber": "C21",
+		"displacement": 9100,
+		"sources": ["roskill-1961"]
+	},
+	"track": {
+		"vesselId": "hms-glasgow",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.84, 49.5],
+				"sources": ["roskill-1961"],
+				"note": "Bombarding Force C ; takes station off eastern Omaha to support 16th RCT landings."
+			},
+			{
+				"time": "1944-06-06T05:50:00Z",
+				"position": [-0.84, 49.49],
+				"sources": ["roskill-1961"],
+				"note": "Opens 6-inch fire on coastal batteries and bluff strongpoints in the Easy Red / Fox Green sector."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.84, 49.49],
+				"sources": ["roskill-1961"],
+				"note": "Continues call-fire support through the afternoon ; remains on station at end of window."
+			}
+		]
+	}
+}

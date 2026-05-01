@@ -6,12 +6,39 @@ place. Bottom section is an append-only dated log.
 
 ## Current state
 
-**Phase:** **M2 exécuté en autonomie (2026-05-01) — branche
-`claude/m2-schemas-001` prête à PR.** Les 7 lots techniques du
-plan §5.1 (recherche structurée absorbée dans lots 2-4)
-commités séquentiellement : `9c170c0` → `a47fa62`. Build vert,
-89 tests pass (72 schémas + 17 apps/web), `pnpm format:check`,
+**Phase:** **M3a (naval) exécuté en autonomie (2026-05-01) —
+branche `claude/m3a-naval-001` prête à PR.** Sign-off utilisateur
+sur scope M3 = M3a uniquement (naval). Air, extension D+1→D+6,
+timeline étendue, painted basemap restent reportés à des jalons
+ultérieurs.
+
+Quatre lots techniques : `fd5616f` schémas + sources NHHC/Roskill ;
+`(commit hash)` 22 vessels ; `27e2d02` couche naval + intégration
+UI ; `8fcec3f` 10 bombardment events. Total monorepo passe à
+**179 tests verts** (160 schémas dont 88 nouveaux pour les
+22 vessels × 4 sub-tests + 19 apps/web). `pnpm format:check`,
 `pnpm lint`, `pnpm check`, `pnpm build` propres.
+
+État dataset après M3a :
+- **22 navires** ajoutés au registre (Force C/A/K/E/D — Texas,
+  Nevada, Belfast, Warspite, Ramillies, Augusta, Glasgow, Montcalm,
+  Georges Leygues, Erebus, Ajax, Argonaut, Orion, Diadem, Roberts,
+  Mauritius, Arethusa, Frobisher, Quincy, Tuscaloosa, Arkansas,
+  Dragon polonais).
+- **57 events** (47 → 57, +10 bombardment events tous catégorisés
+  naval avec involvedVessels).
+- **2 nouvelles sources** : nhhc (USN action reports) +
+  roskill-1961 (RN official history).
+- **Schémas v3** : Vessel, VesselTrack, MapEvent.involvedVessels?.
+- **Couche naval** : icônes navires SVG side-view (cuirassé/
+  monitor/cruiser/destroyer), taille = 6km × √(displ/14k).
+  Toggle « Afficher la flotte alliée » dans la légende.
+- **Fiches détail vessels** : Type, Pays, Fanion, Déplacement,
+  Force, Commandant.
+
+Reste : QA visuelle utilisateur (flotte sur les 5 plages,
+fiches vessel, toggle, bombardment events) puis sign-off avant
+M3b/M3c/painted basemap.
 
 État du dataset après M2 :
 - **13 unités** (vs 7 en M1) : us-1st, us-29th, us-82nd, us-101st,
@@ -319,6 +346,54 @@ selon plan §6.2).
 ---
 
 ## Log
+
+### 2026-05-01 — M3a exécuté en autonomie (4 lots, naval seul)
+
+Sign-off utilisateur sur le scope M3 : « M3a » (naval seul).
+Air, extension D+1→D+6, timeline étendue, painted basemap
+restent reportés.
+
+Branche `claude/m3a-naval-001`, 4 commits :
+
+- `fd5616f` lot 1 — Vessel + VesselTrack schemas, sources nhhc
+  + roskill-1961, MapEvent.involvedVessels?.
+- (commit suivant) lot 2 — 22 fichiers data/vessels/*.json :
+  6 Force O (Texas, Arkansas, Augusta, Glasgow, Montcalm,
+  Georges Leygues), 4 Force U (Nevada, Quincy, Tuscaloosa,
+  Erebus), 3 Force K (Ajax, Argonaut, Orion), 2 Force E
+  (Belfast, Diadem), 7 Force D (Warspite, Ramillies, Roberts,
+  Mauritius, Arethusa, Frobisher, Dragon polonais).
+- `27e2d02` lot 3 — couche naval (vessel-icons.ts SVG +
+  naval.ts IconLayer), intégration data-loader/page/legend/
+  details (toggle « Afficher la flotte alliée », fiche vessel
+  bilingue).
+- `8fcec3f` lot 4 — 10 bombardment events category='naval'
+  reliés via involvedVessels (Belfast first fire, Texas
+  Pointe-du-Hoc, Nevada Crisbecq, French cruisers Longues,
+  Ajax duel Longues, Bradley sur Augusta, Texas closes
+  Vierville, etc.).
+
+Critères §6.2 du plan : « à définir à l'entrée du jalon ».
+Posture pour M3a :
+- Couverture navale principale Forces C/A/K/E/D : ✓ (22 vessels).
+- ≥1 dispute par 2 vessels : non (les vessels ont peu de disputes
+  — leurs positions sont en général bien sourcées via deck logs).
+  Hygiène disputes maintenue côté events (Crisbecq jamais
+  réduit, Bradley redirect, Ramillies tirage Le Havre).
+- Schémas extensibles pour M3b (air = nouveau schéma similaire).
+- Tests 89 → 179 (schema vessel-data + apps/web cross-ref
+  involvedVessels).
+
+### 2026-05-01 — PR #6 mergée : M2 sur main
+
+- Branche `claude/m2-schemas-001` (8 commits, `9c170c0` →
+  `e999dca`) mergée via `gh pr merge 6 --merge`.
+- Merge commit `8da94f4` sur `main`.
+- CI Actions vert (~36 s), build statique servable inclut
+  désormais `build/data/manifest.json` + 13 unités JSON.
+- M2 clos côté code. Gate §10.9 en attente : scope M3 à définir
+  par l'utilisateur avant démarrage (naval / air / D+1→D+6 /
+  timeline étendue / painted basemap).
 
 ### 2026-05-01 — M2 exécuté en autonomie (lots 5, 6, 2, 3, 4, 7, 8)
 
