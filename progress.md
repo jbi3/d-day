@@ -7,14 +7,28 @@ place. Bottom section is an append-only dated log.
 ## Current state
 
 **Phase:** **M3a mergé sur main (2026-05-01) — PR #7 close, merge
-commit `88500df`.** Lot hygiène mergé par-dessus (PR #9, merge
-commit `6eaf621`) : 14 tests d'interpolation frontline +
-factorisation `interpolateWaypointsAt` partagé entre couches
-units et naval, suppression d'un cast `as UnitTrack` unsafe.
-CI Actions vert, 193 tests pass. Trois jalons post-MVP livrés
-(M1 prod-grade, M2 v1 Normandie, M3a naval) ; le périmètre v2
-du brief est partiellement couvert (naval livré, air toujours
-hors scope).
+commit `88500df`.** Quatre lots post-revue mergés par-dessus
+(2026-05-01 → 2026-05-02) :
+- PR #9 (`6eaf621`) — 14 tests d'interpolation frontline +
+  factorisation `interpolateWaypointsAt` partagé entre couches
+  units et naval, suppression d'un cast `as UnitTrack` unsafe.
+- PR #11 (`3a37016`) — `eslint . --fix` sur 7 fichiers
+  (sort-imports) + `mapContainer` passé en `$state<HTMLDivElement
+  | undefined>` pour Svelte 5 runes. `pnpm check` et `pnpm lint`
+  passent désormais à 0 erreur **0 warning**.
+- PR #12 (`a3a0b0b`) — commanders divisionnaires ajoutés sur les
+  7 unités où ils manquaient (Huebner / Gerhardt / Ridgway /
+  Taylor / Gale / Kraiss / Falley) ; capitaines USS Quincy
+  (Senn) et USS Tuscaloosa (Waller) ajoutés via DANFS NHHC.
+  Capitaines RN cruisers et casualties non inclus (cf. log).
+- Cleanup local : 21 branches `claude/*` mergées supprimées
+  localement (`git branch -d`, sûr). 46 branches encore sur
+  GitHub côté remote — pas touchées sans OK explicite.
+
+CI Actions vert, 193 tests pass (160 schema + 33 web). Trois
+jalons post-MVP livrés (M1 prod-grade, M2 v1 Normandie, M3a
+naval) ; le périmètre v2 du brief est partiellement couvert
+(naval livré, air toujours hors scope).
 
 Sign-off utilisateur sur scope M3 = M3a uniquement (naval). Air,
 extension D+1→D+6, timeline étendue, painted basemap restent
@@ -349,6 +363,69 @@ selon plan §6.2).
 ---
 
 ## Log
+
+### 2026-05-02 — Cleanup branches locales mergées
+
+- 21 branches `claude/*` locales toutes accessibles depuis main
+  (vérifié via `git branch --merged main`) supprimées en bloc
+  via `git branch -d` (variant sûr — `-d` refuse de supprimer
+  une branche non-mergée).
+- L'« orpheline » `claude/cleanup-trails-001` flagguée à la
+  revue post-M3a était en réalité absorbée dans main par un
+  autre chemin (rebase / squash dans une PR M1) — pas de perte.
+- Reste : 46 branches `claude/*` côté GitHub remote. Suppression
+  remote = action destructive sur shared state, pas de mon
+  ressort sans OK explicite. Surfaccé à l'utilisateur.
+
+### 2026-05-02 — PR #12 mergée : commanders divisionnaires + 2 commanders navires
+
+- Branche `claude/editorial-commanders-001`, 1 commit `830d99f`,
+  mergée via `gh pr merge 12 --merge --auto`. Merge commit
+  `a3a0b0b`.
+- Comble une partie du trou éditorial relevé à la revue
+  post-M3a (commanders manquants sur 7/13 unités et 16/22
+  navires).
+- **Unités (7)** — sources canoniques déjà présentes au niveau
+  unité (harrison-1951 pour US, iwm-archives pour UK,
+  zetterling-2000 pour DE) :
+  - us-1st-id : Maj Gen Clarence R. Huebner
+  - us-29th-id : Maj Gen Charles H. Gerhardt
+  - us-82nd-airborne : Maj Gen Matthew B. Ridgway
+  - us-101st-airborne : Maj Gen Maxwell D. Taylor
+  - uk-6th-airborne : Maj Gen Richard N. Gale
+  - de-352nd-id : Generalleutnant Dietrich Kraiss
+  - de-91st-709th-elements : Generalleutnant Wilhelm Falley
+    (HQ 91. Luftlande à Picauville ; tué tôt le 6 juin per
+    event `falley-killed` déjà au dataset)
+- **Navires (2)** — DANFS NHHC :
+  - uss-quincy (CA-71) : Captain Elliott M. Senn
+  - uss-tuscaloosa (CA-37) : Captain John B. W. Waller
+- **Hors lot** :
+  - Capitaines des cruisers RN (Ramillies, Glasgow, Ajax,
+    Argonaut, Orion, Diadem, Mauritius, Arethusa, Frobisher,
+    Erebus, Roberts) : moins canoniques dans la shortlist
+    registry. CLAUDE.md non négociable « Do not invent or
+    infer to fill gaps » → trou correct préférable à un nom
+    fabriqué.
+  - Capitaines FNS / ORP : idem.
+  - Casualties (9/13 unités) : figures notoirement contestées
+    (définitions, fenêtres temporelles divergent). Encodage
+    `disputedBy` requis ; lot séparé.
+
+### 2026-05-02 — PR #11 mergée : hygiène lint + Svelte 5 \$state
+
+- Branche `claude/lint-hygiene-001`, 1 commit `90eac3a`, mergée
+  via `gh pr merge 11 --merge --auto`. Merge commit `3a37016`.
+- `eslint . --fix` sur 7 fichiers : uniquement réordonnancement
+  d'imports (perfectionist/sort-imports). Aucun changement
+  sémantique.
+- `mapContainer` (route principale) passé en
+  `$state<HTMLDivElement | undefined>(undefined)` + garde au
+  site d'usage — supprime le warning Svelte 5 « bind:this on a
+  non-state variable » qui traînait depuis M1.
+- État après : `pnpm check` 0 erreur **0 warning** (était 1
+  warning), `pnpm lint` 0 erreur **0 warning** (était 0 erreur
+  10 warnings).
 
 ### 2026-05-01 — PR #9 mergée : hygiène post-revue (frontline tests + interpolateur générique)
 
