@@ -24,31 +24,49 @@
 
 	function formatTime(iso: string): string {
 		const d = new Date(iso);
-		return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}Z`;
+		return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())} UTC`;
 	}
 	function pad(n: number): string {
 		return String(n).padStart(2, '0');
+	}
+
+	function sideLabel(side: string): string {
+		if (side === 'allied') return 'Allié';
+		if (side === 'axis') return 'Axe';
+		return side;
+	}
+
+	function branchLabel(branch: string): string {
+		const map: Record<string, string> = {
+			infantry: 'Infanterie',
+			airborne: 'Aéroportée',
+			armor: 'Blindée',
+			artillery: 'Artillerie',
+			naval: 'Marine',
+			air: 'Aérienne'
+		};
+		return map[branch] ?? branch;
 	}
 </script>
 
 {#if selection}
 	<aside class="details">
-		<button class="close" type="button" onclick={onClose} aria-label="Close">×</button>
+		<button class="close" type="button" onclick={onClose} aria-label="Fermer">×</button>
 
 		{#if selection.kind === 'unit'}
 			{@const u = selection.track.unit}
 			{@const m = selection.track.movement}
 			<h2>{u.name}</h2>
 			<dl>
-				<dt>Side</dt>
-				<dd class="side-{u.side}">{u.side}</dd>
-				<dt>Country</dt>
+				<dt>Côté</dt>
+				<dd class="side-{u.side}">{sideLabel(u.side)}</dd>
+				<dt>Pays</dt>
 				<dd>{u.country}</dd>
-				<dt>Echelon</dt>
+				<dt>Échelon</dt>
 				<dd>{u.echelon}</dd>
-				<dt>Branch</dt>
-				<dd>{u.branch}</dd>
-				<dt>Waypoints</dt>
+				<dt>Arme</dt>
+				<dd>{branchLabel(u.branch)}</dd>
+				<dt>Étapes</dt>
 				<dd>{m.waypoints.length}</dd>
 			</dl>
 
@@ -67,7 +85,7 @@
 			</ul>
 
 			{#if m.waypoints.some((w) => (w.disputedBy?.length ?? 0) > 0)}
-				<h3>Disputed waypoints</h3>
+				<h3>Étapes contestées</h3>
 				<ul class="disputes">
 					{#each m.waypoints as w}
 						{#if (w.disputedBy?.length ?? 0) > 0}
@@ -75,7 +93,7 @@
 								<div class="dispute-time">{formatTime(w.time)}</div>
 								{#each w.disputedBy ?? [] as d}
 									<div class="claim">
-										<code>{d.source}</code>: {d.claim}
+										<code>{d.source}</code> : {d.claim}
 									</div>
 								{/each}
 							</li>
@@ -92,7 +110,7 @@
 			{/if}
 
 			{#if (e.involvedUnits?.length ?? 0) > 0}
-				<h3>Involved units</h3>
+				<h3>Unités impliquées</h3>
 				<ul class="unit-links">
 					{#each e.involvedUnits ?? [] as id (id)}
 						{@const track = unitById.get(id)}
@@ -107,7 +125,7 @@
 								</button>
 							</li>
 						{:else}
-							<li class="unit-link missing">{id} <span>(not in dataset)</span></li>
+							<li class="unit-link missing">{id} <span>(absent du jeu de données)</span></li>
 						{/if}
 					{/each}
 				</ul>
@@ -128,10 +146,10 @@
 			</ul>
 
 			{#if (e.disputedBy?.length ?? 0) > 0}
-				<h3>Disputed</h3>
+				<h3>Faits contestés</h3>
 				<ul class="disputes">
 					{#each e.disputedBy ?? [] as d}
-						<li class="claim"><code>{d.source}</code>: {d.claim}</li>
+						<li class="claim"><code>{d.source}</code> : {d.claim}</li>
 					{/each}
 				</ul>
 			{/if}

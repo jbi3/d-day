@@ -13,10 +13,10 @@
 	};
 
 	const samples: Sample[] = [
-		{ side: 'allied', branch: 'infantry', country: 'US', number: '29', label: 'US infantry division (1st ID, 29th ID)' },
-		{ side: 'allied', branch: 'airborne', country: 'US', number: '82', label: 'US airborne division (82nd, 101st)' },
-		{ side: 'axis', branch: 'infantry', country: 'DE', number: '352', axisAffiliation: 'wehrmacht', label: 'Wehrmacht division (352. ID, 91./709.)' },
-		{ side: 'axis', branch: 'infantry', country: 'DE', number: 'SS', axisAffiliation: 'ss', label: 'Waffen-SS division (gris feldgrau)' }
+		{ side: 'allied', branch: 'infantry', country: 'US', number: '29', label: "Division d'infanterie US (1st ID, 29th ID)" },
+		{ side: 'allied', branch: 'airborne', country: 'US', number: '82', label: 'Division aéroportée US (82nd, 101st)' },
+		{ side: 'axis', branch: 'infantry', country: 'DE', number: '352', axisAffiliation: 'wehrmacht', label: 'Division Wehrmacht (352. ID, 91./709.)' },
+		{ side: 'axis', branch: 'infantry', country: 'DE', number: 'SS', axisAffiliation: 'ss', label: 'Division Waffen-SS (gris feldgrau)' }
 	];
 
 	function svgUri(s: Sample): string {
@@ -30,13 +30,14 @@
 	<button class="pill" type="button" onclick={() => (open = true)}>
 		<span class="pill-glyph" aria-hidden="true">▦</span>
 		<span>Légende</span>
+		<span class="visually-hidden"> — ouvrir</span>
 	</button>
 {:else}
 	<aside class="legend">
 		<button
 			class="close"
 			type="button"
-			aria-label="Close legend"
+			aria-label="Fermer la légende"
 			onclick={() => (open = false)}
 		>×</button>
 		<dl>
@@ -45,11 +46,11 @@
 				<dd>{s.label}</dd>
 			{/each}
 			<dt><span class="swatch event"></span></dt>
-			<dd>Event marker — fires at its time, fades over ~1h</dd>
+			<dd>Événement — apparaît à son heure, s'estompe en ~1 h</dd>
 			<dt><span class="swatch event-disputed"></span></dt>
-			<dd>Event with <code>disputedBy</code> entries</dd>
+			<dd>Événement avec faits contestés</dd>
 			<dt><span class="swatch occupation"></span></dt>
-			<dd>German-occupied land (recedes as Allies advance)</dd>
+			<dd>Territoire occupé par l'Axe (recule à mesure de l'avance alliée)</dd>
 		</dl>
 	</aside>
 {/if}
@@ -82,6 +83,17 @@
 	.pill-glyph {
 		font-size: 0.85rem;
 		line-height: 1;
+	}
+	.visually-hidden {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
 	}
 	.legend {
 		position: absolute;
@@ -156,9 +168,5 @@
 		border-radius: 2px;
 		width: 1rem;
 		height: 0.7rem;
-	}
-	code {
-		font-size: 0.8em;
-		opacity: 0.9;
 	}
 </style>

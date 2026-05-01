@@ -75,18 +75,18 @@
 
 <div class="hud" class:hidden={!visible}>
 	<div class="row">
-		<button class="play" onclick={() => time.toggle()} aria-label={time.playing ? 'Pause' : 'Play'}>
+		<button class="play" onclick={() => time.toggle()} aria-label={time.playing ? 'Pause' : 'Lecture'}>
 			{time.playing ? '❚❚' : '▶'}
 		</button>
-		<button class="secondary" onclick={() => time.reset()} title="Jump to D-1 22:00" aria-label="Reset">
+		<button class="secondary" onclick={() => time.reset()} title="Revenir à D-1 22:00" aria-label="Réinitialiser">
 			↺
 		</button>
 		<span class="time">{formatSimTime(time.simHours)}</span>
 		<label class="speed">
-			<span>Speed</span>
-			<select bind:value={time.playRate}>
-				<option value={0.25}>0.25×</option>
-				<option value={0.5}>0.5×</option>
+			<span>Vitesse</span>
+			<select bind:value={time.playRate} aria-label="Vitesse de lecture">
+				<option value={0.25}>0,25×</option>
+				<option value={0.5}>0,5×</option>
 				<option value={1}>1×</option>
 				<option value={2}>2×</option>
 				<option value={4}>4×</option>
@@ -102,6 +102,7 @@
 			max={time.end}
 			step={0.05}
 			bind:value={time.simHours}
+			aria-label="Position dans la chronologie (heures depuis D-1 22:00)"
 		/>
 		<div class="pins" aria-hidden="true">
 			{#each visibleEvents as { event, hours } (event.id)}
