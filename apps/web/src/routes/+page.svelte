@@ -3,6 +3,7 @@
 	import Details, { type Selection } from '$lib/components/details.svelte';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import Legend from '$lib/components/legend.svelte';
+	import SectorSelector from '$lib/components/sector-selector.svelte';
 	import Timeline from '$lib/components/timeline.svelte';
 	import type { EventCategory } from '@d-day/schema';
 
@@ -286,6 +287,20 @@
 
 		<Legend {categoryFilter} onCategoryToggle={toggleCategory} />
 
+		<SectorSelector
+			onJump={(center, zoom) => {
+				if (!map) return;
+				const reduceMotion =
+					typeof window !== 'undefined' &&
+					window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+				if (reduceMotion) {
+					map.jumpTo({ center, zoom });
+				} else {
+					map.flyTo({ center, zoom, duration: 900 });
+				}
+			}}
+		/>
+
 		{#if data}
 			<Details
 				{selection}
@@ -320,7 +335,8 @@
 	}
 	.map-wrap :global(.legend),
 	.map-wrap :global(.details),
-	.map-wrap :global(.hud) {
+	.map-wrap :global(.hud),
+	.map-wrap :global(.wrap) {
 		z-index: 10;
 	}
 	.loading {
