@@ -9,6 +9,10 @@
 		"name": "29th Infantry Division",
 		"shortName": "29th ID",
 		"strength": 14000,
+		"commander": {
+			"name": "Charles H. Gerhardt",
+			"rank": "Major General"
+		},
 		"sources": ["harrison-1951", "us-na-aar"]
 	},
 	"movement": {

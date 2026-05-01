@@ -9,6 +9,10 @@
 		"name": "91. Luftlande-Division & 709. Infanterie-Division (Cotentin defense elements)",
 		"shortName": "91./709. (Cotentin)",
 		"strength": 17000,
+		"commander": {
+			"name": "Wilhelm Falley",
+			"rank": "Generalleutnant"
+		},
 		"sources": ["zetterling-2000", "harrison-1951"]
 	},
 	"movement": {

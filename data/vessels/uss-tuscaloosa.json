@@ -8,6 +8,10 @@
 		"force": "U",
 		"pennantNumber": "CA-37",
 		"displacement": 9950,
+		"commander": {
+			"name": "John B. W. Waller",
+			"rank": "Captain"
+		},
 		"sources": ["nhhc"]
 	},
 	"track": {

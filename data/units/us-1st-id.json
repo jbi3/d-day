@@ -9,6 +9,10 @@
 		"name": "1st Infantry Division",
 		"shortName": "1st ID",
 		"strength": 14000,
+		"commander": {
+			"name": "Clarence R. Huebner",
+			"rank": "Major General"
+		},
 		"sources": ["harrison-1951", "us-na-aar"]
 	},
 	"movement": {
