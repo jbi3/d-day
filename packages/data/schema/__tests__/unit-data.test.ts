@@ -1,9 +1,10 @@
-import { describe, it, expect } from 'vitest';
-import Ajv from 'ajv';
-import addFormats from 'ajv-formats';
 import { readFileSync, readdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
+import { describe, it, expect } from 'vitest';
 
 import { unitSchema, movementSchema } from '../schemas.ts';
 
@@ -65,9 +66,7 @@ describe('data/units/*.json', () => {
 				const cited = new Set<string>([
 					...data.unit.sources,
 					...data.movement.waypoints.flatMap((w) => w.sources),
-					...data.movement.waypoints.flatMap((w) =>
-						(w.disputedBy ?? []).map((d) => d.source)
-					)
+					...data.movement.waypoints.flatMap((w) => (w.disputedBy ?? []).map((d) => d.source))
 				]);
 				for (const id of cited) {
 					expect(knownSourceIds, `source ${id} missing from registry`).toContain(id);

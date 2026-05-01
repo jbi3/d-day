@@ -1,24 +1,34 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import maplibregl from 'maplibre-gl';
-	import 'maplibre-gl/dist/maplibre-gl.css';
-	import { MapboxOverlay } from '@deck.gl/mapbox';
-
-	import { TimeStore } from '$lib/time-store.svelte';
-	import { loadData, unitPositionAt } from '$lib/data-loader';
-	import { buildUnitLayers } from '$lib/layers/units';
-	import { buildEventLayers } from '$lib/layers/events';
-	import { buildTrailLayers } from '$lib/layers/trails';
-	import { buildFrontlineLayers } from '$lib/layers/frontline';
-	import { buildBasemapLayers } from '$lib/layers/basemap';
-	import { buildToponymLayers } from '$lib/layers/toponyms';
-	import { buildBeachLayers } from '$lib/layers/beaches';
-	import { buildRoadLayers } from '$lib/layers/roads';
-	import Timeline from '$lib/components/timeline.svelte';
+	import DesktopOnly from '$lib/components/desktop-only.svelte';
 	import Details, { type Selection } from '$lib/components/details.svelte';
+	import 'maplibre-gl/dist/maplibre-gl.css';
 	import Legend from '$lib/components/legend.svelte';
+	import Timeline from '$lib/components/timeline.svelte';
+	import { loadData, unitPositionAt, type LoadedData } from '$lib/data-loader';
+	import { buildBasemapLayers } from '$lib/layers/basemap';
+	import { buildBeachLayers } from '$lib/layers/beaches';
+	import { buildEventLayers } from '$lib/layers/events';
+	import { buildFrontlineLayers } from '$lib/layers/frontline';
+	import { buildRoadLayers } from '$lib/layers/roads';
+	import { buildToponymLayers } from '$lib/layers/toponyms';
+	import { buildTrailLayers } from '$lib/layers/trails';
+	import { buildUnitLayers } from '$lib/layers/units';
+	import { TimeStore } from '$lib/time-store.svelte';
+	import { MapboxOverlay } from '@deck.gl/mapbox';
+	import maplibregl from 'maplibre-gl';
+	import { onMount } from 'svelte';
 
-	const data = loadData();
+	const loadResult: { data: LoadedData | null; error: Error | null } = (() => {
+		try {
+			return { data: loadData(), error: null };
+		} catch (err) {
+			return { data: null, error: err instanceof Error ? err : new Error(String(err)) };
+		}
+	})();
+	// data is null only when dataError is set; the template gates everything
+	// behind {#if dataError}, and onMount + $effects short-circuit when set.
+	const data = loadResult.data as LoadedData;
+	const dataError = loadResult.error;
 
 	const simStartIso = '1944-06-05T22:00:00Z';
 	const simStartEpoch = Date.parse(simStartIso);
@@ -75,7 +85,10 @@
 
 	function onKeydown(e: KeyboardEvent) {
 		const target = e.target as HTMLElement | null;
-		if (target && (target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.isContentEditable)) {
+		if (
+			target &&
+			(target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.isContentEditable)
+		) {
 			return;
 		}
 		if (e.key === ' ') {
@@ -96,6 +109,7 @@
 	}
 
 	onMount(() => {
+		if (dataError) return;
 		const initial = readHashState();
 		if (initial.simHours !== undefined) time.seek(initial.simHours);
 		if (initial.selection) selection = initial.selection;
@@ -107,9 +121,7 @@
 		const blankStyle: maplibregl.StyleSpecification = {
 			version: 8,
 			sources: {},
-			layers: [
-				{ id: 'sea', type: 'background', paint: { 'background-color': '#c8d6dd' } }
-			]
+			layers: [{ id: 'sea', type: 'background', paint: { 'background-color': '#c8d6dd' } }]
 		};
 
 		map = new maplibregl.Map({
@@ -177,12 +189,20 @@
 			center = unitPositionAt(selection.track, currentIso);
 		}
 		if (center) {
-			map.flyTo({ center, zoom: Math.max(map.getZoom(), 10), duration: 800 });
+			const reduceMotion =
+				typeof window !== 'undefined' &&
+				window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+			const targetZoom = Math.max(map.getZoom(), 10);
+			if (reduceMotion) {
+				map.jumpTo({ center, zoom: targetZoom });
+			} else {
+				map.flyTo({ center, zoom: targetZoom, duration: 800 });
+			}
 		}
 	});
 
 	$effect(() => {
-		if (!deckOverlay) return;
+		if (!deckOverlay || dataError) return;
 		deckOverlay.setProps({
 			layers: [
 				...buildBasemapLayers(),
@@ -209,31 +229,40 @@
 </script>
 
 <svelte:head>
-	<title>D-Day map — MVP</title>
+	<title>D-Day — 6 juin 1944 — carte interactive heure par heure</title>
 </svelte:head>
 
 <svelte:window onkeydown={onKeydown} />
 
-<div class="map-wrap">
-	<div bind:this={mapContainer} class="map"></div>
+<DesktopOnly />
 
-	<Legend />
+{#if dataError}
+	<div class="error-wrap">
+		<div class="error-card">
+			<h1>Données indisponibles</h1>
+			<p class="hint">
+				La carte n'a pas pu charger ses données historiques. Recharge la page ou reviens plus tard.
+			</p>
+			<p class="msg">{dataError.message}</p>
+		</div>
+	</div>
+{:else}
+	<div class="map-wrap">
+		<div bind:this={mapContainer} class="map"></div>
 
-	<Details
-		{selection}
-		sourceById={data.sourceById}
-		unitById={data.unitById}
-		onSelect={(s) => (selection = s)}
-		onClose={() => (selection = null)}
-	/>
+		<Legend />
 
-	<Timeline
-		{time}
-		{simStartEpoch}
-		events={data.events}
-		{formatSimTime}
-	/>
-</div>
+		<Details
+			{selection}
+			sourceById={data.sourceById}
+			unitById={data.unitById}
+			onSelect={(s) => (selection = s)}
+			onClose={() => (selection = null)}
+		/>
+
+		<Timeline {time} {simStartEpoch} events={data.events} {formatSimTime} />
+	</div>
+{/if}
 
 <style>
 	:global(body) {
@@ -253,5 +282,43 @@
 	.map-wrap :global(.details),
 	.map-wrap :global(.hud) {
 		z-index: 10;
+	}
+	.error-wrap {
+		position: fixed;
+		inset: 0;
+		display: grid;
+		place-items: center;
+		background: #1a1f24;
+		color: #e8e8e8;
+		padding: 2rem;
+	}
+	.error-card {
+		max-width: 480px;
+		background: rgba(20, 20, 20, 0.85);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 8px;
+		padding: 2rem;
+		text-align: center;
+	}
+	.error-card h1 {
+		margin: 0 0 1rem;
+		font-size: 1.4rem;
+		font-weight: 600;
+	}
+	.error-card .hint {
+		margin: 0 0 1rem;
+		font-size: 0.9rem;
+		color: rgba(255, 255, 255, 0.7);
+	}
+	.error-card .msg {
+		margin: 0;
+		padding: 0.75rem;
+		background: rgba(0, 0, 0, 0.3);
+		border-radius: 4px;
+		font-family: ui-monospace, monospace;
+		font-size: 0.8rem;
+		text-align: left;
+		word-break: break-word;
+		color: rgba(255, 200, 200, 0.9);
 	}
 </style>

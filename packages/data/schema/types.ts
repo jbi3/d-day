@@ -4,14 +4,7 @@ export type EventID = string;
 
 export type Side = 'allied' | 'axis';
 export type Echelon = 'division' | 'regiment' | 'battalion' | 'company';
-export type Branch =
-	| 'infantry'
-	| 'airborne'
-	| 'armor'
-	| 'engineer'
-	| 'artillery'
-	| 'naval'
-	| 'air';
+export type Branch = 'infantry' | 'airborne' | 'armor' | 'engineer' | 'artillery' | 'naval' | 'air';
 
 export type SourceKind = 'book' | 'archive' | 'map' | 'aar' | 'web' | 'report';
 

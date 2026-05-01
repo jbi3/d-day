@@ -1,9 +1,10 @@
-import { describe, it, expect } from 'vitest';
-import Ajv from 'ajv';
-import addFormats from 'ajv-formats';
 import { readFileSync, readdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
+import { describe, it, expect } from 'vitest';
 
 import { eventSchema } from '../schemas.ts';
 

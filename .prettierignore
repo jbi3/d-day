@@ -1,0 +1,16 @@
+node_modules
+.svelte-kit
+build
+dist
+coverage
+inspiration
+pnpm-lock.yaml
+pnpm-workspace.yaml
+
+# Markdown : authored prose, prettier reflows lists/wraps in ways
+# that diverge from the user's intent.
+*.md
+
+# JSON files use the existing 2-space convention across the repo;
+# prettier defaults would re-tab them. Out of scope for M1 lint.
+*.json

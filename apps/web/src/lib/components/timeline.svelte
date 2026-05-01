@@ -38,6 +38,16 @@
 	const HIDE_DELAY_MS = 2500;
 	let visible = $state(true);
 	let hideTimer: ReturnType<typeof setTimeout> | null = null;
+	let reduceMotion = $state(false);
+
+	$effect(() => {
+		if (typeof window === 'undefined' || !window.matchMedia) return;
+		const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+		reduceMotion = mq.matches;
+		const onChange = (e: MediaQueryListEvent) => (reduceMotion = e.matches);
+		mq.addEventListener('change', onChange);
+		return () => mq.removeEventListener('change', onChange);
+	});
 
 	function clearHideTimer() {
 		if (hideTimer !== null) {
@@ -55,6 +65,11 @@
 	}
 
 	$effect(() => {
+		if (reduceMotion) {
+			clearHideTimer();
+			visible = true;
+			return;
+		}
 		if (time.playing) {
 			visible = true;
 			armHideTimer();
@@ -65,9 +80,25 @@
 	});
 
 	function onWindowMouseMove() {
+		if (reduceMotion) return;
 		if (!time.playing) return;
 		visible = true;
 		armHideTimer();
+	}
+
+	let copied = $state(false);
+	let copyTimer: ReturnType<typeof setTimeout> | null = null;
+	async function copyLink() {
+		if (typeof window === 'undefined') return;
+		try {
+			await navigator.clipboard.writeText(window.location.href);
+			copied = true;
+			if (copyTimer) clearTimeout(copyTimer);
+			copyTimer = setTimeout(() => (copied = false), 1800);
+		} catch {
+			// Clipboard refused (insecure context, permission); the URL is still
+			// in the browser bar — silently no-op rather than show an error.
+		}
 	}
 </script>
 
@@ -75,23 +106,40 @@
 
 <div class="hud" class:hidden={!visible}>
 	<div class="row">
-		<button class="play" onclick={() => time.toggle()} aria-label={time.playing ? 'Pause' : 'Play'}>
+		<button
+			class="play"
+			onclick={() => time.toggle()}
+			aria-label={time.playing ? 'Pause' : 'Lecture'}
+		>
 			{time.playing ? '❚❚' : '▶'}
 		</button>
-		<button class="secondary" onclick={() => time.reset()} title="Jump to D-1 22:00" aria-label="Reset">
+		<button
+			class="secondary"
+			onclick={() => time.reset()}
+			title="Revenir à D-1 22:00"
+			aria-label="Réinitialiser"
+		>
 			↺
 		</button>
 		<span class="time">{formatSimTime(time.simHours)}</span>
 		<label class="speed">
-			<span>Speed</span>
-			<select bind:value={time.playRate}>
-				<option value={0.25}>0.25×</option>
-				<option value={0.5}>0.5×</option>
+			<span>Vitesse</span>
+			<select bind:value={time.playRate} aria-label="Vitesse de lecture">
+				<option value={0.25}>0,25×</option>
+				<option value={0.5}>0,5×</option>
 				<option value={1}>1×</option>
 				<option value={2}>2×</option>
 				<option value={4}>4×</option>
 			</select>
 		</label>
+		<button
+			class="secondary copy"
+			type="button"
+			onclick={copyLink}
+			aria-label="Copier le lien partageable"
+		>
+			{copied ? '✓ Copié' : '⎘ Lien'}
+		</button>
 	</div>
 
 	<div class="track-wrap">
@@ -102,6 +150,7 @@
 			max={time.end}
 			step={0.05}
 			bind:value={time.simHours}
+			aria-label="Position dans la chronologie (heures depuis D-1 22:00)"
 		/>
 		<div class="pins" aria-hidden="true">
 			{#each visibleEvents as { event, hours } (event.id)}
@@ -116,7 +165,7 @@
 			{/each}
 		</div>
 		<div class="ticks" aria-hidden="true">
-			{#each ticks as t}
+			{#each ticks as t (t.hours)}
 				<span class="tick" style:left={pinLeft(t.hours)}>{t.label}</span>
 			{/each}
 		</div>
@@ -138,7 +187,9 @@
 		gap: 0.4rem;
 		backdrop-filter: blur(12px);
 		font-family: system-ui, sans-serif;
-		transition: opacity 250ms ease, transform 250ms ease;
+		transition:
+			opacity 250ms ease,
+			transform 250ms ease;
 	}
 	.hud.hidden {
 		opacity: 0;
@@ -182,8 +233,12 @@
 		align-items: center;
 		gap: 0.4rem;
 		font-size: 0.78rem;
-		opacity: 0.7;
+		opacity: 0.85;
 		margin-left: auto;
+	}
+	.copy {
+		font-size: 0.78rem;
+		padding: 0.3rem 0.6rem;
 	}
 	.speed select {
 		background: rgba(255, 255, 255, 0.12);
@@ -237,8 +292,23 @@
 		top: 0;
 		transform: translateX(-50%);
 		font-size: 0.68rem;
-		opacity: 0.45;
+		opacity: 0.7;
 		font-variant-numeric: tabular-nums;
 		white-space: nowrap;
+	}
+	button:focus-visible,
+	.scrub:focus-visible,
+	.speed select:focus-visible {
+		outline: 2px solid #5ec3ff;
+		outline-offset: 2px;
+	}
+	.pin:focus-visible {
+		outline: 2px solid #5ec3ff;
+		outline-offset: 1px;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.hud {
+			transition: none;
+		}
 	}
 </style>

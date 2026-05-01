@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { MapEvent, Source } from '@d-day/schema';
 	import type { UnitTrack } from '$lib/data-loader';
+	import type { MapEvent, Source } from '@d-day/schema';
 
 	export type Selection =
 		| { kind: 'unit'; track: UnitTrack }
@@ -17,6 +17,51 @@
 
 	const { selection, sourceById, unitById, onSelect, onClose }: Props = $props();
 
+	let panel: HTMLElement | undefined = $state();
+	let previouslyFocused: HTMLElement | null = null;
+
+	$effect(() => {
+		if (!selection) {
+			previouslyFocused = null;
+			return;
+		}
+		// Focus the panel on open so Tab cycles inside; remember the prior
+		// focus to restore it when the panel closes.
+		previouslyFocused = (
+			typeof document !== 'undefined' ? document.activeElement : null
+		) as HTMLElement | null;
+		queueMicrotask(() => panel?.focus());
+		return () => {
+			previouslyFocused?.focus?.();
+		};
+	});
+
+	function focusable(): HTMLElement[] {
+		if (!panel) return [];
+		return Array.from(
+			panel.querySelectorAll<HTMLElement>(
+				'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+			)
+		);
+	}
+
+	function onWindowKeydown(e: KeyboardEvent) {
+		if (e.key !== 'Tab' || !panel) return;
+		const active = document.activeElement as HTMLElement | null;
+		if (!active || !panel.contains(active)) return;
+		const items = focusable();
+		if (items.length === 0) return;
+		const first = items[0];
+		const last = items[items.length - 1];
+		if (e.shiftKey && (active === first || active === panel)) {
+			e.preventDefault();
+			last.focus();
+		} else if (!e.shiftKey && active === last) {
+			e.preventDefault();
+			first.focus();
+		}
+	}
+
 	function selectUnit(id: string) {
 		const track = unitById.get(id);
 		if (track) onSelect({ kind: 'unit', track });
@@ -24,31 +69,51 @@
 
 	function formatTime(iso: string): string {
 		const d = new Date(iso);
-		return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}Z`;
+		return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())} UTC`;
 	}
 	function pad(n: number): string {
 		return String(n).padStart(2, '0');
 	}
+
+	function sideLabel(side: string): string {
+		if (side === 'allied') return 'Allié';
+		if (side === 'axis') return 'Axe';
+		return side;
+	}
+
+	function branchLabel(branch: string): string {
+		const map: Record<string, string> = {
+			infantry: 'Infanterie',
+			airborne: 'Aéroportée',
+			armor: 'Blindée',
+			artillery: 'Artillerie',
+			naval: 'Marine',
+			air: 'Aérienne'
+		};
+		return map[branch] ?? branch;
+	}
 </script>
 
+<svelte:window onkeydown={onWindowKeydown} />
+
 {#if selection}
-	<aside class="details">
-		<button class="close" type="button" onclick={onClose} aria-label="Close">×</button>
+	<aside class="details" bind:this={panel} tabindex="-1" aria-label="Fiche de détail">
+		<button class="close" type="button" onclick={onClose} aria-label="Fermer">×</button>
 
 		{#if selection.kind === 'unit'}
 			{@const u = selection.track.unit}
 			{@const m = selection.track.movement}
 			<h2>{u.name}</h2>
 			<dl>
-				<dt>Side</dt>
-				<dd class="side-{u.side}">{u.side}</dd>
-				<dt>Country</dt>
+				<dt>Côté</dt>
+				<dd class="side-{u.side}">{sideLabel(u.side)}</dd>
+				<dt>Pays</dt>
 				<dd>{u.country}</dd>
-				<dt>Echelon</dt>
+				<dt>Échelon</dt>
 				<dd>{u.echelon}</dd>
-				<dt>Branch</dt>
-				<dd>{u.branch}</dd>
-				<dt>Waypoints</dt>
+				<dt>Arme</dt>
+				<dd>{branchLabel(u.branch)}</dd>
+				<dt>Étapes</dt>
 				<dd>{m.waypoints.length}</dd>
 			</dl>
 
@@ -67,15 +132,15 @@
 			</ul>
 
 			{#if m.waypoints.some((w) => (w.disputedBy?.length ?? 0) > 0)}
-				<h3>Disputed waypoints</h3>
+				<h3>Étapes contestées</h3>
 				<ul class="disputes">
-					{#each m.waypoints as w}
+					{#each m.waypoints as w (w.time)}
 						{#if (w.disputedBy?.length ?? 0) > 0}
 							<li>
 								<div class="dispute-time">{formatTime(w.time)}</div>
-								{#each w.disputedBy ?? [] as d}
+								{#each w.disputedBy ?? [] as d (d.source + d.claim)}
 									<div class="claim">
-										<code>{d.source}</code>: {d.claim}
+										<code>{d.source}</code> : {d.claim}
 									</div>
 								{/each}
 							</li>
@@ -92,7 +157,7 @@
 			{/if}
 
 			{#if (e.involvedUnits?.length ?? 0) > 0}
-				<h3>Involved units</h3>
+				<h3>Unités impliquées</h3>
 				<ul class="unit-links">
 					{#each e.involvedUnits ?? [] as id (id)}
 						{@const track = unitById.get(id)}
@@ -107,7 +172,7 @@
 								</button>
 							</li>
 						{:else}
-							<li class="unit-link missing">{id} <span>(not in dataset)</span></li>
+							<li class="unit-link missing">{id} <span>(absent du jeu de données)</span></li>
 						{/if}
 					{/each}
 				</ul>
@@ -128,10 +193,10 @@
 			</ul>
 
 			{#if (e.disputedBy?.length ?? 0) > 0}
-				<h3>Disputed</h3>
+				<h3>Faits contestés</h3>
 				<ul class="disputes">
-					{#each e.disputedBy ?? [] as d}
-						<li class="claim"><code>{d.source}</code>: {d.claim}</li>
+					{#each e.disputedBy ?? [] as d (d.source + d.claim)}
+						<li class="claim"><code>{d.source}</code> : {d.claim}</li>
 					{/each}
 				</ul>
 			{/if}
@@ -181,7 +246,7 @@
 		font-size: 0.85rem;
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
-		opacity: 0.7;
+		opacity: 0.85;
 	}
 	dl {
 		display: grid;
@@ -191,7 +256,7 @@
 		margin: 0.5rem 0;
 	}
 	dt {
-		opacity: 0.65;
+		opacity: 0.85;
 	}
 	dd {
 		margin: 0;
@@ -204,7 +269,7 @@
 	}
 	.event-time {
 		font-variant-numeric: tabular-nums;
-		opacity: 0.75;
+		opacity: 0.9;
 		margin-bottom: 0.5rem;
 	}
 	p {
@@ -228,14 +293,14 @@
 	.disputes code {
 		display: inline-block;
 		font-size: 0.78rem;
-		opacity: 0.7;
+		opacity: 0.85;
 		margin-right: 0.4rem;
 	}
 	.title {
 		font-weight: 500;
 	}
 	.author {
-		opacity: 0.7;
+		opacity: 0.85;
 		margin-left: 0.25rem;
 	}
 	.disputes li {
@@ -247,7 +312,7 @@
 	}
 	.dispute-time {
 		font-variant-numeric: tabular-nums;
-		opacity: 0.65;
+		opacity: 0.85;
 		font-size: 0.82rem;
 		margin-bottom: 0.2rem;
 	}
@@ -282,11 +347,17 @@
 		border-left: 3px solid #e87a7a;
 	}
 	.unit-link.missing {
-		opacity: 0.55;
+		opacity: 0.75;
 		font-size: 0.78rem;
 		padding: 0.25rem 0.5rem;
 	}
 	.unit-link.missing span {
-		opacity: 0.7;
+		opacity: 0.85;
+	}
+	.details:focus-visible,
+	.close:focus-visible,
+	.unit-link:focus-visible {
+		outline: 2px solid #5ec3ff;
+		outline-offset: 2px;
 	}
 </style>

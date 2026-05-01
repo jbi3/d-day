@@ -1,9 +1,8 @@
+import type { Position } from '@d-day/schema';
+import type { FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import { feature } from 'topojson-client';
 import type { Topology } from 'topojson-specification';
-import type { FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import countries50m from 'world-atlas/countries-10m.json';
-
-import type { Position } from '@d-day/schema';
 
 // ISO 3166-1 numeric code for France in Natural Earth.
 const FRANCE_ID = '250';

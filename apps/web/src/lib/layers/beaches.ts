@@ -1,7 +1,6 @@
-import { PathLayer, TextLayer, IconLayer } from '@deck.gl/layers';
-import type { Layer } from '@deck.gl/core';
-
 import type { Position } from '@d-day/schema';
+import type { Layer } from '@deck.gl/core';
+import { PathLayer, TextLayer, IconLayer } from '@deck.gl/layers';
 
 import { FLAG_BY_NATION, type FlagSpec, type Nation } from './national-flags';
 
@@ -334,8 +333,7 @@ export function buildBeachLayers({ zoom }: BuildBeachLayersOptions): Layer[] {
 				pixelOffsetY: -(totalH / 2 + NAME_TO_FLAG_GAP_PX)
 			});
 		} else {
-			const rowWidth =
-				sizes.reduce((a, s) => a + s, 0) + FLAG_GAP_PX * (sizes.length - 1);
+			const rowWidth = sizes.reduce((a, s) => a + s, 0) + FLAG_GAP_PX * (sizes.length - 1);
 			let cursorX = -rowWidth / 2;
 			for (let i = 0; i < b.flags.length; i++) {
 				const s = sizes[i];

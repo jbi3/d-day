@@ -1,8 +1,7 @@
-import { PathLayer } from '@deck.gl/layers';
-import type { Layer } from '@deck.gl/core';
-import type { Side } from '@d-day/schema';
-
 import { unitPositionAt, type UnitTrack } from '$lib/data-loader';
+import type { Side } from '@d-day/schema';
+import type { Layer } from '@deck.gl/core';
+import { PathLayer } from '@deck.gl/layers';
 
 interface BuildTrailLayersOptions {
 	tracks: UnitTrack[];
@@ -26,10 +25,7 @@ const MIN_VISIBLE_ALPHA = 6;
  * segment's far endpoint. Older segments fade out, recent direction
  * stays visible.
  */
-export function buildTrailLayers({
-	tracks,
-	isoTime
-}: BuildTrailLayersOptions): Layer[] {
+export function buildTrailLayers({ tracks, isoTime }: BuildTrailLayersOptions): Layer[] {
 	const segments: TrailSegment[] = [];
 	const t = Date.parse(isoTime);
 
@@ -70,10 +66,7 @@ export function buildTrailLayers({
 			id: 'unit-trails',
 			data: segments,
 			getPath: (d) => d.path,
-			getColor: (d) =>
-				d.side === 'allied'
-					? [80, 150, 230, d.alpha]
-					: [220, 80, 80, d.alpha],
+			getColor: (d) => (d.side === 'allied' ? [80, 150, 230, d.alpha] : [220, 80, 80, d.alpha]),
 			getWidth: 3,
 			widthUnits: 'pixels',
 			widthMinPixels: 2,

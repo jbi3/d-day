@@ -1,7 +1,6 @@
-import { PathLayer } from '@deck.gl/layers';
-import type { Layer } from '@deck.gl/core';
-
 import type { Position } from '@d-day/schema';
+import type { Layer } from '@deck.gl/core';
+import { PathLayer } from '@deck.gl/layers';
 
 interface Road {
 	id: string;

@@ -1,11 +1,10 @@
+import type { Position } from '@d-day/schema';
+import type { Layer } from '@deck.gl/core';
+import { PolygonLayer } from '@deck.gl/layers';
+import type { FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import { feature } from 'topojson-client';
 import type { Topology } from 'topojson-specification';
-import type { FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import countries from 'world-atlas/countries-10m.json';
-import { PolygonLayer } from '@deck.gl/layers';
-import type { Layer } from '@deck.gl/core';
-
-import type { Position } from '@d-day/schema';
 
 // Visible bbox: wide enough to include S England, Channel Islands,
 // N France, Belgium, Netherlands, NW Germany. Drives both the land

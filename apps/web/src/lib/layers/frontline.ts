@@ -1,7 +1,7 @@
-import { PolygonLayer } from '@deck.gl/layers';
-import type { Layer } from '@deck.gl/core';
-import polygonClipping, { type Polygon as PCPolygon, type Ring as PCRing } from 'polygon-clipping';
 import type { FrontlineSegment, Position } from '@d-day/schema';
+import type { Layer } from '@deck.gl/core';
+import { PolygonLayer } from '@deck.gl/layers';
+import polygonClipping, { type Polygon as PCPolygon, type Ring as PCRing } from 'polygon-clipping';
 
 import { FRANCE_LAND_MULTIPOLYGON } from './france-land';
 
@@ -103,10 +103,7 @@ function interpolatePath(
 			const pb = keyframes[i + 1].path;
 			const out: Position[] = new Array(pa.length);
 			for (let j = 0; j < pa.length; j++) {
-				out[j] = [
-					pa[j][0] + (pb[j][0] - pa[j][0]) * f,
-					pa[j][1] + (pb[j][1] - pa[j][1]) * f
-				];
+				out[j] = [pa[j][0] + (pb[j][0] - pa[j][0]) * f, pa[j][1] + (pb[j][1] - pa[j][1]) * f];
 			}
 			return out;
 		}
