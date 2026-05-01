@@ -9,6 +9,10 @@
 		"name": "6th Airborne Division",
 		"shortName": "6th Abn",
 		"strength": 7900,
+		"commander": {
+			"name": "Richard N. Gale",
+			"rank": "Major General"
+		},
 		"sources": ["harrison-1951", "iwm-archives"]
 	},
 	"movement": {

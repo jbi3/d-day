@@ -8,6 +8,10 @@
 		"force": "U",
 		"pennantNumber": "CA-71",
 		"displacement": 13600,
+		"commander": {
+			"name": "Elliott M. Senn",
+			"rank": "Captain"
+		},
 		"sources": ["nhhc"]
 	},
 	"track": {

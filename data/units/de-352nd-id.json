@@ -9,6 +9,10 @@
 		"name": "352. Infanterie-Division",
 		"shortName": "352. ID",
 		"strength": 12700,
+		"commander": {
+			"name": "Dietrich Kraiss",
+			"rank": "Generalleutnant"
+		},
 		"sources": ["zetterling-2000", "harrison-1951"]
 	},
 	"movement": {

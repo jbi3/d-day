@@ -9,6 +9,10 @@
 		"name": "101st Airborne Division",
 		"shortName": "101st Abn",
 		"strength": 6600,
+		"commander": {
+			"name": "Maxwell D. Taylor",
+			"rank": "Major General"
+		},
 		"sources": ["harrison-1951", "us-na-aar"]
 	},
 	"movement": {
