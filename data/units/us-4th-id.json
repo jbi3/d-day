@@ -1,0 +1,68 @@
+{
+	"$schema": "../../packages/data/schema/unit.schema.json",
+	"unit": {
+		"id": "us-4th-id",
+		"side": "allied",
+		"country": "US",
+		"echelon": "division",
+		"branch": "infantry",
+		"name": "4th Infantry Division",
+		"shortName": "4th ID",
+		"strength": 14500,
+		"commander": {
+			"name": "Raymond O. Barton",
+			"rank": "Major General"
+		},
+		"casualties": {
+			"total": 197
+		},
+		"sources": ["harrison-1951", "us-na-aar"]
+	},
+	"movement": {
+		"unitId": "us-4th-id",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-1.18, 49.6],
+				"sources": ["harrison-1951"],
+				"note": "Embarked, Force U transports forming offshore north-east of Saint-Vaast. Position approximates Transport Area V on the Utah run-in."
+			},
+			{
+				"time": "1944-06-06T06:30:00Z",
+				"position": [-1.176, 49.412],
+				"sources": ["harrison-1951", "us-na-aar"],
+				"disputedBy": [
+					{
+						"source": "beevor-2009",
+						"claim": "The first wave touched down ~1.8 km south of the planned Tare Green / Uncle Red sectors due to a southward set of the tidal current and the loss of the lead control vessel. Roosevelt's well-known 'we'll start the war from right here' resolved the dilemma in the field."
+					}
+				],
+				"note": "H-Hour: 8th RCT (lead) lands on Tare Green / Uncle Red sectors of Utah, on or near La Madeleine. Position approximates the centerline of the actual touchdown, south of the planned beach."
+			},
+			{
+				"time": "1944-06-06T09:00:00Z",
+				"position": [-1.198, 49.405],
+				"sources": ["harrison-1951"],
+				"note": "Beach exits cleared rapidly compared to Omaha; assault waves move inland along Causeway 2 toward Sainte-Marie-du-Mont."
+			},
+			{
+				"time": "1944-06-06T11:00:00Z",
+				"position": [-1.205, 49.42],
+				"sources": ["harrison-1951", "us-na-aar"],
+				"note": "Lead elements link up with the 101st Airborne at Pouppeville (Causeway 1). The Utah lodgement is joined to the airborne pocket."
+			},
+			{
+				"time": "1944-06-06T15:00:00Z",
+				"position": [-1.224, 49.388],
+				"sources": ["harrison-1951"],
+				"note": "Sainte-Marie-du-Mont consolidated ; 22nd RCT pushing west toward Beuzeville-au-Plain. Centroid drifts inland."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-1.21, 49.42],
+				"sources": ["harrison-1951", "us-na-aar"],
+				"note": "End of MVP window: 4th ID established on the Cotentin coastal plain, link-ups achieved with both 101st and (at Audouville-la-Hubert) elements moving toward 82nd. Position is divisional centroid, approximate."
+			}
+		]
+	}
+}

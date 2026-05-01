@@ -3,7 +3,10 @@
 	import Details, { type Selection } from '$lib/components/details.svelte';
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import Legend from '$lib/components/legend.svelte';
+	import SectorSelector from '$lib/components/sector-selector.svelte';
 	import Timeline from '$lib/components/timeline.svelte';
+	import type { EventCategory } from '@d-day/schema';
+
 	import { loadData, unitPositionAt, type LoadedData } from '$lib/data-loader';
 	import { buildBasemapLayers } from '$lib/layers/basemap';
 	import { buildBeachLayers } from '$lib/layers/beaches';
@@ -18,17 +21,27 @@
 	import maplibregl from 'maplibre-gl';
 	import { onMount } from 'svelte';
 
-	const loadResult: { data: LoadedData | null; error: Error | null } = (() => {
-		try {
-			return { data: loadData(), error: null };
-		} catch (err) {
-			return { data: null, error: err instanceof Error ? err : new Error(String(err)) };
-		}
-	})();
-	// data is null only when dataError is set; the template gates everything
-	// behind {#if dataError}, and onMount + $effects short-circuit when set.
-	const data = loadResult.data as LoadedData;
-	const dataError = loadResult.error;
+	let data = $state<LoadedData | null>(null);
+	let dataError = $state<Error | null>(null);
+
+	let categoryFilter = $state<Record<EventCategory, boolean>>({
+		airborne: true,
+		'h-hour': true,
+		beach: true,
+		inland: true,
+		'german-reaction': true,
+		naval: true,
+		air: true
+	});
+
+	function toggleCategory(cat: EventCategory) {
+		categoryFilter = { ...categoryFilter, [cat]: !categoryFilter[cat] };
+	}
+
+	const filteredEvents = $derived.by(() => {
+		if (!data) return [];
+		return data.events.filter((e) => !e.category || categoryFilter[e.category]);
+	});
 
 	const simStartIso = '1944-06-05T22:00:00Z';
 	const simStartEpoch = Date.parse(simStartIso);
@@ -44,7 +57,7 @@
 	let map: maplibregl.Map | undefined;
 	let deckOverlay: MapboxOverlay | undefined;
 
-	function readHashState(): { simHours?: number; selection?: Selection } {
+	function readHashStateFor(d: LoadedData): { simHours?: number; selection?: Selection } {
 		if (typeof window === 'undefined') return {};
 		const raw = window.location.hash.replace(/^#/, '');
 		if (!raw) return {};
@@ -59,10 +72,10 @@
 		if (sel) {
 			const [kind, id] = sel.split(':');
 			if (kind === 'unit' && id) {
-				const track = data.unitById.get(id);
+				const track = d.unitById.get(id);
 				if (track) out.selection = { kind: 'unit', track };
 			} else if (kind === 'event' && id) {
-				const event = data.eventById.get(id);
+				const event = d.eventById.get(id);
 				if (event) out.selection = { kind: 'event', event };
 			}
 		}
@@ -109,10 +122,18 @@
 	}
 
 	onMount(() => {
-		if (dataError) return;
-		const initial = readHashState();
-		if (initial.simHours !== undefined) time.seek(initial.simHours);
-		if (initial.selection) selection = initial.selection;
+		// Kick off the async dataset fetch ; the deck.gl + maplibre setup
+		// proceeds in parallel so the basemap can paint while data loads.
+		loadData()
+			.then((d) => {
+				data = d;
+				const initial = readHashStateFor(d);
+				if (initial.simHours !== undefined) time.seek(initial.simHours);
+				if (initial.selection) selection = initial.selection;
+			})
+			.catch((err: unknown) => {
+				dataError = err instanceof Error ? err : new Error(String(err));
+			});
 
 		// Basemap is rendered entirely via deck.gl (see buildBasemapLayers)
 		// from the same Natural Earth 1:10M source as the occupation veil,
@@ -152,6 +173,7 @@
 					selection = null;
 					return true;
 				}
+				if (!data) return true;
 				if (layer.id === 'units-marker') {
 					const track = data.unitById.get(object.id);
 					if (track) selection = { kind: 'unit', track };
@@ -202,7 +224,20 @@
 	});
 
 	$effect(() => {
-		if (!deckOverlay || dataError) return;
+		if (!deckOverlay) return;
+		// Render basemap chrome immediately ; data-driven layers wait for
+		// loadData() to resolve so the user sees the map taking shape
+		// progressively rather than a blank canvas.
+		const chrome = [
+			...buildBasemapLayers(),
+			...buildRoadLayers({ zoom }),
+			...buildToponymLayers({ zoom }),
+			...buildBeachLayers({ zoom })
+		];
+		if (!data) {
+			deckOverlay.setProps({ layers: chrome });
+			return;
+		}
 		deckOverlay.setProps({
 			layers: [
 				...buildBasemapLayers(),
@@ -211,7 +246,7 @@
 				...buildToponymLayers({ zoom }),
 				...buildBeachLayers({ zoom }),
 				...buildTrailLayers({ tracks: data.units, isoTime: currentIso }),
-				...buildEventLayers({ events: data.events, currentEpoch }),
+				...buildEventLayers({ events: filteredEvents, currentEpoch }),
 				...buildUnitLayers({ tracks: data.units, isoTime: currentIso, zoom })
 			]
 		});
@@ -250,17 +285,37 @@
 	<div class="map-wrap">
 		<div bind:this={mapContainer} class="map"></div>
 
-		<Legend />
+		<Legend {categoryFilter} onCategoryToggle={toggleCategory} />
 
-		<Details
-			{selection}
-			sourceById={data.sourceById}
-			unitById={data.unitById}
-			onSelect={(s) => (selection = s)}
-			onClose={() => (selection = null)}
+		<SectorSelector
+			onJump={(center, zoom) => {
+				if (!map) return;
+				const reduceMotion =
+					typeof window !== 'undefined' &&
+					window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+				if (reduceMotion) {
+					map.jumpTo({ center, zoom });
+				} else {
+					map.flyTo({ center, zoom, duration: 900 });
+				}
+			}}
 		/>
 
-		<Timeline {time} {simStartEpoch} events={data.events} {formatSimTime} />
+		{#if data}
+			<Details
+				{selection}
+				sourceById={data.sourceById}
+				unitById={data.unitById}
+				onSelect={(s) => (selection = s)}
+				onClose={() => (selection = null)}
+			/>
+
+			<Timeline {time} {simStartEpoch} events={filteredEvents} {formatSimTime} />
+		{:else}
+			<div class="loading" role="status" aria-live="polite">
+				<div class="loading-card">Chargement des données…</div>
+			</div>
+		{/if}
 	</div>
 {/if}
 
@@ -280,8 +335,26 @@
 	}
 	.map-wrap :global(.legend),
 	.map-wrap :global(.details),
-	.map-wrap :global(.hud) {
+	.map-wrap :global(.hud),
+	.map-wrap :global(.wrap) {
 		z-index: 10;
+	}
+	.loading {
+		position: absolute;
+		left: 50%;
+		bottom: 1.5rem;
+		transform: translateX(-50%);
+		z-index: 10;
+		pointer-events: none;
+	}
+	.loading-card {
+		background: rgba(20, 20, 20, 0.7);
+		color: #f5f5f5;
+		padding: 0.5rem 1rem;
+		border-radius: 999px;
+		font-family: system-ui, sans-serif;
+		font-size: 0.85rem;
+		backdrop-filter: blur(8px);
 	}
 	.error-wrap {
 		position: fixed;

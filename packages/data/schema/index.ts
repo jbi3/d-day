@@ -9,11 +9,16 @@ export type {
 	Source,
 	Dispute,
 	Position,
+	Commander,
+	CasualtyPhase,
+	Casualties,
 	Unit,
 	Waypoint,
 	Movement,
+	EventCategory,
 	MapEvent,
 	FrontlineKeyframe,
+	FrontlineConfidence,
 	FrontlineSegment,
 	FrontlineFile
 } from './types.ts';

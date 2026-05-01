@@ -21,6 +21,38 @@
 		"shortName": { "type": "string" },
 		"strength": { "type": "integer", "minimum": 1 },
 		"axisAffiliation": { "type": "string", "enum": ["wehrmacht", "ss"] },
+		"commander": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["name", "rank"],
+			"properties": {
+				"name": { "type": "string", "minLength": 1 },
+				"rank": { "type": "string", "minLength": 1 }
+			}
+		},
+		"casualties": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": ["total"],
+			"properties": {
+				"total": { "type": "integer", "minimum": 0 },
+				"byPhase": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"additionalProperties": false,
+						"required": ["phase"],
+						"properties": {
+							"phase": { "type": "string", "minLength": 1 },
+							"killed": { "type": "integer", "minimum": 0 },
+							"wounded": { "type": "integer", "minimum": 0 },
+							"missing": { "type": "integer", "minimum": 0 },
+							"captured": { "type": "integer", "minimum": 0 }
+						}
+					}
+				}
+			}
+		},
 		"sources": {
 			"type": "array",
 			"items": { "type": "string" },

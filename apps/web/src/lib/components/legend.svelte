@@ -1,5 +1,14 @@
 <script lang="ts">
+	import type { EventCategory } from '@d-day/schema';
+
 	import { buildSvg, type AxisAffiliation } from '$lib/layers/unit-icons';
+
+	interface Props {
+		categoryFilter: Record<EventCategory, boolean>;
+		onCategoryToggle: (cat: EventCategory) => void;
+	}
+
+	const { categoryFilter, onCategoryToggle }: Props = $props();
 
 	let open = $state(false);
 
@@ -17,6 +26,16 @@
 		axisAffiliation?: AxisAffiliation;
 		label: string;
 	};
+
+	const categoryLabels: Array<{ key: EventCategory; label: string }> = [
+		{ key: 'airborne', label: 'Aéroportées' },
+		{ key: 'h-hour', label: 'H-Hour' },
+		{ key: 'beach', label: 'Combat de plage' },
+		{ key: 'inland', label: 'Avance intérieure' },
+		{ key: 'german-reaction', label: 'Réaction allemande' },
+		{ key: 'naval', label: 'Bombardement naval' },
+		{ key: 'air', label: 'Bombardement aérien' }
+	];
 
 	const samples: Sample[] = [
 		{
@@ -86,6 +105,20 @@
 			<dt><span class="swatch occupation"></span></dt>
 			<dd>Territoire occupé par l'Axe (recule à mesure de l'avance alliée)</dd>
 		</dl>
+
+		<fieldset class="filter">
+			<legend>Filtrer les événements</legend>
+			{#each categoryLabels as cat (cat.key)}
+				<label>
+					<input
+						type="checkbox"
+						checked={categoryFilter[cat.key]}
+						onchange={() => onCategoryToggle(cat.key)}
+					/>
+					<span>{cat.label}</span>
+				</label>
+			{/each}
+		</fieldset>
 	</aside>
 {/if}
 
@@ -210,5 +243,42 @@
 		outline: 2px solid #5ec3ff;
 		outline-offset: 2px;
 		opacity: 1;
+	}
+	.filter {
+		margin: 0.6rem -0.2rem 0;
+		padding: 0.5rem 0.4rem 0.3rem;
+		border: 0;
+		border-top: 1px solid rgba(255, 255, 255, 0.12);
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		row-gap: 0.25rem;
+		column-gap: 0.5rem;
+	}
+	.filter legend {
+		grid-column: 1 / -1;
+		font-size: 0.72rem;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		opacity: 0.85;
+		margin-bottom: 0.2rem;
+		padding: 0;
+	}
+	.filter label {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-size: 0.74rem;
+		cursor: pointer;
+	}
+	.filter input[type='checkbox'] {
+		margin: 0;
+		width: 0.85rem;
+		height: 0.85rem;
+		accent-color: #5ec3ff;
+		cursor: pointer;
+	}
+	.filter input[type='checkbox']:focus-visible {
+		outline: 2px solid #5ec3ff;
+		outline-offset: 2px;
 	}
 </style>

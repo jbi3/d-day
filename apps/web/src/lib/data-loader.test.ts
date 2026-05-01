@@ -1,19 +1,61 @@
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { describe, expect, it } from 'vitest';
 
 import { DataLoadError, loadData, unitPositionAt, type UnitTrack } from './data-loader';
 
-describe('loadData', () => {
-	it('loads bundled fixtures, validates schemas, asserts source registry coverage', () => {
-		const data = loadData();
+const here = dirname(fileURLToPath(import.meta.url));
+const dataRoot = join(here, '..', '..', '..', '..', 'data');
 
-		// Sanity: at least one of each entity type loaded.
+/**
+ * Tests run in jsdom which has no `/data/...` server, so we wire a fake
+ * fetch that resolves URLs against the workspace `data/` directory the
+ * same way the dev server middleware does.
+ */
+function makeFakeFetch(): typeof fetch {
+	return (async (input: RequestInfo | URL): Promise<Response> => {
+		const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
+		const path = url.replace(/^https?:\/\/[^/]+/, '');
+		if (path === '/data/manifest.json') {
+			const { readdirSync } = await import('node:fs');
+			const units = readdirSync(join(dataRoot, 'units'))
+				.filter((f) => f.endsWith('.json'))
+				.sort()
+				.map((f) => `units/${f}`);
+			const events = readdirSync(join(dataRoot, 'events'))
+				.filter((f) => f.endsWith('.json'))
+				.sort()
+				.map((f) => `events/${f}`);
+			return new Response(
+				JSON.stringify({
+					units,
+					events,
+					sources: 'sources/registry.json',
+					frontline: 'frontline.json'
+				})
+			);
+		}
+		const rel = path.replace(/^\/data\//, '');
+		const file = join(dataRoot, rel);
+		try {
+			return new Response(readFileSync(file, 'utf-8'));
+		} catch {
+			return new Response('Not found', { status: 404 });
+		}
+	}) as typeof fetch;
+}
+
+describe('loadData', () => {
+	it('loads workspace fixtures, validates schemas, asserts source registry coverage', async () => {
+		const data = await loadData(makeFakeFetch());
+
 		expect(data.units.length).toBeGreaterThan(0);
 		expect(data.events.length).toBeGreaterThan(0);
 		expect(data.sources.length).toBeGreaterThan(0);
 		expect(data.frontlineSegments.length).toBeGreaterThan(0);
 
-		// Cross-references: every unit, event and waypoint source ID is in
-		// the registry. (loadData throws if not — this is a smoke test.)
 		const known = new Set(data.sources.map((s) => s.id));
 		for (const t of data.units) {
 			for (const id of t.unit.sources) expect(known.has(id)).toBe(true);
@@ -26,8 +68,8 @@ describe('loadData', () => {
 		}
 	});
 
-	it('exposes id-keyed lookup maps that round-trip', () => {
-		const data = loadData();
+	it('exposes id-keyed lookup maps that round-trip', async () => {
+		const data = await loadData(makeFakeFetch());
 		for (const t of data.units) {
 			expect(data.unitById.get(t.unit.id)).toBe(t);
 		}
@@ -36,8 +78,8 @@ describe('loadData', () => {
 		}
 	});
 
-	it('every event involvedUnit references a known unit (no phantom IDs)', () => {
-		const data = loadData();
+	it('every event involvedUnit references a known unit (no phantom IDs)', async () => {
+		const data = await loadData(makeFakeFetch());
 		for (const e of data.events) {
 			for (const id of e.involvedUnits ?? []) {
 				expect(data.unitById.has(id), `event "${e.id}" involves unknown unit "${id}"`).toBe(true);
@@ -51,6 +93,12 @@ describe('loadData', () => {
 		expect(err.name).toBe('DataLoadError');
 		expect(err.context).toBe('test');
 		expect(err.message).toBe('[data-loader] test: msg');
+	});
+
+	it('throws DataLoadError on HTTP failure', async () => {
+		const failingFetch = (async () =>
+			new Response('boom', { status: 500, statusText: 'Server Error' })) as typeof fetch;
+		await expect(loadData(failingFetch)).rejects.toBeInstanceOf(DataLoadError);
 	});
 });
 

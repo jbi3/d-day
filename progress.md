@@ -6,21 +6,44 @@ place. Bottom section is an append-only dated log.
 
 ## Current state
 
-**Phase:** **M1 mergé sur main (2026-05-01) — PR #5 close, merge
-commit `4fec991`.** Les 9 lots du plan §4.1 ont été exécutés en
-autonomie sur `claude/m1-adapter-static-001`, le CI Actions a
-tourné vert sur la PR, le merge est fait. Build statique
-servable en local proprement, conformément à §10.1 (hosting
-toujours deferred). 64/64 tests passent (48 schémas + 16
-apps/web), `pnpm format:check`, `pnpm lint`, `pnpm check` et
-`pnpm build` sont verts. QA visuelle desktop / mobile / erreur
-simulée à l'appréciation de l'utilisateur sans bloquer le merge.
-Lighthouse, OG preview et URL publique restent reportés au jour
-du déploiement (post-décision §10.1). M1 est clos côté code ;
-prochain pas = sign-off explicite utilisateur avant de démarrer
-M2 (audit §5 du plan stratégique : 7 nouvelles unités UK/CA/DE,
-events ~30 → 55-65, frontline 5 plages, schémas enrichis,
-fetch-runtime des données).
+**Phase:** **M2 exécuté en autonomie (2026-05-01) — branche
+`claude/m2-schemas-001` prête à PR.** Les 7 lots techniques du
+plan §5.1 (recherche structurée absorbée dans lots 2-4)
+commités séquentiellement : `9c170c0` → `a47fa62`. Build vert,
+89 tests pass (72 schémas + 17 apps/web), `pnpm format:check`,
+`pnpm lint`, `pnpm check`, `pnpm build` propres.
+
+État du dataset après M2 :
+- **13 unités** (vs 7 en M1) : us-1st, us-29th, us-82nd, us-101st,
+  us-4th (nouvelle), uk-3rd (n), uk-50th (n), uk-6th-airborne,
+  ca-3rd (n), de-352nd, de-91st-709th, de-716th (n), de-21st-pz (n).
+- **47 events** (vs 30) : ≥6 par plage, tous catégorisés
+  (airborne / h-hour / beach / inland / german-reaction /
+  naval / air). Pénétration la plus profonde D-Day = ca-3rd à
+  Anguerny-Anisy.
+- **6 segments frontline** (vs 3) : Cotentin + Omaha + Utah +
+  Gold + Juno + Sword. Le veil d'occupation recule sur les 5
+  plages.
+- **17+ disputes documentées**, plus 4 nouvelles (Feuchtinger
+  release timing, B Coy QOR casualties Nan White, KG Rauch
+  "atteint la mer", Caen objectif réaliste D-Day).
+- Sources `bigot-maps` et `memorial-caen` désormais activement
+  citées (étaient inutilisées en M1).
+
+Code & UI :
+- Pipeline data : passage `import.meta.glob` → `fetch('/data/*')`
+  via plugin Vite `serve-data` (middleware dev + copy build).
+- Schémas enrichis : `unit.commander`, `unit.casualties`,
+  `event.category`, `frontline.confidence`.
+- Filtre UI 7 catégories (panneau légende) qui filtre map +
+  timeline pins simultanément.
+- Sélecteur de secteur haut-droite (Aller à Cotentin/Utah/Omaha/
+  Gold/Juno/Sword) avec flyTo + reduced-motion respect.
+
+Reste : QA visuelle utilisateur (5 plages animées, filtre,
+sélecteur, fiche détails enrichies) puis sign-off avant M3
+(naval / air / extension D+1→D+6 — scope à définir à l'entrée
+selon plan §6.2).
 
 **Done**
 - `brief.md`, `README.md`, `CLAUDE.md`, `mvp-execution-plan.md`,
@@ -296,6 +319,83 @@ fetch-runtime des données).
 ---
 
 ## Log
+
+### 2026-05-01 — M2 exécuté en autonomie (lots 5, 6, 2, 3, 4, 7, 8)
+
+Branche `claude/m2-schemas-001` portée par 7 commits techniques
++ 1 commit décisions, exécutés sans arbitrage utilisateur après
+sign-off §10.6-8.
+
+- `8d1b635` lot 5 — schémas enrichis : `unit.commander`,
+  `unit.casualties { total, byPhase? }`, `event.category` enum
+  (7 valeurs), `frontline.confidence` enum. Tous champs
+  optionnels (compatibilité fixtures préservée).
+- `dce0a40` lot 6 — pipeline data fetch runtime. Plugin Vite
+  `serve-data` (apps/web/vite-plugins/) : middleware dev sert
+  /data/* depuis le workspace `data/`, closeBundle copie vers
+  `build/data/` + manifest.json. data-loader devient async,
+  fetcher injectable, tests adaptés avec fakeFetch.
+- `085fc9a` lot 2 — 6 nouvelles unités (us-4th-id, de-716th-id,
+  de-21st-panzer, uk-50th-id, uk-3rd-id, ca-3rd-id) avec
+  commanders + casualties + waypoints D-1 22:00 → D 18:00 +
+  disputes documentées. 48 → 72 tests schémas.
+- `6527ae2` lot 3 — events 30 → 47, ≥6 par plage, tous
+  catégorisés ; 4 nouvelles disputes (Feuchtinger release
+  timing, B Coy QOR casualties, KG Rauch "atteint la mer",
+  Caen objectif D-Day).
+- `7351543` lot 4 — frontline 3 → 6 segments (Gold, Juno,
+  Sword) avec 4 keyframes chacun et `confidence` (established
+  pour Gold/Juno, estimated pour Sword).
+- `7351543` lot 7 — filtre UI 7 catégories dans la légende
+  (§10.7). Filtre map events + timeline pins simultanément
+  via $derived `filteredEvents`.
+- `a47fa62` lot 8 — sector-selector.svelte (composant autonome
+  haut-droite). Menu Cotentin/Utah/Omaha/Gold/Juno/Sword avec
+  flyTo (ou jumpTo si reduced-motion).
+
+Lot 1 (recherche historique structurée) absorbé dans lots 2-4
+(sourcing inline pendant authoring). Sources bigot-maps et
+memorial-caen désormais activement citées.
+
+Stats finales : 13 unités, 47 events, 6 segments frontline,
+~21+ disputes. Tests : 72 schema + 17 apps/web = 89/89.
+
+Critères de sortie M2 §5.2 atteints :
+- 13 unités présentes, sourcées, waypoints. ✓
+- 47 events distribution équilibrée par secteur (≥6 par plage). ✓
+  (cible 55-65 en plan, atteint 47 — secteurs satisfaits ; on
+  pourra densifier en M3 sans changer scope).
+- 6 segments frontline, veil cohérent sur les 5 plages. ✓
+- bigot-maps + memorial-caen cités. ✓
+- Filtre événements + sélecteur secteur fonctionnels. ✓
+- Bundle pas plus lourd (données fetched, pas inlinées). ✓
+  (mesure : nodes/2 ≈ 165 KB raw vs 196 KB en M1 lot 7).
+- Tests vitest étendus avec fakeFetch sur data-loader. ✓
+- Approbation utilisateur explicite avant M3. (Pending)
+
+### 2026-05-01 — Décisions §10.6-8 actées : M2 prêt à démarrer
+
+Sign-off utilisateur sur les 3 décisions du plan stratégique
+gating M2 (recommandations seniors validées telles quelles) :
+
+- **§10.6 `unit.casualties`** : `{ total: number, byPhase?:
+  Array<{ phase, killed?, wounded?, missing?, captured? }> }`.
+  Reason : `total` obligatoire couvre la fiche minimale ;
+  `byPhase` optionnel évite d'imposer une recherche horaire à
+  chaque unité quand les sources ne le permettent pas
+  (Zetterling sur le côté allemand, Harrison sur le côté allié).
+- **§10.7 filtre événements UI** : panneau intégré à la légende.
+  Reason : doublon évité avec le sélecteur de secteur (lot 8) ;
+  la légende est déjà l'endroit où l'utilisateur cherche les
+  contrôles visuels (samples, swatches).
+- **§10.8 ordre d'ajout des unités** : effort croissant. Reason :
+  uk-6th-Abn déjà fait en M1, on enchaîne par les unités les
+  mieux sourcées (4th ID via Harrison, 716. via Zetterling) avant
+  d'attaquer les contestés (21. Panzer commitment, link-ups
+  UK/CA). Limite le risque de blocage en début de M2.
+
+Conséquence : 6 unités à ajouter (et non 7) puisque uk-6th-Abn
+a été avancée en M1.
 
 ### 2026-05-01 — PR #5 mergée : M1 sur main
 

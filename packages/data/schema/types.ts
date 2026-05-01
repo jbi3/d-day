@@ -29,6 +29,24 @@ export interface Dispute {
 
 export type Position = [number, number]; // [lon, lat]
 
+export interface Commander {
+	name: string;
+	rank: string;
+}
+
+export interface CasualtyPhase {
+	phase: string;
+	killed?: number;
+	wounded?: number;
+	missing?: number;
+	captured?: number;
+}
+
+export interface Casualties {
+	total: number;
+	byPhase?: CasualtyPhase[];
+}
+
 export interface Unit {
 	id: UnitID;
 	side: Side;
@@ -41,6 +59,8 @@ export interface Unit {
 	strength?: number;
 	/** For axis units, distinguishes Wehrmacht (default) from Waffen-SS for icon styling. */
 	axisAffiliation?: 'wehrmacht' | 'ss';
+	commander?: Commander;
+	casualties?: Casualties;
 	sources: SourceID[];
 }
 
@@ -62,10 +82,13 @@ export interface FrontlineKeyframe {
 	path: Position[];
 }
 
+export type FrontlineConfidence = 'established' | 'estimated' | 'contested';
+
 export interface FrontlineSegment {
 	id: string;
 	label?: string;
 	closed?: boolean;
+	confidence?: FrontlineConfidence;
 	keyframes: FrontlineKeyframe[];
 	sources: SourceID[];
 }
@@ -74,6 +97,15 @@ export interface FrontlineFile {
 	segments: FrontlineSegment[];
 }
 
+export type EventCategory =
+	| 'airborne'
+	| 'h-hour'
+	| 'beach'
+	| 'inland'
+	| 'german-reaction'
+	| 'naval'
+	| 'air';
+
 export interface MapEvent {
 	id: EventID;
 	title: string;
@@ -81,6 +113,7 @@ export interface MapEvent {
 	time: string; // ISO-8601
 	position: Position;
 	involvedUnits?: UnitID[];
+	category?: EventCategory;
 	sources: SourceID[];
 	disputedBy?: Dispute[];
 }

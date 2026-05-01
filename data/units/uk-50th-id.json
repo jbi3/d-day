@@ -1,0 +1,68 @@
+{
+	"$schema": "../../packages/data/schema/unit.schema.json",
+	"unit": {
+		"id": "uk-50th-id",
+		"side": "allied",
+		"country": "UK",
+		"echelon": "division",
+		"branch": "infantry",
+		"name": "50th (Northumbrian) Infantry Division",
+		"shortName": "50th ID",
+		"strength": 14500,
+		"commander": {
+			"name": "Douglas A. Graham",
+			"rank": "Major General"
+		},
+		"casualties": {
+			"total": 400
+		},
+		"sources": ["iwm-archives", "harrison-1951"]
+	},
+	"movement": {
+		"unitId": "uk-50th-id",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.5, 50.0],
+				"sources": ["iwm-archives"],
+				"note": "Embarked, Force G transports forming in the Channel north of Gold. Centroid offshore."
+			},
+			{
+				"time": "1944-06-06T07:25:00Z",
+				"position": [-0.6, 49.341],
+				"sources": ["iwm-archives", "harrison-1951"],
+				"note": "H-Hour Gold (later than US beaches because of tide differential): 231 Brigade lands on Jig sectors (Le Hamel area) ; 69 Brigade on King sectors (La Rivière). Position approximates the King/Jig boundary."
+			},
+			{
+				"time": "1944-06-06T09:00:00Z",
+				"position": [-0.602, 49.335],
+				"sources": ["iwm-archives"],
+				"note": "Le Hamel still resisting (Hampshires take heavy fire from WN37) ; La Rivière cleared by East Yorkshires ; assault working through Asnelles-sur-Mer."
+			},
+			{
+				"time": "1944-06-06T12:00:00Z",
+				"position": [-0.65, 49.31],
+				"sources": ["iwm-archives", "harrison-1951"],
+				"note": "Mid-day: armour and infantry pushing inland through Ryes and Meuvaines toward the Bayeux–Caen road (RN13)."
+			},
+			{
+				"time": "1944-06-06T15:00:00Z",
+				"position": [-0.69, 49.295],
+				"sources": ["iwm-archives"],
+				"disputedBy": [
+					{
+						"source": "harrison-1951",
+						"claim": "Cross-Channel Attack records that 50th Division 'almost reached Bayeux' on D-Day, while IWM unit war diaries show only forward recce patrols of 56 Brigade approaching the city outskirts late afternoon. The main divisional line stopped short, and Bayeux was entered formally on D+1."
+					}
+				],
+				"note": "Lead elements (56 Brigade with Sherwood Rangers tanks) approach the eastern outskirts of Bayeux ; main divisional line still short of the RN13."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.71, 49.288],
+				"sources": ["iwm-archives", "harrison-1951"],
+				"note": "End of MVP window: divisional line approximately Sommervieu–Vaux-sur-Seulles ; Bayeux not yet entered. Centroid drifts west of the day's lodgement axis."
+			}
+		]
+	}
+}

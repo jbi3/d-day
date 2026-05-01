@@ -1,0 +1,72 @@
+{
+	"$schema": "../../packages/data/schema/unit.schema.json",
+	"unit": {
+		"id": "de-21st-panzer",
+		"side": "axis",
+		"country": "DE",
+		"echelon": "division",
+		"branch": "armor",
+		"name": "21. Panzer-Division",
+		"shortName": "21. Pz",
+		"strength": 16000,
+		"axisAffiliation": "wehrmacht",
+		"commander": {
+			"name": "Edgar Feuchtinger",
+			"rank": "Generalmajor"
+		},
+		"sources": ["zetterling-2000", "harrison-1951"]
+	},
+	"movement": {
+		"unitId": "de-21st-panzer",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.36, 49.18],
+				"sources": ["zetterling-2000"],
+				"note": "Bivouac and assembly areas south and east of Caen (Falaise–Saint-Pierre-sur-Dives axis). Centroid south of Caen at the start of the night."
+			},
+			{
+				"time": "1944-06-06T06:30:00Z",
+				"position": [-0.36, 49.18],
+				"sources": ["zetterling-2000"],
+				"disputedBy": [
+					{
+						"source": "harrison-1951",
+						"claim": "Feuchtinger's authority to commit the division was constrained by the OKW reserve rule. Sources differ on the exact moment release came through (early morning per German staff records vs ~14:00 per some Allied accounts) and on whether Feuchtinger acted on his own initiative against elements east of the Orne before formal release."
+					}
+				],
+				"note": "Still south of Caen at H-Hour. Some elements (notably Pz-Aufkl-Abt 21) were already engaging the British 6th Airborne east of the Orne overnight on local initiative."
+			},
+			{
+				"time": "1944-06-06T10:00:00Z",
+				"position": [-0.3, 49.2],
+				"sources": ["zetterling-2000"],
+				"note": "Division ordered north through Caen toward the British landings ; movement slowed by Allied air interdiction and the Caen road bottleneck."
+			},
+			{
+				"time": "1944-06-06T14:00:00Z",
+				"position": [-0.26, 49.25],
+				"sources": ["zetterling-2000", "harrison-1951"],
+				"note": "Counterattack assembly north of Caen, Pz-Rgt 22 forming up between Lebisey and Bieville to attack toward the coast."
+			},
+			{
+				"time": "1944-06-06T17:00:00Z",
+				"position": [-0.28, 49.3],
+				"sources": ["zetterling-2000", "harrison-1951"],
+				"disputedBy": [
+					{
+						"source": "beevor-2009",
+						"claim": "The narrative claim that elements of 21. Panzer 'reached the sea' between Sword and Juno is contested. A small Kampfgruppe Rauch (Pz-Gren-Rgt 192) did make it to Lion-sur-Mer briefly in the evening, but the bulk of the panzer regiment was repulsed by Sherman Fireflies at Bieville and never closed the coastal gap."
+					}
+				],
+				"note": "Counterattack toward Lion-sur-Mer in progress. KG Rauch reaches the coast briefly before withdrawing ; main Pz-Rgt 22 stalled at Bieville/Lebisey."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.3, 49.32],
+				"sources": ["zetterling-2000"],
+				"note": "End of MVP window: division line stabilises along the Lebisey–Bieville ridge, blocking the British 3rd ID's drive on Caen. Position is divisional centroid, approximate."
+			}
+		]
+	}
+}
