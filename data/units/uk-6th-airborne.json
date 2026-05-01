@@ -1,0 +1,61 @@
+{
+	"$schema": "../../packages/data/schema/unit.schema.json",
+	"unit": {
+		"id": "uk-6th-airborne",
+		"side": "allied",
+		"country": "UK",
+		"echelon": "division",
+		"branch": "airborne",
+		"name": "6th Airborne Division",
+		"shortName": "6th Abn",
+		"strength": 7900,
+		"sources": ["harrison-1951", "iwm-archives"]
+	},
+	"movement": {
+		"unitId": "uk-6th-airborne",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-1.0, 51.0],
+				"sources": ["harrison-1951"],
+				"note": "Pre-drop: aboard 38/46 Group RAF transport serials and Horsa/Hamilcar gliders forming over southern England. Position approximates the route start over the south coast — exact assembly geometry not material at division-level."
+			},
+			{
+				"time": "1944-06-06T00:16:00Z",
+				"position": [-0.274, 49.242],
+				"sources": ["iwm-archives", "harrison-1951"],
+				"note": "Coup-de-main party (Major Howard, D Coy 2nd Ox & Bucks LI) takes Pegasus Bridge by glider assault. Division centroid pinned to Pegasus at this instant; main brigade still en route over the Channel."
+			},
+			{
+				"time": "1944-06-06T01:00:00Z",
+				"position": [-0.21, 49.22],
+				"sources": ["harrison-1951"],
+				"disputedBy": [
+					{
+						"source": "iwm-archives",
+						"claim": "Like the US airborne drops, 6th Airborne stick distribution on DZ-N was uneven; some sticks landed several kilometres off-DZ near Cabourg and Varaville. The DZ-N centroid is therefore an idealisation, not where most sticks actually came down."
+					}
+				],
+				"note": "Main drop on DZ-N (Ranville–Bois-de-Bavent area): 5th Para Brigade (12, 13, 7 Para Bn). Position is the planned DZ-N centroid."
+			},
+			{
+				"time": "1944-06-06T04:30:00Z",
+				"position": [-0.22, 49.235],
+				"sources": ["harrison-1951", "iwm-archives"],
+				"note": "Ranville cleared by 13 Para Bn (first French village liberated by British forces); 9 Para (Otway) assaults Merville Battery (~04:30) with depleted force. Division centroid approximated on the Orne bridgehead."
+			},
+			{
+				"time": "1944-06-06T13:30:00Z",
+				"position": [-0.274, 49.242],
+				"sources": ["iwm-archives"],
+				"note": "Lord Lovat's 1st Special Service Brigade (from Sword) links up at Pegasus Bridge with Howard's coup-de-main party. Bridgehead consolidating; centroid drifts back to Pegasus at link-up moment."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.235, 49.225],
+				"sources": ["harrison-1951"],
+				"note": "End of MVP window: division holding the Orne bridgehead (Ranville–Bréville–Bois-de-Bavent line). Position is divisional centroid, approximate."
+			}
+		]
+	}
+}
