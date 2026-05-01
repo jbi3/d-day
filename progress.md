@@ -6,28 +6,23 @@ place. Bottom section is an append-only dated log.
 
 ## Current state
 
-**Phase:** **MVP accepted (2026-05-01) — post-MVP plan committed
-(2026-05-01) — décisions §10 toutes actées (2026-05-01) — M1
-prêt à démarrer.** Le plan stratégique production est sous
-contrôle de version dans `docs/production-plan.md` ; il sert de
-référence pour M1 (prod-grade MVP, local-only), M2 (v1 Normandie
-complète), M3 (naval/air + extension D+1→D+6). Décisions
-structurantes prises avec l'utilisateur : (a) plan séquencé en
-trois jalons avec sign-off entre chacun, (b) desktop-only assumé,
-mobile bloqué proprement, (c) LOD multi-granularité deferred.
-**Décisions §10 actées au 2026-05-01** : §10.1 hosting deferred,
-local-only — M1 prépare le build comme s'il allait shipper sans
-choisir de cible ni déployer ; §10.2 SSG (`adapter-static` +
-`prerender = true`) ; §10.3 `rivers.ts` supprimé ; §10.4 unité
-`uk-6th-airborne` ajoutée (élargissement scope flanc Est UK
-assumé) ; §10.5 i18n FR-only en M1, pas de lib i18n.
-Décisions §10.1–5 packagées dans la PR #4
-(`claude/m1-decisions-001`, commit `837eb86`) — en attente de merge.
-Prochain pas concret : merge #4, puis démarrer M1 (lot 1 =
-adapter-static + prerender + structure CI locale ; lots 2–9 du
-plan §4.1 exécutables en parallèle ou en séquence selon
-préférence). M1 peut tourner en autonomie sans arbitrage
-utilisateur restant.
+**Phase:** **M1 exécuté en autonomie (2026-05-01) — branche
+`claude/m1-adapter-static-001` prête à PR.** Les 9 lots du plan
+§4.1 sont commités séquentiellement sur cette branche
+(`7ad837c` → `fa6bd60`). Le build statique est servable en local
+proprement, conformément au critère §10.1 (hosting toujours
+deferred — pas de déploiement public ni d'OG image générée à
+ce stade). 64/64 tests passent (48 schémas + 16 apps/web),
+`pnpm format:check`, `pnpm lint`, `pnpm check` et `pnpm build`
+sont verts. Reste pour clore M1 : (a) approbation utilisateur
+visuelle (Chrome/Firefox/Safari récents — desktop-only assumé),
+(b) test manuel de l'écran de blocage mobile (resize <1024 px),
+(c) test erreur simulée (corrompre `data/events/d-day.json`
+localement → vérifier que l'error boundary FR s'affiche).
+Lighthouse, OG preview et URL publique sont reportés au jour du
+déploiement (post-décision §10.1). Une fois M1 mergé sur main,
+sign-off utilisateur explicite avant de démarrer M2 (audit §5
+du plan stratégique).
 
 **Done**
 - `brief.md`, `README.md`, `CLAUDE.md`, `mvp-execution-plan.md`,
@@ -214,22 +209,83 @@ utilisateur restant.
 - 48/48 schema + registry + unit-data + events-data + frontline-data
   tests pass on every merge (44 → 48 le 2026-05-01 avec
   l'ajout `uk-6th-airborne`) ; web app `pnpm check` clean.
+- **M1 lot 1 (`7ad837c`)** : `@sveltejs/adapter-static` (strict)
+  remplace `adapter-auto`, `prerender = true` sur la route
+  racine ; workflow `.github/workflows/ci.yml` (format:check +
+  lint + check + test + build).
+- **M1 lot 2 (`f364a9a`)** : robustesse runtime — `DataLoadError`
+  typée dans data-loader, `loadData()` wrappé en IIFE try/catch
+  dans +page.svelte, fallback FR à la place de la carte si la
+  validation échoue ; `+error.svelte` global FR pour les erreurs
+  framework.
+- **M1 lot 3 (`5c5bc1f`)** : i18n FR-first — `lang="fr"` dans
+  `app.html`, timeline / details / legend traduits en FR (Côté,
+  Pays, Échelon, Arme, Étapes contestées, Unités impliquées,
+  Faits contestés, vitesse "0,25×", aria-labels FR).
+- **M1 lot 4 (`2bfb584`)** : a11y WCAG 2.1 AA — contrastes 0.45
+  → 0.7-0.85, `prefers-reduced-motion` respecté (timeline n'auto-
+  hide plus, `flyTo` → `jumpTo`, transitions désactivées),
+  outline `#5ec3ff` sur tous les contrôles, focus trap simple
+  pour le panel détail, Esc ferme la légende, restauration du
+  focus précédent à la fermeture.
+- **M1 lot 5 (`c017c30`)** : blocage mobile propre — composant
+  `desktop-only.svelte` plein écran z=1000 si `pointer:coarse`
+  ou viewport < 1024 px, message FR explicatif, pas de fallback
+  tactile.
+- **M1 lot 6 (`5bd7751`)** : SEO + meta sociale — title riche,
+  meta description FR, og:type/locale=fr_FR/title/description,
+  twitter:card=summary_large_image (image OG différée jusqu'au
+  déploiement) ; bouton « ⎘ Lien » discret dans la timeline qui
+  copie l'URL complète (le hash deep-linking porte déjà l'état).
+- **M1 lot 7 (`2d3123c`)** : mesure bundle + split vendors —
+  rolldown `advancedChunks` sépare maplibre / deck / geo en
+  chunks vendors. Entry node passé de **1 476 KB gz** à **60 KB
+  gz** ; chunks vendors fetched en parallèle. Total chunks
+  initiaux ~1,53 MB gz (deck.gl est le poste dominant et
+  irréductible sans réécriture renderer — décision §3.1 : pas de
+  réécriture).
+- **M1 lot 8 (`014473a`)** : hygiène code — Prettier 3.8 +
+  prettier-plugin-svelte, ESLint 10 flat config + typescript-eslint
+  + eslint-plugin-svelte (flat/recommended) + perfectionist
+  (sort-imports en warning), simple-git-hooks (pre-commit =
+  format:check + lint), `type:module` racine, lint clean (0 erreur).
+  Génération JSON Schema depuis types TS deferred (risque de
+  divergence avec les 48 tests schémas hand-authored).
+- **M1 lot 9 (`fa6bd60`)** : tests vitest apps/web — 16 tests
+  (7 time-store + 9 data-loader). Suite monorepo `pnpm test`
+  passe maintenant 64/64.
 
-**Next (post-MVP — awaiting user direction)**
-- v1 scope kickoff (`brief.md` §Roadmap step 3): broaden geography
-  to full Normandy, add UK/CA beach data tracks (currently only
-  reference geography), German OOB beyond 352./91./709.
-- Painted basemap exploration (`brief.md` §Visual direction) — was
-  deferred during MVP in favour of the deck.gl-rendered Natural
-  Earth coastline; revisit now that the slice is locked.
-- Hosting decision (Cloudflare Pages vs Netlify) — deferred in
-  Phase 0; needed before any public deploy.
-- Mixed-granularity LOD (regiment / battalion at higher zoom in
-  selected sectors) — flagged in `brief.md` as ~half the project's
-  effort; user call on when to take this on.
-- A.1–A.6 historical-data refinement — division-centroid
-  approximations are good enough for division-level MVP but will
-  need tightening if v1 surfaces regiment/battalion granularity.
+**Next (M1 close-out — awaiting user QA)**
+- Test manuel desktop sur la branche : Chrome / Firefox / Safari
+  récents, vérifier qu'il n'y a pas de régression visuelle vs
+  MVP accepté.
+- Test manuel mobile : ouvrir avec un viewport < 1024 px ou
+  émulation tactile → l'écran de blocage doit s'afficher.
+- Test erreur : corrompre temporairement `data/events/d-day.json`
+  (ex : retirer un `id`) → `pnpm dev` doit afficher l'error
+  boundary FR au lieu d'écran blanc.
+- Approbation explicite utilisateur → merge `claude/m1-adapter-
+  static-001` sur main → démarrer M2 (audit §5 du plan).
+
+**Next (M2 — sur sign-off)**
+- Élargir périmètre à la v1 du brief : 5 plages, OOB allemand
+  complet (`brief.md` §Roadmap step 3, plan §5.1).
+- 7 nouvelles unités : 4th ID, 716., uk-50th, uk-3rd, ca-3rd,
+  21. Panzer.
+- ~25-35 nouveaux events (équilibrer Juno = 0 actuellement).
+- Schémas enrichis : `unit.commander`, `unit.casualties`,
+  `event.category`, `frontline.confidence`.
+- Pipeline data : passage `import.meta.glob` → `fetch()` runtime.
+
+**Deferred (par décision explicite)**
+- Hosting (CF Pages vs Vercel vs Netlify vs GH Pages) : §10.1
+  rouvrir au moment du déploiement.
+- OG image production : générer une capture statique 1200×630
+  d'Omaha à H-Hour quand on déploie.
+- Painted basemap : §3.1 du plan, à revisiter avant M3.
+- Mixed-granularity LOD (regiment / battalion par zoom) : ~½
+  effort total du projet (`brief.md`), hors scope M1/M2/M3.
+- Génération JSON Schema depuis types TS : §M1 lot 8 sub-deferred.
 
 **Open questions / unresolved**
 - None blocking. Painted basemap, hosting, mixed-granularity LOD,
@@ -242,6 +298,51 @@ utilisateur restant.
 ---
 
 ## Log
+
+### 2026-05-01 — M1 exécuté en autonomie (lots 1→9)
+
+Branche `claude/m1-adapter-static-001` portée par 9 commits
+séquentiels exécutés sans arbitrage utilisateur, conformément à
+la décision §10 (M1 peut tourner en autonomie sur le périmètre
+Omaha + airborne US existant).
+
+- `7ad837c` lot 1 — adapter-static + prerender + CI (workflow
+  GitHub Actions `format:check + lint + check + test + build`).
+  Décision §10.1 : pas de target hosting choisi, build local-only.
+- `f364a9a` lot 2 — robustesse runtime (DataLoadError typée,
+  fallback FR, `+error.svelte` global).
+- `5c5bc1f` lot 3 — i18n FR-first (lang="fr", strings UI traduits,
+  format dates UTC, aria-labels FR). Cohérent §10.5.
+- `2bfb584` lot 4 — a11y WCAG 2.1 AA (contrastes, prefers-reduced-
+  motion, focus visible, focus trap panel, Esc ferme légende).
+- `c017c30` lot 5 — blocage mobile propre (composant `desktop-
+  only.svelte` plein écran si pointer:coarse ou viewport < 1024).
+- `5bd7751` lot 6 — SEO (title, meta description FR, og:* + twitter
+  card, image OG différée jusqu'au déploiement) + bouton « ⎘ Lien »
+  discret dans la timeline.
+- `2d3123c` lot 7 — split vendors via rolldown advancedChunks.
+  Entry node 1 476 KB gz → **60 KB gz** ; total ~1,53 MB gz
+  parallélisable. Pas de renderer rewrite déclenché (§3.1).
+- `014473a` lot 8 — Prettier + ESLint flat + perfectionist +
+  simple-git-hooks + `type:module`. Lint = 0 erreur (58 warnings
+  de sort-imports natural en mode warn). Génération JSON Schema
+  depuis types TS deferred (risque divergence avec les 48 tests
+  schémas existants).
+- `fa6bd60` lot 9 — vitest apps/web : 16 tests (7 time-store +
+  9 data-loader avec `unitPositionAt`). Total monorepo : **64/64**.
+
+État final M1 :
+- `pnpm format:check`, `pnpm lint`, `pnpm check`, `pnpm test`,
+  `pnpm build` tous verts.
+- Bundle entry 60 KB gz ; 4 chunks vendors fetched en parallèle.
+- A11y WCAG 2.1 AA respecté (contrastes, focus, motion).
+- I18n FR cohérent partout.
+- Erreur de validation data → fallback gracieux ; pas d'écran
+  blanc même si `data/units/*.json` corrompu.
+- Mobile / tactile bloqués proprement.
+- 16 KB de meta sociale + bouton de partage fonctionnel.
+
+Reste pour clore M1 : QA visuelle utilisateur + sign-off avant M2.
 
 ### 2026-04-29 — Session 1 closeout, repo bootstrapped
 - `brief.md` and `README.md` pushed to `main` (commit `e4d06e9`).
