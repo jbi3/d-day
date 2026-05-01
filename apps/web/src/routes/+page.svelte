@@ -229,7 +229,7 @@
 </script>
 
 <svelte:head>
-	<title>D-Day map — MVP</title>
+	<title>D-Day — 6 juin 1944 — carte interactive heure par heure</title>
 </svelte:head>
 
 <svelte:window onkeydown={onKeydown} />

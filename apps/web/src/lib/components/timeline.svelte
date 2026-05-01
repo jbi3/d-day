@@ -85,6 +85,21 @@
 		visible = true;
 		armHideTimer();
 	}
+
+	let copied = $state(false);
+	let copyTimer: ReturnType<typeof setTimeout> | null = null;
+	async function copyLink() {
+		if (typeof window === 'undefined') return;
+		try {
+			await navigator.clipboard.writeText(window.location.href);
+			copied = true;
+			if (copyTimer) clearTimeout(copyTimer);
+			copyTimer = setTimeout(() => (copied = false), 1800);
+		} catch {
+			// Clipboard refused (insecure context, permission); the URL is still
+			// in the browser bar — silently no-op rather than show an error.
+		}
+	}
 </script>
 
 <svelte:window onmousemove={onWindowMouseMove} />
@@ -108,6 +123,9 @@
 				<option value={4}>4×</option>
 			</select>
 		</label>
+		<button class="secondary copy" type="button" onclick={copyLink} aria-label="Copier le lien partageable">
+			{copied ? '✓ Copié' : '⎘ Lien'}
+		</button>
 	</div>
 
 	<div class="track-wrap">
@@ -199,8 +217,12 @@
 		align-items: center;
 		gap: 0.4rem;
 		font-size: 0.78rem;
-		opacity: 0.7;
+		opacity: 0.85;
 		margin-left: auto;
+	}
+	.copy {
+		font-size: 0.78rem;
+		padding: 0.3rem 0.6rem;
 	}
 	.speed select {
 		background: rgba(255, 255, 255, 0.12);
