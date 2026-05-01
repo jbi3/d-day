@@ -5,7 +5,7 @@
 	import { MapboxOverlay } from '@deck.gl/mapbox';
 
 	import { TimeStore } from '$lib/time-store.svelte';
-	import { loadData, unitPositionAt } from '$lib/data-loader';
+	import { loadData, unitPositionAt, type LoadedData } from '$lib/data-loader';
 	import { buildUnitLayers } from '$lib/layers/units';
 	import { buildEventLayers } from '$lib/layers/events';
 	import { buildTrailLayers } from '$lib/layers/trails';
@@ -18,7 +18,17 @@
 	import Details, { type Selection } from '$lib/components/details.svelte';
 	import Legend from '$lib/components/legend.svelte';
 
-	const data = loadData();
+	const loadResult: { data: LoadedData | null; error: Error | null } = (() => {
+		try {
+			return { data: loadData(), error: null };
+		} catch (err) {
+			return { data: null, error: err instanceof Error ? err : new Error(String(err)) };
+		}
+	})();
+	// data is null only when dataError is set; the template gates everything
+	// behind {#if dataError}, and onMount + $effects short-circuit when set.
+	const data = loadResult.data as LoadedData;
+	const dataError = loadResult.error;
 
 	const simStartIso = '1944-06-05T22:00:00Z';
 	const simStartEpoch = Date.parse(simStartIso);
@@ -96,6 +106,7 @@
 	}
 
 	onMount(() => {
+		if (dataError) return;
 		const initial = readHashState();
 		if (initial.simHours !== undefined) time.seek(initial.simHours);
 		if (initial.selection) selection = initial.selection;
@@ -182,7 +193,7 @@
 	});
 
 	$effect(() => {
-		if (!deckOverlay) return;
+		if (!deckOverlay || dataError) return;
 		deckOverlay.setProps({
 			layers: [
 				...buildBasemapLayers(),
@@ -214,26 +225,38 @@
 
 <svelte:window onkeydown={onKeydown} />
 
-<div class="map-wrap">
-	<div bind:this={mapContainer} class="map"></div>
+{#if dataError}
+	<div class="error-wrap">
+		<div class="error-card">
+			<h1>Données indisponibles</h1>
+			<p class="hint">
+				La carte n'a pas pu charger ses données historiques. Recharge la page ou reviens plus tard.
+			</p>
+			<p class="msg">{dataError.message}</p>
+		</div>
+	</div>
+{:else}
+	<div class="map-wrap">
+		<div bind:this={mapContainer} class="map"></div>
 
-	<Legend />
+		<Legend />
 
-	<Details
-		{selection}
-		sourceById={data.sourceById}
-		unitById={data.unitById}
-		onSelect={(s) => (selection = s)}
-		onClose={() => (selection = null)}
-	/>
+		<Details
+			{selection}
+			sourceById={data.sourceById}
+			unitById={data.unitById}
+			onSelect={(s) => (selection = s)}
+			onClose={() => (selection = null)}
+		/>
 
-	<Timeline
-		{time}
-		{simStartEpoch}
-		events={data.events}
-		{formatSimTime}
-	/>
-</div>
+		<Timeline
+			{time}
+			{simStartEpoch}
+			events={data.events}
+			{formatSimTime}
+		/>
+	</div>
+{/if}
 
 <style>
 	:global(body) {
@@ -253,5 +276,43 @@
 	.map-wrap :global(.details),
 	.map-wrap :global(.hud) {
 		z-index: 10;
+	}
+	.error-wrap {
+		position: fixed;
+		inset: 0;
+		display: grid;
+		place-items: center;
+		background: #1a1f24;
+		color: #e8e8e8;
+		padding: 2rem;
+	}
+	.error-card {
+		max-width: 480px;
+		background: rgba(20, 20, 20, 0.85);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 8px;
+		padding: 2rem;
+		text-align: center;
+	}
+	.error-card h1 {
+		margin: 0 0 1rem;
+		font-size: 1.4rem;
+		font-weight: 600;
+	}
+	.error-card .hint {
+		margin: 0 0 1rem;
+		font-size: 0.9rem;
+		color: rgba(255, 255, 255, 0.7);
+	}
+	.error-card .msg {
+		margin: 0;
+		padding: 0.75rem;
+		background: rgba(0, 0, 0, 0.3);
+		border-radius: 4px;
+		font-family: ui-monospace, monospace;
+		font-size: 0.8rem;
+		text-align: left;
+		word-break: break-word;
+		color: rgba(255, 200, 200, 0.9);
 	}
 </style>

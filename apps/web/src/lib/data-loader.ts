@@ -52,11 +52,18 @@ const frontlineGlob = import.meta.glob<FrontlineFile>('../../../../data/frontlin
 	import: 'default'
 });
 
+export class DataLoadError extends Error {
+	readonly context: string;
+	constructor(context: string, message: string) {
+		super(`[data-loader] ${context}: ${message}`);
+		this.name = 'DataLoadError';
+		this.context = context;
+	}
+}
+
 function expect<T>(value: ValidateFunction<T>, data: unknown, ctx: string): T {
 	if (!value(data)) {
-		throw new Error(
-			`[data-loader] ${ctx} failed schema validation: ${JSON.stringify(value.errors)}`
-		);
+		throw new DataLoadError(ctx, `schema validation failed: ${JSON.stringify(value.errors)}`);
 	}
 	return data as T;
 }
@@ -82,8 +89,9 @@ export function loadData(): LoadedData {
 		expect(validateUnit, file.unit, `${path}#/unit`);
 		expect(validateMovement, file.movement, `${path}#/movement`);
 		if (file.movement.unitId !== file.unit.id) {
-			throw new Error(
-				`[data-loader] ${path}: movement.unitId (${file.movement.unitId}) ≠ unit.id (${file.unit.id})`
+			throw new DataLoadError(
+				path,
+				`movement.unitId (${file.movement.unitId}) ≠ unit.id (${file.unit.id})`
 			);
 		}
 		units.push({ unit: file.unit, movement: file.movement });
@@ -129,8 +137,9 @@ export function loadData(): LoadedData {
 			const v0 = seg.keyframes[0]?.path.length ?? 0;
 			for (let i = 1; i < seg.keyframes.length; i++) {
 				if (seg.keyframes[i].path.length !== v0) {
-					throw new Error(
-						`[data-loader] frontline segment ${seg.id}: keyframe ${i} has ${seg.keyframes[i].path.length} vertices, expected ${v0} (vertex count must match across keyframes for interpolation)`
+					throw new DataLoadError(
+						`frontline segment ${seg.id}`,
+						`keyframe ${i} has ${seg.keyframes[i].path.length} vertices, expected ${v0} (vertex count must match across keyframes for interpolation)`
 					);
 				}
 			}
@@ -147,7 +156,7 @@ export function loadData(): LoadedData {
 
 function assertKnown(id: string, known: Set<string>, ctx: string): void {
 	if (!known.has(id)) {
-		throw new Error(`[data-loader] ${ctx}: cited source "${id}" not in registry`);
+		throw new DataLoadError(ctx, `cited source "${id}" not in registry`);
 	}
 }
 
