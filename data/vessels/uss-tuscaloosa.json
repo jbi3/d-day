@@ -1,0 +1,36 @@
+{
+	"$schema": "../../packages/data/schema/vessel.schema.json",
+	"vessel": {
+		"id": "uss-tuscaloosa",
+		"name": "USS Tuscaloosa",
+		"country": "US",
+		"kind": "heavy-cruiser",
+		"force": "U",
+		"pennantNumber": "CA-37",
+		"displacement": 9950,
+		"sources": ["nhhc"]
+	},
+	"track": {
+		"vesselId": "uss-tuscaloosa",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-1.23, 49.55],
+				"sources": ["nhhc"],
+				"note": "Bombarding Force A station off Utah."
+			},
+			{
+				"time": "1944-06-06T05:50:00Z",
+				"position": [-1.22, 49.54],
+				"sources": ["nhhc"],
+				"note": "Opens 8-inch fire on Saint-Vaast and the Pernelle radar station."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-1.22, 49.53],
+				"sources": ["nhhc"],
+				"note": "Continues call-fire."
+			}
+		]
+	}
+}

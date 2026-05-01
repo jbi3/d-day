@@ -1,0 +1,40 @@
+{
+	"$schema": "../../packages/data/schema/vessel.schema.json",
+	"vessel": {
+		"id": "uss-augusta",
+		"name": "USS Augusta",
+		"country": "US",
+		"kind": "heavy-cruiser",
+		"force": "O",
+		"pennantNumber": "CA-31",
+		"displacement": 9050,
+		"commander": {
+			"name": "Edward H. Jones",
+			"rank": "Captain"
+		},
+		"sources": ["nhhc", "harrison-1951"]
+	},
+	"track": {
+		"vesselId": "uss-augusta",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.92, 49.52],
+				"sources": ["nhhc"],
+				"note": "Flagship of the Western Naval Task Force (Rear Adm Kirk + Lt Gen Bradley aboard) ; takes station off Omaha."
+			},
+			{
+				"time": "1944-06-06T06:30:00Z",
+				"position": [-0.91, 49.51],
+				"sources": ["nhhc"],
+				"note": "Observation and direction post during H-Hour ; engages targets of opportunity through the morning."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.91, 49.51],
+				"sources": ["nhhc"],
+				"note": "Continues as command ship through the day ; Bradley's view of the Omaha disaster drove the request to redirect later waves."
+			}
+		]
+	}
+}

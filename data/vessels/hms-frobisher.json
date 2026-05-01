@@ -1,0 +1,36 @@
+{
+	"$schema": "../../packages/data/schema/vessel.schema.json",
+	"vessel": {
+		"id": "hms-frobisher",
+		"name": "HMS Frobisher",
+		"country": "UK",
+		"kind": "heavy-cruiser",
+		"force": "S",
+		"pennantNumber": "D81",
+		"displacement": 9750,
+		"sources": ["roskill-1961"]
+	},
+	"track": {
+		"vesselId": "hms-frobisher",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.24, 49.44],
+				"sources": ["roskill-1961"],
+				"note": "Bombarding Force D, Sword sector. WWI-era Hawkins-class heavy cruiser brought back into front-line service for Neptune."
+			},
+			{
+				"time": "1944-06-06T05:30:00Z",
+				"position": [-0.24, 49.42],
+				"sources": ["roskill-1961"],
+				"note": "Opens 7.5-inch fire on inland strongpoints."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.24, 49.42],
+				"sources": ["roskill-1961"],
+				"note": "Continues call-fire."
+			}
+		]
+	}
+}

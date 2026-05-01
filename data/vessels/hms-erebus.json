@@ -1,0 +1,36 @@
+{
+	"$schema": "../../packages/data/schema/vessel.schema.json",
+	"vessel": {
+		"id": "hms-erebus",
+		"name": "HMS Erebus",
+		"country": "UK",
+		"kind": "monitor",
+		"force": "U",
+		"pennantNumber": "I02",
+		"displacement": 7200,
+		"sources": ["roskill-1961"]
+	},
+	"track": {
+		"vesselId": "hms-erebus",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-1.21, 49.555],
+				"sources": ["roskill-1961"],
+				"note": "Monitor (purpose-built shore bombardment) attached to Bombarding Force A ; takes station off Saint-Marcouf islands."
+			},
+			{
+				"time": "1944-06-06T05:50:00Z",
+				"position": [-1.2, 49.55],
+				"sources": ["roskill-1961"],
+				"note": "Opens 15-inch fire on the Saint-Marcouf battery in concert with USS Nevada."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-1.2, 49.55],
+				"sources": ["roskill-1961"],
+				"note": "Continues bombardment ; Crisbecq battery still partially active at end of MVP window."
+			}
+		]
+	}
+}

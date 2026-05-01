@@ -1,0 +1,36 @@
+{
+	"$schema": "../../packages/data/schema/vessel.schema.json",
+	"vessel": {
+		"id": "hms-ajax",
+		"name": "HMS Ajax",
+		"country": "UK",
+		"kind": "light-cruiser",
+		"force": "G",
+		"pennantNumber": "C22",
+		"displacement": 6985,
+		"sources": ["roskill-1961"]
+	},
+	"track": {
+		"vesselId": "hms-ajax",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.6, 49.43],
+				"sources": ["roskill-1961"],
+				"note": "Bombarding Force K (Gold) ; veteran of the River Plate."
+			},
+			{
+				"time": "1944-06-06T05:50:00Z",
+				"position": [-0.6, 49.42],
+				"sources": ["roskill-1961"],
+				"note": "Opens 6-inch fire on the Longues-sur-Mer battery — duels with German 152 mm guns and silences the battery by mid-morning."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.6, 49.42],
+				"sources": ["roskill-1961"],
+				"note": "Continues call-fire support inland."
+			}
+		]
+	}
+}

@@ -1,0 +1,40 @@
+{
+	"$schema": "../../packages/data/schema/vessel.schema.json",
+	"vessel": {
+		"id": "uss-arkansas",
+		"name": "USS Arkansas",
+		"country": "US",
+		"kind": "battleship",
+		"force": "O",
+		"pennantNumber": "BB-33",
+		"displacement": 26100,
+		"commander": {
+			"name": "Frederick G. Richards",
+			"rank": "Captain"
+		},
+		"sources": ["nhhc", "harrison-1951"]
+	},
+	"track": {
+		"vesselId": "uss-arkansas",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.88, 49.5],
+				"sources": ["nhhc"],
+				"note": "Bombarding Force C station, central Omaha (Les Moulins / Easy Red)."
+			},
+			{
+				"time": "1944-06-06T05:50:00Z",
+				"position": [-0.88, 49.485],
+				"sources": ["nhhc"],
+				"note": "Opens fire 05:50 on bluff strongpoints WN-65 / WN-66 (Les Moulins)."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.88, 49.495],
+				"sources": ["nhhc"],
+				"note": "Holds central Omaha bombardment lane through D-Day."
+			}
+		]
+	}
+}

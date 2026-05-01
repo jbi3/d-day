@@ -1,0 +1,46 @@
+{
+	"$schema": "../../packages/data/schema/vessel.schema.json",
+	"vessel": {
+		"id": "uss-texas",
+		"name": "USS Texas",
+		"country": "US",
+		"kind": "battleship",
+		"force": "O",
+		"pennantNumber": "BB-35",
+		"displacement": 27000,
+		"commander": {
+			"name": "Charles A. Baker",
+			"rank": "Captain"
+		},
+		"sources": ["nhhc", "harrison-1951"]
+	},
+	"track": {
+		"vesselId": "uss-texas",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.95, 49.5],
+				"sources": ["nhhc"],
+				"note": "Bombarding Force C station, ~12 km north-west of Pointe-du-Hoc."
+			},
+			{
+				"time": "1944-06-06T05:50:00Z",
+				"position": [-0.97, 49.49],
+				"sources": ["nhhc"],
+				"note": "Opens fire on Pointe-du-Hoc battery (target 1) at 05:50 ; later shifts to Vierville draw and bluff defenses."
+			},
+			{
+				"time": "1944-06-06T12:00:00Z",
+				"position": [-0.93, 49.47],
+				"sources": ["nhhc"],
+				"note": "Closes the range mid-morning to deliver direct fire on stubborn Vierville bluff defenses ; goes briefly into 7 fathoms."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.94, 49.49],
+				"sources": ["nhhc"],
+				"note": "Withdrawn to nominal bombardment station at end of MVP window ; on call for night gunfire support."
+			}
+		]
+	}
+}

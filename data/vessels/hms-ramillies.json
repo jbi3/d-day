@@ -1,0 +1,36 @@
+{
+	"$schema": "../../packages/data/schema/vessel.schema.json",
+	"vessel": {
+		"id": "hms-ramillies",
+		"name": "HMS Ramillies",
+		"country": "UK",
+		"kind": "battleship",
+		"force": "S",
+		"pennantNumber": "07",
+		"displacement": 29150,
+		"sources": ["roskill-1961"]
+	},
+	"track": {
+		"vesselId": "hms-ramillies",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.28, 49.45],
+				"sources": ["roskill-1961"],
+				"note": "Bombarding Force D station, Sword sector ; tasked against Le Havre approaches."
+			},
+			{
+				"time": "1944-06-06T05:30:00Z",
+				"position": [-0.28, 49.43],
+				"sources": ["roskill-1961"],
+				"note": "Opens 15-inch fire on Benerville and Houlgate batteries to suppress threats from the east flank."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.28, 49.43],
+				"sources": ["roskill-1961"],
+				"note": "Continues call-fire ; deters German destroyer / E-boat sortie attempts from Le Havre."
+			}
+		]
+	}
+}

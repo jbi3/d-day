@@ -1,0 +1,36 @@
+{
+	"$schema": "../../packages/data/schema/vessel.schema.json",
+	"vessel": {
+		"id": "hms-roberts",
+		"name": "HMS Roberts",
+		"country": "UK",
+		"kind": "monitor",
+		"force": "S",
+		"pennantNumber": "F40",
+		"displacement": 7970,
+		"sources": ["roskill-1961"]
+	},
+	"track": {
+		"vesselId": "hms-roberts",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.27, 49.46],
+				"sources": ["roskill-1961"],
+				"note": "Monitor attached to Bombarding Force D ; shallow-draught design optimised for shore bombardment."
+			},
+			{
+				"time": "1944-06-06T05:30:00Z",
+				"position": [-0.27, 49.43],
+				"sources": ["roskill-1961"],
+				"note": "Opens 15-inch fire on inland strongpoints behind Sword."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.27, 49.43],
+				"sources": ["roskill-1961"],
+				"note": "Continues call-fire support."
+			}
+		]
+	}
+}

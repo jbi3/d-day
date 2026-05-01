@@ -1,0 +1,36 @@
+{
+	"$schema": "../../packages/data/schema/vessel.schema.json",
+	"vessel": {
+		"id": "orp-dragon",
+		"name": "ORP Dragon",
+		"country": "PL",
+		"kind": "light-cruiser",
+		"force": "S",
+		"pennantNumber": "D46",
+		"displacement": 4850,
+		"sources": ["roskill-1961"]
+	},
+	"track": {
+		"vesselId": "orp-dragon",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.22, 49.44],
+				"sources": ["roskill-1961"],
+				"note": "Polish Navy ; ex-HMS Dragon transferred to the Polish Navy in 1943. On station with Bombarding Force D."
+			},
+			{
+				"time": "1944-06-06T05:30:00Z",
+				"position": [-0.22, 49.42],
+				"sources": ["roskill-1961"],
+				"note": "Opens 6-inch fire in support of Sword sector ; first major Polish naval action against the German army on the European mainland since 1939."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.22, 49.42],
+				"sources": ["roskill-1961"],
+				"note": "Continues call-fire support. Sunk by a Marder human-torpedo off Sword on 8 July 1944 (post-MVP)."
+			}
+		]
+	}
+}

@@ -1,0 +1,40 @@
+{
+	"$schema": "../../packages/data/schema/vessel.schema.json",
+	"vessel": {
+		"id": "hms-belfast",
+		"name": "HMS Belfast",
+		"country": "UK",
+		"kind": "light-cruiser",
+		"force": "J",
+		"pennantNumber": "C35",
+		"displacement": 11550,
+		"commander": {
+			"name": "Frederick R. Parham",
+			"rank": "Captain"
+		},
+		"sources": ["roskill-1961", "iwm-archives"]
+	},
+	"track": {
+		"vesselId": "hms-belfast",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.45, 49.45],
+				"sources": ["roskill-1961"],
+				"note": "Flagship of Bombarding Force E (Adm Dalrymple-Hamilton) ; on station off Juno Beach."
+			},
+			{
+				"time": "1944-06-06T05:30:00Z",
+				"position": [-0.45, 49.43],
+				"sources": ["roskill-1961", "iwm-archives"],
+				"note": "Opens 6-inch fire 05:30 on the La Marefontaine battery (Ver-sur-Mer) — first heavy ship to fire on D-Day."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.45, 49.43],
+				"sources": ["roskill-1961"],
+				"note": "Continues call-fire support for Canadian 3rd ID inland advance ; remains in commission as a museum ship in London today."
+			}
+		]
+	}
+}
