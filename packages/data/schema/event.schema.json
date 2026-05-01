@@ -20,6 +20,10 @@
 			"type": "array",
 			"items": { "type": "string" }
 		},
+		"involvedVessels": {
+			"type": "array",
+			"items": { "type": "string" }
+		},
 		"category": {
 			"type": "string",
 			"enum": ["airborne", "h-hour", "beach", "inland", "german-reaction", "naval", "air"]
