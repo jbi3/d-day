@@ -106,6 +106,109 @@
 			"sources": ["harrison-1951"]
 		},
 		{
+			"id": "belfast-first-fire",
+			"title": "HMS Belfast ouvre le feu sur La Marefontaine",
+			"description": "À 05:30, HMS Belfast (flag Force E) ouvre la première salve d'obus de 6 pouces sur la batterie de La Marefontaine (Ver-sur-Mer). Première lourde salve de la flotte alliée le jour J.",
+			"time": "1944-06-06T05:30:00Z",
+			"position": [-0.55, 49.35],
+			"category": "naval",
+			"involvedVessels": ["hms-belfast"],
+			"sources": ["roskill-1961", "iwm-archives"]
+		},
+		{
+			"id": "warspite-villerville",
+			"title": "HMS Warspite vs batterie de Villerville",
+			"description": "Le cuirassé HMS Warspite (15 pouces) engage la batterie de Villerville à l'est de l'Orne, neutralisant un risque de tir d'enfilade sur Sword.",
+			"time": "1944-06-06T05:30:00Z",
+			"position": [0.06, 49.41],
+			"category": "naval",
+			"involvedVessels": ["hms-warspite"],
+			"sources": ["roskill-1961"]
+		},
+		{
+			"id": "ramillies-le-havre",
+			"title": "HMS Ramillies dissuade Le Havre",
+			"description": "HMS Ramillies tire sur les batteries de Bénerville et Houlgate, et reste en posture de blocage face à toute sortie potentielle de destroyers ou de S-Boote depuis Le Havre.",
+			"time": "1944-06-06T05:35:00Z",
+			"position": [0.05, 49.42],
+			"category": "naval",
+			"involvedVessels": ["hms-ramillies"],
+			"sources": ["roskill-1961"]
+		},
+		{
+			"id": "texas-pointe-du-hoc",
+			"title": "USS Texas tire sur Pointe-du-Hoc",
+			"description": "À 05:50 le cuirassé USS Texas (14 pouces) ouvre le feu sur la position fortifiée de Pointe-du-Hoc, préparant l'assaut des Rangers de Rudder qui débute à 07:10.",
+			"time": "1944-06-06T05:50:00Z",
+			"position": [-0.989, 49.396],
+			"category": "naval",
+			"involvedVessels": ["uss-texas"],
+			"involvedUnits": ["de-352nd-id"],
+			"sources": ["nhhc", "harrison-1951"]
+		},
+		{
+			"id": "nevada-crisbecq",
+			"title": "USS Nevada vs batterie de Crisbecq",
+			"description": "USS Nevada — survivante de Pearl Harbor — engage la batterie de Crisbecq (Saint-Marcouf, 4×210 mm) en concert avec HMS Erebus. La batterie tirera encore le 12 juin, jamais entièrement réduite par le feu naval.",
+			"time": "1944-06-06T05:50:00Z",
+			"position": [-1.293, 49.488],
+			"category": "naval",
+			"involvedVessels": ["uss-nevada", "hms-erebus"],
+			"sources": ["nhhc", "roskill-1961"]
+		},
+		{
+			"id": "arkansas-glasgow-omaha",
+			"title": "USS Arkansas + HMS Glasgow ouvrent sur Omaha central",
+			"description": "USS Arkansas (12 pouces) et HMS Glasgow (6 pouces) ouvrent le feu sur les strongpoints WN-65/WN-66 et la zone Les Moulins / Easy Red. La densité du feu reste insuffisante face aux bunkers en béton du 916. IR.",
+			"time": "1944-06-06T05:55:00Z",
+			"position": [-0.88, 49.485],
+			"category": "naval",
+			"involvedVessels": ["uss-arkansas", "hms-glasgow"],
+			"involvedUnits": ["de-352nd-id"],
+			"sources": ["nhhc", "roskill-1961", "harrison-1951"]
+		},
+		{
+			"id": "french-cruisers-longues",
+			"title": "Montcalm + Georges Leygues vs batterie de Longues-sur-Mer",
+			"description": "Les croiseurs des Forces Navales Françaises Libres FNS Montcalm et FNS Georges Leygues ouvrent le feu sur la batterie de Longues-sur-Mer (4×152 mm), première action navale française majeure en eaux françaises depuis 1940.",
+			"time": "1944-06-06T06:50:00Z",
+			"position": [-0.692, 49.343],
+			"category": "naval",
+			"involvedVessels": ["fns-montcalm", "fns-georges-leygues", "hms-ajax"],
+			"sources": ["roskill-1961", "memorial-caen"]
+		},
+		{
+			"id": "ajax-longues-duel",
+			"title": "Duel HMS Ajax vs Longues-sur-Mer",
+			"description": "HMS Ajax (vétéran du combat de la Plata) duelle avec la batterie de Longues à courte portée et la fait taire vers 08:45. La batterie est capturée intacte par le 50th Northumbrian le 7 juin (post-MVP).",
+			"time": "1944-06-06T08:45:00Z",
+			"position": [-0.692, 49.343],
+			"category": "naval",
+			"involvedVessels": ["hms-ajax", "fns-georges-leygues"],
+			"sources": ["roskill-1961"]
+		},
+		{
+			"id": "augusta-bradley-redirect",
+			"title": "USS Augusta : Bradley redirige les vagues Omaha",
+			"description": "Depuis le pont du croiseur lourd USS Augusta, le LtGen Bradley reçoit un flot de rapports alarmants sur Omaha (« la situation est désespérée ») et envisage de rediriger les vagues suivantes vers Utah ou Gold. La tendance se renverse vers 11:00 quand la première brèche du bluff arrive.",
+			"time": "1944-06-06T08:30:00Z",
+			"position": [-0.91, 49.51],
+			"category": "naval",
+			"involvedVessels": ["uss-augusta"],
+			"sources": ["nhhc", "harrison-1951"]
+		},
+		{
+			"id": "texas-vierville-close",
+			"title": "USS Texas s'approche pour Vierville",
+			"description": "Avec les exits Omaha encore bouchés, USS Texas se met en position rapprochée (environ 7 brasses sous la quille) pour délivrer un tir direct sur les défenses du draw de Vierville (D-1). Risque opérationnel assumé pour appuyer le 116th RCT.",
+			"time": "1944-06-06T11:00:00Z",
+			"position": [-0.93, 49.47],
+			"category": "naval",
+			"involvedVessels": ["uss-texas"],
+			"involvedUnits": ["us-29th-id", "de-352nd-id"],
+			"sources": ["nhhc"]
+		},
+		{
 			"id": "air-bombing-omaha-overshoot",
 			"title": "Heavy bomber strike on Omaha overshoots",
 			"description": "8th AF B-24s release late through cloud to avoid hitting incoming landing craft; bombs fall up to several kilometers inland, missing the bluff defenses.",

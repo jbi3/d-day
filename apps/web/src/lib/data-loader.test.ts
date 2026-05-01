@@ -87,6 +87,25 @@ describe('loadData', () => {
 		}
 	});
 
+	it('every event involvedVessel references a known vessel (no phantom IDs)', async () => {
+		const data = await loadData(makeFakeFetch());
+		for (const e of data.events) {
+			for (const id of e.involvedVessels ?? []) {
+				expect(data.vesselById.has(id), `event "${e.id}" involves unknown vessel "${id}"`).toBe(
+					true
+				);
+			}
+		}
+	});
+
+	it('vessels round-trip through vesselById', async () => {
+		const data = await loadData(makeFakeFetch());
+		expect(data.vessels.length).toBeGreaterThan(0);
+		for (const v of data.vessels) {
+			expect(data.vesselById.get(v.vessel.id)).toBe(v);
+		}
+	});
+
 	it('DataLoadError is exported and identifiable', () => {
 		const err = new DataLoadError('test', 'msg');
 		expect(err).toBeInstanceOf(Error);
