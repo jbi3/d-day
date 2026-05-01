@@ -4,12 +4,16 @@ import {
 	eventSchema,
 	sourceSchema,
 	frontlineSchema,
+	vesselSchema,
+	vesselTrackSchema,
 	type Unit,
 	type Movement,
 	type MapEvent,
 	type Source,
 	type FrontlineFile,
-	type FrontlineSegment
+	type FrontlineSegment,
+	type Vessel,
+	type VesselTrack
 } from '@d-day/schema';
 import Ajv, { type ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
@@ -21,10 +25,17 @@ const validateMovement = ajv.compile(movementSchema) as ValidateFunction<Movemen
 const validateEvent = ajv.compile(eventSchema) as ValidateFunction<MapEvent>;
 const validateSource = ajv.compile(sourceSchema) as ValidateFunction<Source>;
 const validateFrontline = ajv.compile(frontlineSchema) as ValidateFunction<FrontlineFile>;
+const validateVessel = ajv.compile(vesselSchema) as ValidateFunction<Vessel>;
+const validateVesselTrack = ajv.compile(vesselTrackSchema) as ValidateFunction<VesselTrack>;
 
 interface UnitFile {
 	unit: Unit;
 	movement: Movement;
+}
+
+interface VesselFile {
+	vessel: Vessel;
+	track: VesselTrack;
 }
 
 interface RegistryFile {
@@ -34,6 +45,7 @@ interface RegistryFile {
 
 interface Manifest {
 	units: string[];
+	vessels: string[];
 	events: string[];
 	sources: string;
 	frontline: string;
@@ -60,13 +72,20 @@ export interface UnitTrack {
 	movement: Movement;
 }
 
+export interface VesselWithTrack {
+	vessel: Vessel;
+	track: VesselTrack;
+}
+
 export interface LoadedData {
 	units: UnitTrack[];
+	vessels: VesselWithTrack[];
 	events: MapEvent[];
 	sources: Source[];
 	frontlineSegments: FrontlineSegment[];
 	sourceById: Map<string, Source>;
 	unitById: Map<string, UnitTrack>;
+	vesselById: Map<string, VesselWithTrack>;
 	eventById: Map<string, MapEvent>;
 }
 
@@ -102,10 +121,15 @@ async function fetchJson<T>(path: string, ctx: string, fetcher: typeof fetch): P
 export async function loadData(fetcher: typeof fetch = fetch): Promise<LoadedData> {
 	const manifest = await fetchJson<Manifest>('/data/manifest.json', 'manifest', fetcher);
 
-	const [unitFiles, eventFiles, registry, frontlineFile] = await Promise.all([
+	const [unitFiles, vesselFiles, eventFiles, registry, frontlineFile] = await Promise.all([
 		Promise.all(
 			manifest.units.map((p) =>
 				fetchJson<UnitFile>(`/data/${p}`, p, fetcher).then((file) => ({ path: p, file }))
+			)
+		),
+		Promise.all(
+			(manifest.vessels ?? []).map((p) =>
+				fetchJson<VesselFile>(`/data/${p}`, p, fetcher).then((file) => ({ path: p, file }))
 			)
 		),
 		Promise.all(
@@ -133,6 +157,19 @@ export async function loadData(fetcher: typeof fetch = fetch): Promise<LoadedDat
 		units.push({ unit: file.unit, movement: file.movement });
 	}
 
+	const vessels: VesselWithTrack[] = [];
+	for (const { path, file } of vesselFiles) {
+		expect(validateVessel, file.vessel, `${path}#/vessel`);
+		expect(validateVesselTrack, file.track, `${path}#/track`);
+		if (file.track.vesselId !== file.vessel.id) {
+			throw new DataLoadError(
+				path,
+				`track.vesselId (${file.track.vesselId}) ≠ vessel.id (${file.vessel.id})`
+			);
+		}
+		vessels.push({ vessel: file.vessel, track: file.track });
+	}
+
 	const events: MapEvent[] = [];
 	for (const { path, raw } of eventFiles) {
 		const arr = Array.isArray(raw) ? raw : (raw.events ?? []);
@@ -158,6 +195,14 @@ export async function loadData(fetcher: typeof fetch = fetch): Promise<LoadedDat
 				assertKnown(d.source, knownIds, `${unit.id} waypoint ${w.time} disputedBy`);
 		}
 	}
+	for (const { vessel, track } of vessels) {
+		for (const id of vessel.sources) assertKnown(id, knownIds, `vessel ${vessel.id}`);
+		for (const w of track.waypoints) {
+			for (const id of w.sources) assertKnown(id, knownIds, `${vessel.id} waypoint ${w.time}`);
+			for (const d of w.disputedBy ?? [])
+				assertKnown(d.source, knownIds, `${vessel.id} waypoint ${w.time} disputedBy`);
+		}
+	}
 	for (const e of events) {
 		for (const id of e.sources) assertKnown(id, knownIds, `event ${e.id}`);
 		for (const d of e.disputedBy ?? []) assertKnown(d.source, knownIds, `event ${e.id} disputedBy`);
@@ -180,9 +225,20 @@ export async function loadData(fetcher: typeof fetch = fetch): Promise<LoadedDat
 	}
 
 	const unitById = new Map(units.map((u) => [u.unit.id, u]));
+	const vesselById = new Map(vessels.map((v) => [v.vessel.id, v]));
 	const eventById = new Map(events.map((e) => [e.id, e]));
 
-	return { units, events, sources, frontlineSegments, sourceById, unitById, eventById };
+	return {
+		units,
+		vessels,
+		events,
+		sources,
+		frontlineSegments,
+		sourceById,
+		unitById,
+		vesselById,
+		eventById
+	};
 }
 
 function assertKnown(id: string, known: Set<string>, ctx: string): void {

@@ -1,21 +1,23 @@
 <script lang="ts">
-	import type { UnitTrack } from '$lib/data-loader';
+	import type { UnitTrack, VesselWithTrack } from '$lib/data-loader';
 	import type { MapEvent, Source } from '@d-day/schema';
 
 	export type Selection =
 		| { kind: 'unit'; track: UnitTrack }
 		| { kind: 'event'; event: MapEvent }
+		| { kind: 'vessel'; vessel: VesselWithTrack }
 		| null;
 
 	interface Props {
 		selection: Selection;
 		sourceById: Map<string, Source>;
 		unitById: Map<string, UnitTrack>;
+		vesselById: Map<string, VesselWithTrack>;
 		onSelect: (s: Selection) => void;
 		onClose: () => void;
 	}
 
-	const { selection, sourceById, unitById, onSelect, onClose }: Props = $props();
+	const { selection, sourceById, unitById, vesselById, onSelect, onClose }: Props = $props();
 
 	let panel: HTMLElement | undefined = $state();
 	let previouslyFocused: HTMLElement | null = null;
@@ -92,6 +94,31 @@
 		};
 		return map[branch] ?? branch;
 	}
+
+	function vesselKindLabel(kind: string): string {
+		const map: Record<string, string> = {
+			battleship: 'Cuirassé',
+			monitor: 'Monitor',
+			'heavy-cruiser': 'Croiseur lourd',
+			'light-cruiser': 'Croiseur léger',
+			cruiser: 'Croiseur',
+			destroyer: 'Destroyer',
+			'destroyer-escort': 'Destroyer d’escorte',
+			frigate: 'Frégate'
+		};
+		return map[kind] ?? kind;
+	}
+
+	function forceLabel(force: string | undefined): string {
+		const map: Record<string, string> = {
+			O: 'Force C — Omaha',
+			U: 'Force A — Utah',
+			G: 'Force K — Gold',
+			J: 'Force E — Juno',
+			S: 'Force D — Sword'
+		};
+		return force ? (map[force] ?? force) : '—';
+	}
 </script>
 
 <svelte:window onkeydown={onWindowKeydown} />
@@ -148,6 +175,48 @@
 					{/each}
 				</ul>
 			{/if}
+		{:else if selection.kind === 'vessel'}
+			{@const v = selection.vessel.vessel}
+			{@const tr = selection.vessel.track}
+			<h2>{v.name}</h2>
+			<dl>
+				<dt>Type</dt>
+				<dd>{vesselKindLabel(v.kind)}</dd>
+				<dt>Pays</dt>
+				<dd>{v.country}</dd>
+				{#if v.pennantNumber}
+					<dt>Fanion</dt>
+					<dd>{v.pennantNumber}</dd>
+				{/if}
+				{#if v.displacement}
+					<dt>Déplacement</dt>
+					<dd>{v.displacement.toLocaleString('fr-FR')} t</dd>
+				{/if}
+				{#if v.force}
+					<dt>Force</dt>
+					<dd>{forceLabel(v.force)}</dd>
+				{/if}
+				{#if v.commander}
+					<dt>Commandant</dt>
+					<dd>{v.commander.rank} {v.commander.name}</dd>
+				{/if}
+				<dt>Étapes</dt>
+				<dd>{tr.waypoints.length}</dd>
+			</dl>
+
+			<h3>Sources</h3>
+			<ul class="sources">
+				{#each v.sources as id (id)}
+					{@const source = sourceById.get(id)}
+					{#if source}
+						<li>
+							<code>{id}</code>
+							<span class="title">{source.title}</span>
+							{#if source.author}<span class="author">— {source.author}</span>{/if}
+						</li>
+					{/if}
+				{/each}
+			</ul>
 		{:else}
 			{@const e = selection.event}
 			<h2>{e.title}</h2>
@@ -169,6 +238,28 @@
 									onclick={() => selectUnit(id)}
 								>
 									{track.unit.shortName ?? track.unit.name}
+								</button>
+							</li>
+						{:else}
+							<li class="unit-link missing">{id} <span>(absent du jeu de données)</span></li>
+						{/if}
+					{/each}
+				</ul>
+			{/if}
+
+			{#if (e.involvedVessels?.length ?? 0) > 0}
+				<h3>Navires impliqués</h3>
+				<ul class="unit-links">
+					{#each e.involvedVessels ?? [] as id (id)}
+						{@const v = vesselById.get(id)}
+						{#if v}
+							<li>
+								<button
+									class="unit-link vessel"
+									type="button"
+									onclick={() => onSelect({ kind: 'vessel', vessel: v })}
+								>
+									{v.vessel.name}
 								</button>
 							</li>
 						{:else}
@@ -345,6 +436,9 @@
 	}
 	.unit-link.side-axis {
 		border-left: 3px solid #e87a7a;
+	}
+	.unit-link.vessel {
+		border-left: 3px solid #d4a253;
 	}
 	.unit-link.missing {
 		opacity: 0.75;

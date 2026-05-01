@@ -12,6 +12,7 @@
 	import { buildBeachLayers } from '$lib/layers/beaches';
 	import { buildEventLayers } from '$lib/layers/events';
 	import { buildFrontlineLayers } from '$lib/layers/frontline';
+	import { buildNavalLayers } from '$lib/layers/naval';
 	import { buildRoadLayers } from '$lib/layers/roads';
 	import { buildToponymLayers } from '$lib/layers/toponyms';
 	import { buildTrailLayers } from '$lib/layers/trails';
@@ -36,6 +37,11 @@
 
 	function toggleCategory(cat: EventCategory) {
 		categoryFilter = { ...categoryFilter, [cat]: !categoryFilter[cat] };
+	}
+
+	let navalVisible = $state(true);
+	function toggleNaval() {
+		navalVisible = !navalVisible;
 	}
 
 	const filteredEvents = $derived.by(() => {
@@ -74,6 +80,9 @@
 			if (kind === 'unit' && id) {
 				const track = d.unitById.get(id);
 				if (track) out.selection = { kind: 'unit', track };
+			} else if (kind === 'vessel' && id) {
+				const v = d.vesselById.get(id);
+				if (v) out.selection = { kind: 'vessel', vessel: v };
 			} else if (kind === 'event' && id) {
 				const event = d.eventById.get(id);
 				if (event) out.selection = { kind: 'event', event };
@@ -88,6 +97,7 @@
 		params.set('t', time.simHours.toFixed(2));
 		if (selection) {
 			if (selection.kind === 'unit') params.set('s', `unit:${selection.track.unit.id}`);
+			else if (selection.kind === 'vessel') params.set('s', `vessel:${selection.vessel.vessel.id}`);
 			else params.set('s', `event:${selection.event.id}`);
 		}
 		const next = `#${params.toString()}`;
@@ -163,6 +173,9 @@
 				if (layer.id === 'units-marker' && object.label) {
 					return { text: object.label };
 				}
+				if (layer.id === 'vessels' && object.label) {
+					return { text: object.label };
+				}
 				if (layer.id === 'events' && object.title) {
 					return { text: object.title };
 				}
@@ -177,6 +190,9 @@
 				if (layer.id === 'units-marker') {
 					const track = data.unitById.get(object.id);
 					if (track) selection = { kind: 'unit', track };
+				} else if (layer.id === 'vessels') {
+					const v = data.vesselById.get(object.id);
+					if (v) selection = { kind: 'vessel', vessel: v };
 				} else if (layer.id === 'events') {
 					const event = data.eventById.get(object.id);
 					if (event) selection = { kind: 'event', event };
@@ -207,8 +223,13 @@
 		let center: [number, number] | null = null;
 		if (selection.kind === 'event') {
 			center = selection.event.position;
-		} else {
+		} else if (selection.kind === 'unit') {
 			center = unitPositionAt(selection.track, currentIso);
+		} else {
+			// vessel : reuse the unit-shaped interpolator via the same shim shape.
+			const wp = selection.vessel.track.waypoints;
+			const last = wp[wp.length - 1];
+			center = last ? last.position : null;
 		}
 		if (center) {
 			const reduceMotion =
@@ -246,6 +267,9 @@
 				...buildToponymLayers({ zoom }),
 				...buildBeachLayers({ zoom }),
 				...buildTrailLayers({ tracks: data.units, isoTime: currentIso }),
+				...(navalVisible
+					? buildNavalLayers({ vessels: data.vessels, isoTime: currentIso, zoom })
+					: []),
 				...buildEventLayers({ events: filteredEvents, currentEpoch }),
 				...buildUnitLayers({ tracks: data.units, isoTime: currentIso, zoom })
 			]
@@ -285,7 +309,12 @@
 	<div class="map-wrap">
 		<div bind:this={mapContainer} class="map"></div>
 
-		<Legend {categoryFilter} onCategoryToggle={toggleCategory} />
+		<Legend
+			{categoryFilter}
+			onCategoryToggle={toggleCategory}
+			{navalVisible}
+			onNavalToggle={toggleNaval}
+		/>
 
 		<SectorSelector
 			onJump={(center, zoom) => {
@@ -306,6 +335,7 @@
 				{selection}
 				sourceById={data.sourceById}
 				unitById={data.unitById}
+				vesselById={data.vesselById}
 				onSelect={(s) => (selection = s)}
 				onClose={() => (selection = null)}
 			/>

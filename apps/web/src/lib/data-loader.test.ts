@@ -19,19 +19,19 @@ function makeFakeFetch(): typeof fetch {
 		const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
 		const path = url.replace(/^https?:\/\/[^/]+/, '');
 		if (path === '/data/manifest.json') {
-			const { readdirSync } = await import('node:fs');
-			const units = readdirSync(join(dataRoot, 'units'))
-				.filter((f) => f.endsWith('.json'))
-				.sort()
-				.map((f) => `units/${f}`);
-			const events = readdirSync(join(dataRoot, 'events'))
-				.filter((f) => f.endsWith('.json'))
-				.sort()
-				.map((f) => `events/${f}`);
+			const { readdirSync, existsSync } = await import('node:fs');
+			const list = (sub: string) =>
+				existsSync(join(dataRoot, sub))
+					? readdirSync(join(dataRoot, sub))
+							.filter((f) => f.endsWith('.json'))
+							.sort()
+							.map((f) => `${sub}/${f}`)
+					: [];
 			return new Response(
 				JSON.stringify({
-					units,
-					events,
+					units: list('units'),
+					vessels: list('vessels'),
+					events: list('events'),
 					sources: 'sources/registry.json',
 					frontline: 'frontline.json'
 				})
