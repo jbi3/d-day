@@ -1,5 +1,5 @@
-import { describe, expect, it, vi, afterEach, beforeEach } from 'vitest';
 import { flushSync } from 'svelte';
+import { describe, expect, it, vi, afterEach, beforeEach } from 'vitest';
 
 import { TimeStore } from './time-store.svelte';
 

@@ -5,8 +5,6 @@
 	import Legend from '$lib/components/legend.svelte';
 	import SectorSelector from '$lib/components/sector-selector.svelte';
 	import Timeline from '$lib/components/timeline.svelte';
-	import type { EventCategory } from '@d-day/schema';
-
 	import { loadData, unitPositionAt, type LoadedData } from '$lib/data-loader';
 	import { buildBasemapLayers } from '$lib/layers/basemap';
 	import { buildBeachLayers } from '$lib/layers/beaches';
@@ -18,6 +16,7 @@
 	import { buildTrailLayers } from '$lib/layers/trails';
 	import { buildUnitLayers } from '$lib/layers/units';
 	import { TimeStore } from '$lib/time-store.svelte';
+	import type { EventCategory } from '@d-day/schema';
 	import { MapboxOverlay } from '@deck.gl/mapbox';
 	import maplibregl from 'maplibre-gl';
 	import { onMount } from 'svelte';
@@ -59,7 +58,7 @@
 	let selection = $state<Selection>(null);
 	let zoom = $state(8.5);
 
-	let mapContainer: HTMLDivElement;
+	let mapContainer = $state<HTMLDivElement | undefined>(undefined);
 	let map: maplibregl.Map | undefined;
 	let deckOverlay: MapboxOverlay | undefined;
 
@@ -155,6 +154,7 @@
 			layers: [{ id: 'sea', type: 'background', paint: { 'background-color': '#c8d6dd' } }]
 		};
 
+		if (!mapContainer) return;
 		map = new maplibregl.Map({
 			container: mapContainer,
 			style: blankStyle,

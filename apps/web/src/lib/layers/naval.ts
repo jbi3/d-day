@@ -1,8 +1,7 @@
+import { interpolateWaypointsAt, type VesselWithTrack } from '$lib/data-loader';
 import type { Vessel } from '@d-day/schema';
 import type { Layer } from '@deck.gl/core';
 import { IconLayer } from '@deck.gl/layers';
-
-import { interpolateWaypointsAt, type VesselWithTrack } from '$lib/data-loader';
 
 import { vesselIconUri } from './vessel-icons';
 

@@ -1,8 +1,7 @@
 <script lang="ts">
-	import type { EventCategory } from '@d-day/schema';
-
 	import { buildSvg, type AxisAffiliation } from '$lib/layers/unit-icons';
 	import { vesselIconUri } from '$lib/layers/vessel-icons';
+	import type { EventCategory } from '@d-day/schema';
 
 	interface Props {
 		categoryFilter: Record<EventCategory, boolean>;
