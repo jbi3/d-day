@@ -21,9 +21,10 @@ commit `88500df`.** Quatre lots post-revue mergés par-dessus
   Taylor / Gale / Kraiss / Falley) ; capitaines USS Quincy
   (Senn) et USS Tuscaloosa (Waller) ajoutés via DANFS NHHC.
   Capitaines RN cruisers et casualties non inclus (cf. log).
-- Cleanup local : 21 branches `claude/*` mergées supprimées
-  localement (`git branch -d`, sûr). 46 branches encore sur
-  GitHub côté remote — pas touchées sans OK explicite.
+- Cleanup branches : 21 locales + 45 remote `claude/*` toutes
+  mergées dans main supprimées (`git branch -d` puis
+  `git push origin --delete`). Repo propre, ne reste que main
+  côté local et remote.
 
 CI Actions vert, 193 tests pass (160 schema + 33 web). Trois
 jalons post-MVP livrés (M1 prod-grade, M2 v1 Normandie, M3a
@@ -363,6 +364,17 @@ selon plan §6.2).
 ---
 
 ## Log
+
+### 2026-05-02 — Cleanup branches remote (45 branches `claude/*` supprimées sur GitHub)
+
+- 45 branches `claude/*` toutes vérifiées mergées dans main
+  (`git branch -r --merged main` → 0 non-mergées) supprimées en
+  un push (`xargs ... git push origin --delete`).
+- État final : 1 branche locale (main), 1 branche remote
+  (origin/main). Repo cleané.
+- Note méta : utilisateur a explicitement validé l'opération
+  destructive sur shared state ; cleanup conditionné à
+  vérification non-merged = 0 avant action.
 
 ### 2026-05-02 — Cleanup branches locales mergées
 
