@@ -32,7 +32,7 @@ nouveaux qu'on n'a pas eu à traiter dans la slice :
 
 **Décisions structurantes prises avec l'utilisateur (2026-05-01) :**
 - Plan **séquencé en trois jalons** (M1 → M2 → M3) avec point de décision entre chacun. Pas d'engagement prématuré sur M3.
-- **Hosting laissé ouvert** dans le plan : comparer les options, décider à l'entrée de M1.
+- **Hosting deferred — local-only pour l'instant.** M1 prépare l'app à être shippable (adapter statique, robustesse, a11y, FR, error boundary) sans choisir de cible ni déployer publiquement. Décision hosting (CF Pages / Vercel / Netlify / GitHub Pages) rouverte quand l'utilisateur décidera de publier. Détails §10.1.
 - **Desktop-only assumé** : détecter mobile et afficher un écran "use desktop". Pas de responsive/tactile bâclé.
 
 **Ce qui reste deferred (par décision explicite, pas par oubli) :**
@@ -428,11 +428,11 @@ Ces décisions verrouillent des choix structurants. Per `CLAUDE.md`,
 elles ne sont pas prises silencieusement.
 
 **Avant de démarrer M1 :**
-1. **Hosting** : Cloudflare Pages confirmé ? (recommandation senior). Si non, comparer avec Vercel / Netlify / GitHub Pages.
-2. **Mode SSG vs SSR** : prerender complet pour M1 ? (recommandation : oui).
-3. **Code mort `rivers.ts`** : wirer (avec flag désactivable) ou supprimer ?
-4. **Bug `uk-6th-airborne`** : ajouter une unit minimale en M1 (recommandé pour fidélité sourcing) ou retirer les `involvedUnits` qui pointent dans le vide ?
-5. **i18n FR-first vs FR+EN** : confirmation FR-only en M1 ?
+1. ~~**Hosting**~~ — **[acté 2026-05-01] Local-only pour l'instant.** M1 est construit comme s'il allait shipper (adapter statique, robustesse, a11y, FR, error boundary, meta OG dans le HTML), mais pas de cible hosting choisie ni de déploiement public. La comparaison Cloudflare Pages / Vercel / Netlify / GitHub Pages est rouverte quand l'utilisateur décidera de publier. Conséquences : pas de workflow CI/CD de deploy en M1, pas de génération d'OG image (peut attendre 10 min le jour J), critère de sortie M1 "URL publique accessible" remplacé par "build statique servable en local clean".
+2. ~~**Mode SSG vs SSR**~~ — **[acté 2026-05-01] SSG**, `@sveltejs/adapter-static` + `prerender = true` partout. Cohérent avec décision 1 (build statique local-only, prêt à pousser sur n'importe quel host statique le jour J). L'app est read-only, aucune route ne nécessite SSR.
+3. ~~**Code mort `rivers.ts`**~~ — **[acté 2026-05-01] Supprimé.** Fichier orphelin depuis ~5 mois (deferred pending visual fit), aucun appelant, code ressuscitable via `git show` si re-tentative ultérieure. Suppression effectuée le 2026-05-01, `pnpm check` clean. La recommandation §4.1 lot 8 ("wirer avec flag") est invalidée par les faits — le code n'a pas été repris en 5 mois, le re-design éventuel viendra avec un autre style de rendu.
+4. ~~**Bug `uk-6th-airborne`**~~ — **[acté 2026-05-01] Unité ajoutée.** `data/units/uk-6th-airborne.json` créé, division-level, 6 waypoints D-1 22:00 → D 18:00 (pré-drop / Pegasus 00:16 / DZ-N 01:00 / Ranville+Merville 04:30 / Lovat link-up 13:30 / Orne bridgehead 18:00). Sources : `harrison-1951` + `iwm-archives` (cette dernière était dans le registry mais jamais citée — désormais activée, cf. audit §2.2). Disputes documentées sur la dispersion DZ-N (parallèle au pattern 82nd Abn). 48/48 tests passent (4 nouveaux tests pour la nouvelle unité), `pnpm check` clean. Conséquence : élargissement de scope MVP au flanc Est (UK 6th Abn) — assumé. Avance de M2 §5.1.2 (l'unité y était listée comme "déjà ajoutée en M1 si recommandation suivie").
+5. ~~**i18n FR-first vs FR+EN**~~ — **[acté 2026-05-01] FR-only en M1.** Pas de lib i18n. Tous les strings UI passent en français (timeline, fiche détail, legend déjà fait, états vides). Si M2/M3 visent un public EN, on enveloppera les strings dans un dictionnaire à ce moment-là (~1 j de travail). Cohérent avec brief, conversation, et registre patrimonial français du projet.
 
 **Avant de démarrer M2 :**
 6. **Granularité du champ casualties** : par phase, par heure, par regiment, ou simplement total par unité ? Impacte le schéma.

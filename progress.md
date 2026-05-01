@@ -7,16 +7,27 @@ place. Bottom section is an append-only dated log.
 ## Current state
 
 **Phase:** **MVP accepted (2026-05-01) — post-MVP plan committed
-(2026-05-01).** Le plan stratégique production est désormais sous
+(2026-05-01) — décisions §10 toutes actées (2026-05-01) — M1
+prêt à démarrer.** Le plan stratégique production est sous
 contrôle de version dans `docs/production-plan.md` ; il sert de
-référence pour M1 (prod-grade MVP), M2 (v1 Normandie complète), M3
-(naval/air + extension D+1→D+6). Décisions structurantes prises avec
-l'utilisateur : (a) plan séquencé en trois jalons avec sign-off entre
-chacun, (b) hosting laissé ouvert dans le plan, à trancher à l'entrée
-M1, (c) **desktop-only assumé**, mobile bloqué proprement (pas de
-responsive bâclé). LOD multi-granularité reste deferred par décision
-explicite. Prochain pas concret : décisions §10 du plan (5 questions
-avant de démarrer M1).
+référence pour M1 (prod-grade MVP, local-only), M2 (v1 Normandie
+complète), M3 (naval/air + extension D+1→D+6). Décisions
+structurantes prises avec l'utilisateur : (a) plan séquencé en
+trois jalons avec sign-off entre chacun, (b) desktop-only assumé,
+mobile bloqué proprement, (c) LOD multi-granularité deferred.
+**Décisions §10 actées au 2026-05-01** : §10.1 hosting deferred,
+local-only — M1 prépare le build comme s'il allait shipper sans
+choisir de cible ni déployer ; §10.2 SSG (`adapter-static` +
+`prerender = true`) ; §10.3 `rivers.ts` supprimé ; §10.4 unité
+`uk-6th-airborne` ajoutée (élargissement scope flanc Est UK
+assumé) ; §10.5 i18n FR-only en M1, pas de lib i18n.
+Décisions §10.1–5 packagées dans la PR #4
+(`claude/m1-decisions-001`, commit `837eb86`) — en attente de merge.
+Prochain pas concret : merge #4, puis démarrer M1 (lot 1 =
+adapter-static + prerender + structure CI locale ; lots 2–9 du
+plan §4.1 exécutables en parallèle ou en séquence selon
+préférence). M1 peut tourner en autonomie sans arbitrage
+utilisateur restant.
 
 **Done**
 - `brief.md`, `README.md`, `CLAUDE.md`, `mvp-execution-plan.md`,
@@ -40,6 +51,10 @@ avant de démarrer M1).
 - A.4 US 101st Airborne — Utah causeway exits track.
 - A.5 German 352. Infanterie-Division — Omaha defense track.
 - A.6 German 91. Luftlande / 709. ID combined Cotentin elements.
+- A.6b UK 6th Airborne — Orne bridgehead track (Pegasus / DZ-N /
+  Ranville / Merville / Lovat link-up). Ajoutée 2026-05-01 pour
+  fixer l'unité fantôme référencée par 3 events ; élargit le MVP
+  au flanc Est UK (avance sur M2 §5.1.2).
 - A.7 Events list — 30 events spanning D-1 22:00 → D 18:00 (Pegasus
   Bridge, Pathfinder departure, US drops, Sainte-Mère-Église,
   H-Hour all five beaches, Pointe-du-Hoc, Falley killed, La Fière,
@@ -186,19 +201,19 @@ avant de démarrer M1).
   (Caen → Falaise), D572 (Bayeux → Saint-Lô), D972 (Saint-Lô →
   Coutances). No road labels for the MVP. Sources: harrison-1951,
   bigot-maps.
-- Hydrography — `apps/web/src/lib/layers/rivers.ts` exists with the
-  five Normandy rivers most relevant to the D-Day narrative (Orne,
-  Vire, Douve, Merderet, Dives) but is **currently unwired** in
-  `+page.svelte` per user direction (deferred pending a clearer
-  visual fit). The data + layer code stay in place for quick
-  re-enable. Sources: harrison-1951, bigot-maps.
+- Hydrography — supprimée le 2026-05-01 (décision §10.3 du plan).
+  Le fichier `apps/web/src/lib/layers/rivers.ts` couvrait Orne /
+  Vire / Douve / Merderet / Dives mais n'avait jamais été wiré
+  dans `+page.svelte` (deferred pending visual fit ~5 mois).
+  Code ressuscitable via `git show` si retour à un style
+  différent. Sources d'origine : harrison-1951, bigot-maps.
 - Strength-weighted unit icons — `Unit.strength` (optional) drives
   `getSize` via `sqrt(strength / 14 000)` so 91./709. (Cotentin
   combined ~17 k) reads bigger than 101st Abn (~6.6 k jumped on
   6 June). Pixel clamps unchanged.
-- 44/44 schema + registry + unit-data + events-data + frontline-data
-  tests pass on every merge; web app `pnpm check` and `pnpm build`
-  clean.
+- 48/48 schema + registry + unit-data + events-data + frontline-data
+  tests pass on every merge (44 → 48 le 2026-05-01 avec
+  l'ajout `uk-6th-airborne`) ; web app `pnpm check` clean.
 
 **Next (post-MVP — awaiting user direction)**
 - v1 scope kickoff (`brief.md` §Roadmap step 3): broaden geography
@@ -1167,3 +1182,131 @@ pas d'œil sur le DOM.
 - `progress.md` reste le journal chronologique (ce fichier) ;
   `docs/production-plan.md` est l'horizon stratégique. Les deux
   sont sources complémentaires, pas redondantes.
+
+### 2026-05-01 — Décision §10.1 actée : hosting deferred, local-only
+- **Choix** : option A — M1 est construit comme s'il allait shipper
+  (adapter statique, robustesse, a11y, FR, error boundary, meta OG
+  dans le HTML), mais **pas de cible hosting choisie ni de
+  déploiement public**. Per `CLAUDE.md` §"Tech stack", aucun lock
+  fournisseur n'est posé sans sign-off explicite.
+- **Conséquences plan** :
+  - §10.1 du plan coché et annoté.
+  - §1 "Décisions structurantes" mis à jour : "Hosting deferred —
+    local-only pour l'instant" remplace "Hosting laissé ouvert".
+  - Items M1 reportés au jour où l'utilisateur décidera de publier :
+    workflow CI/CD de deploy, génération de l'OG image PNG (10 min
+    de boulot), critère de sortie M1 "URL publique accessible"
+    (remplacé par "build statique servable en local clean").
+  - Comparaison CF Pages / Vercel / Netlify / GitHub Pages reste
+    documentée dans le plan §3.4 mais n'est plus à trancher tant
+    que la décision de publier n'est pas prise.
+- **Pas un blocker** : M1 peut démarrer dès que les 4 décisions
+  §10 restantes sont actées (SSG vs SSR, `rivers.ts`,
+  `uk-6th-airborne`, i18n).
+- Aucun code modifié dans ce tour. Modifs limitées à
+  `docs/production-plan.md` §10.1 + §1 et `progress.md`.
+
+### 2026-05-01 — PR #4 ouverte : §10.1–5 packagées
+- Branche `claude/m1-decisions-001`, commit `837eb86`.
+- URL : https://github.com/jbi3/d-day/pull/4
+- Contenu : annotations plan §10 + §1, snapshot progress.md
+  réécrit + 5 entrées datées, `data/units/uk-6th-airborne.json`
+  créé, `apps/web/src/lib/layers/rivers.ts` supprimé.
+- État : tests 48/48, `pnpm --filter web check` clean.
+- Intention : checkpoint avant M1 pour figer les arbitrages
+  utilisateur. Une fois mergée, M1 lot 1 démarrable en
+  autonomie. Aucune décision §10.6–9 n'est requise avant M2/M3.
+
+### 2026-05-01 — Décision §10.5 actée : i18n FR-only en M1
+- **Choix** : FR-only en M1, pas de lib i18n. Tous les strings UI
+  encore en anglais (timeline, fiche détail) à passer en français.
+  La légende est déjà en FR.
+- **Pourquoi pas FR+EN** : doublerait la maintenance de contenu,
+  forcerait à choisir une lib i18n (paraglide-js / svelte-i18n)
+  maintenant, ajouterait un sélecteur de langue à l'UI, allongerait
+  M1 d'~1 semaine. Si M2/M3 visent un public EN, l'enveloppement
+  des strings dans un dictionnaire est ~1 j de travail à ce
+  moment-là — pas un coût bloquant à payer prématurément.
+- **Pourquoi pas EN-only** : contre-intuitif. Brief en français,
+  conversation en français, légende déjà en français, registre
+  patrimonial français du projet.
+- **Conséquence M1** : ~30 strings UI à traduire (timeline : Pause,
+  Play, Reset, Speed, Jump to D-1 22:00 ; fiche détail : Side →
+  Côté, Country → Pays, Echelon → Échelon, Branch → Arme,
+  Waypoints → Étapes, Sources, Involved units → Unités impliquées,
+  Disputed waypoints → Étapes contestées, etc.). `lang="fr"` dans
+  `app.html`. Format dates / heures déjà FR sur la timeline ;
+  vérifier la fiche détail.
+- **Toutes les décisions §10 (1-5) sont désormais actées.** M1
+  peut démarrer dès que l'utilisateur le décide.
+
+### 2026-05-01 — Décision §10.4 actée : `uk-6th-airborne` ajoutée
+- **Choix** : option A — `data/units/uk-6th-airborne.json` créé,
+  division-level, 6 waypoints sur la fenêtre D-1 22:00 → D 18:00
+  (cohérent avec les autres divisions du MVP).
+- **Pourquoi pas B (retirer involvedUnits)** : maintenait un état
+  dégradé — les events Pegasus / Horsa / Lovat seraient restés
+  affichés mais sans cross-link. Pire des trois.
+- **Pourquoi pas C (retirer events)** : Pegasus Bridge est
+  l'objectif allié n°1 de D-Day (00:16, premier objectif pris).
+  Le retirer pour respecter "MVP US-only" appauvrit la lecture
+  narrative pour un gain de pureté de scope minime.
+- **Sources mobilisées** : `harrison-1951` + `iwm-archives`. Cette
+  dernière était dans le registry depuis le seed initial mais
+  jamais citée (l'audit §2.2 le notait) — désormais activée.
+  C'est la première unité UK du MVP : seule unité non-US, scope
+  élargi au flanc Est assumé.
+- **Waypoints** : pré-drop (D-1 22:00, transports forming au-dessus
+  de la côte sud anglaise) ; Pegasus capture (00:16, coup-de-main
+  Howard) ; DZ-N drop (01:00, 5 Para Bde, avec disputedBy parallèle
+  au pattern 82nd Abn sur la dispersion des sticks) ; Ranville
+  cleared + Merville assault (04:30) ; Lovat link-up à Pegasus
+  (13:30) ; Orne bridgehead held (18:00, ligne Ranville–Bréville–
+  Bois-de-Bavent). Notes signalent toutes les approximations
+  (centroïdes divisionnaires, géométries d'assemblage non
+  matérielles à ce niveau de granularité).
+- **Validation** : 48/48 tests passent (44 + 4 nouveaux tests
+  auto-générés pour la nouvelle unité par
+  `unit-data.test.ts`). `pnpm --filter web check` clean.
+- **Conséquence M2** : §5.1.2 du plan listait `uk-6th-airborne`
+  comme à ajouter en M2 "sauf si déjà fait en M1" — c'est fait.
+  M2 démarre avec 6 unités déjà existantes au lieu de 5.
+
+### 2026-05-01 — Décision §10.3 actée : `rivers.ts` supprimé
+- **Choix** : option B — suppression de
+  `apps/web/src/lib/layers/rivers.ts`. Le fichier était orphelin
+  depuis ~5 mois (deferred pending visual fit), jamais importé
+  dans `+page.svelte`. Recommandation initiale du plan §4.1 lot 8
+  ("wirer avec flag désactivable") invalidée par les faits — un
+  re-design éventuel viendra probablement avec un autre style de
+  rendu, le code actuel serait réécrit.
+- **Pourquoi pas A (wirer-avec-flag)** : introduit du dead code
+  voulu, tendance qui s'accumule. Le `git show` retrouve le code
+  si besoin (~150 lignes).
+- **Action prise** : `rm apps/web/src/lib/layers/rivers.ts`,
+  `pnpm --filter web check` → 0 errors, 0 warnings (le fichier
+  n'avait aucun appelant, suppression sans impact).
+- **Conséquences plan** : §10.3 coché. Le lot 8 du M1 §4.1 est
+  partiellement déjà fait — reste juste Prettier/ESLint/précommit
+  + génération JSON Schema + fix `uk-6th-airborne`.
+- **Conséquences progress.md** : entrée "Hydrography" du snapshot
+  réécrite pour refléter la suppression.
+
+### 2026-05-01 — Décision §10.2 actée : SSG (adapter-static + prerender)
+- **Choix** : SSG via `@sveltejs/adapter-static`, `prerender = true`
+  partout. Recommandation senior §3.3 confirmée.
+- **Pourquoi** : (a) cohérent avec décision §10.1 — build statique
+  local prêt à pousser sur n'importe quel host statique le jour
+  où la décision de publier sera prise ; (b) l'app est read-only
+  (aucune route SSR, pas de form actions, données = JSON), donc
+  SSR n'apporterait que de la complexité d'hébergement ; (c) HTML
+  pré-rendu améliore le first paint et débloque SEO/OG dès qu'on
+  publiera.
+- **Conséquences plan** : §10.2 coché et annoté. §3.3 et §4.1 lot 1
+  inchangés (déjà alignés sur la recommandation).
+- **Conséquences code (à exécuter en M1)** : remplacer
+  `@sveltejs/adapter-auto` par `@sveltejs/adapter-static` dans
+  `apps/web/svelte.config.js`, ajouter `export const prerender =
+  true;` dans `apps/web/src/routes/+layout.ts` (à créer si absent).
+  ~5–10 lignes de diff. `pnpm dev` non affecté.
+- Aucun code modifié dans ce tour.
