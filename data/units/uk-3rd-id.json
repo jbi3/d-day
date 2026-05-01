@@ -1,0 +1,68 @@
+{
+	"$schema": "../../packages/data/schema/unit.schema.json",
+	"unit": {
+		"id": "uk-3rd-id",
+		"side": "allied",
+		"country": "UK",
+		"echelon": "division",
+		"branch": "infantry",
+		"name": "3rd Infantry Division",
+		"shortName": "3rd ID",
+		"strength": 14500,
+		"commander": {
+			"name": "Tom G. Rennie",
+			"rank": "Major General"
+		},
+		"casualties": {
+			"total": 630
+		},
+		"sources": ["iwm-archives", "harrison-1951"]
+	},
+	"movement": {
+		"unitId": "uk-3rd-id",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.3, 49.85],
+				"sources": ["iwm-archives"],
+				"note": "Embarked, Force S transports forming offshore north of Sword. Centroid in the run-in approach lane."
+			},
+			{
+				"time": "1944-06-06T07:25:00Z",
+				"position": [-0.293, 49.297],
+				"sources": ["iwm-archives", "harrison-1951"],
+				"note": "H-Hour Sword: 8 Brigade (South Lancs, East Yorks) lands on Queen White / Queen Red (La Brèche / Lion-sur-Mer area). 1st Special Service Brigade (Lord Lovat) and Free French Cdo Kieffer assault Ouistreham casino strongpoint at the Orne mouth."
+			},
+			{
+				"time": "1944-06-06T09:00:00Z",
+				"position": [-0.291, 49.29],
+				"sources": ["iwm-archives"],
+				"note": "Hermanville cleared ; 9 Brigade following through ; Ouistreham casino taken by Kieffer's commandos."
+			},
+			{
+				"time": "1944-06-06T13:30:00Z",
+				"position": [-0.3, 49.27],
+				"sources": ["iwm-archives", "harrison-1951"],
+				"note": "Lord Lovat's commandos cross to Pegasus Bridge linking up with 6th Airborne. Main division pushing south through Beuville and Periers-sur-le-Dan."
+			},
+			{
+				"time": "1944-06-06T15:00:00Z",
+				"position": [-0.32, 49.23],
+				"sources": ["iwm-archives"],
+				"disputedBy": [
+					{
+						"source": "harrison-1951",
+						"claim": "Whether Caen was a realistic D-Day objective for 3rd ID is one of the most-disputed questions of the campaign. Montgomery's plan called for Caen on D-Day ; Harrison concludes the schedule was unrealistic given the depth of advance and the 21. Panzer counterattack ; Beevor (cross-check) pushes back on this revisionism, noting at least 7 hours' delay before 9 Brigade was committed inland."
+					}
+				],
+				"note": "Lead Sherman Fireflies of Staffordshire Yeomanry engage 21. Panzer's Pz-Rgt 22 at Bieville. Division blocked from Caen by the German counterattack."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.325, 49.225],
+				"sources": ["iwm-archives", "harrison-1951"],
+				"note": "End of MVP window: 3rd ID line stops at the Lebisey ridge, ~6 km short of Caen. The objective Montgomery had set for D-Day will not fall for another month. Position is approximate divisional centroid."
+			}
+		]
+	}
+}

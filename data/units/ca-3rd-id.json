@@ -1,0 +1,68 @@
+{
+	"$schema": "../../packages/data/schema/unit.schema.json",
+	"unit": {
+		"id": "ca-3rd-id",
+		"side": "allied",
+		"country": "CA",
+		"echelon": "division",
+		"branch": "infantry",
+		"name": "3rd Canadian Infantry Division",
+		"shortName": "3rd Cdn",
+		"strength": 14000,
+		"commander": {
+			"name": "Rod Keller",
+			"rank": "Major General"
+		},
+		"casualties": {
+			"total": 1074
+		},
+		"sources": ["iwm-archives", "memorial-caen"]
+	},
+	"movement": {
+		"unitId": "ca-3rd-id",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.45, 49.84],
+				"sources": ["iwm-archives"],
+				"note": "Embarked, Force J transports forming offshore north of Juno. Centroid in the run-in approach lane."
+			},
+			{
+				"time": "1944-06-06T07:35:00Z",
+				"position": [-0.421, 49.336],
+				"sources": ["memorial-caen", "iwm-archives"],
+				"disputedBy": [
+					{
+						"source": "iwm-archives",
+						"claim": "B Company Queen's Own Rifles of Canada is often cited as having taken the highest single-company casualties of any Allied first wave on D-Day (Nan White sector, ~2/3 of the company down within the first minutes). The exact figure is contested across QOR, brigade, and divisional war diaries ; published estimates range from 61 to 95 for B Coy alone."
+					}
+				],
+				"note": "H-Hour Juno (delayed 10 min): 7 Brigade on Mike sectors (Courseulles), 8 Brigade on Nan sectors (Bernières / Saint-Aubin). Position approximates Bernières-sur-Mer."
+			},
+			{
+				"time": "1944-06-06T09:00:00Z",
+				"position": [-0.42, 49.33],
+				"sources": ["memorial-caen", "iwm-archives"],
+				"note": "Bernières-sur-Mer cleared (first French village liberated by Canadian troops) ; 9 Brigade landing in support."
+			},
+			{
+				"time": "1944-06-06T12:00:00Z",
+				"position": [-0.43, 49.3],
+				"sources": ["iwm-archives"],
+				"note": "Lead armour (1st Hussars Shermans) pushing through Reviers and Bény-sur-Mer toward the high ground south of the beachhead."
+			},
+			{
+				"time": "1944-06-06T15:00:00Z",
+				"position": [-0.44, 49.27],
+				"sources": ["iwm-archives", "memorial-caen"],
+				"note": "Lead patrols of the Inns of Court / 1st Hussars reach Anguerny / Anisy. Canadian advance is the deepest D-Day penetration of any Allied division."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.46, 49.24],
+				"sources": ["iwm-archives", "memorial-caen"],
+				"note": "End of MVP window: 3rd Cdn ID closest approach to the Caen–Carpiquet airfield; centroid south of Bény-sur-Mer. Position is approximate divisional centroid."
+			}
+		]
+	}
+}

@@ -1,0 +1,66 @@
+{
+	"$schema": "../../packages/data/schema/unit.schema.json",
+	"unit": {
+		"id": "de-716th-id",
+		"side": "axis",
+		"country": "DE",
+		"echelon": "division",
+		"branch": "infantry",
+		"name": "716. Infanterie-Division",
+		"shortName": "716. ID",
+		"strength": 7000,
+		"axisAffiliation": "wehrmacht",
+		"commander": {
+			"name": "Wilhelm Richter",
+			"rank": "Generalleutnant"
+		},
+		"sources": ["zetterling-2000", "harrison-1951"]
+	},
+	"movement": {
+		"unitId": "de-716th-id",
+		"waypoints": [
+			{
+				"time": "1944-06-05T22:00:00Z",
+				"position": [-0.45, 49.3],
+				"sources": ["zetterling-2000"],
+				"disputedBy": [
+					{
+						"source": "harrison-1951",
+						"claim": "Pre-invasion Allied intelligence (Cross-Channel Attack §VII) credited the 716. ID with substantially more strength than Zetterling's archival reconstruction (~8 500 vs ~7 000). The discrepancy turns on how Ost-battalion fillers and divisional artillery are counted ; Zetterling excludes attached non-organic units."
+					}
+				],
+				"note": "Static coastal-defence division holding the sector from the Vire estuary to the Orne. Divisional HQ in the Caen suburbs ; centroid drifted west of Caen since the division's strongpoints are spread along ~50 km of coast."
+			},
+			{
+				"time": "1944-06-06T06:30:00Z",
+				"position": [-0.5, 49.32],
+				"sources": ["zetterling-2000"],
+				"note": "H-Hour : the Gold/Juno/Sword sectors are within 716. ID's frontage. Strongpoints (WN) take naval bombardment and assault landings simultaneously."
+			},
+			{
+				"time": "1944-06-06T09:00:00Z",
+				"position": [-0.45, 49.32],
+				"sources": ["zetterling-2000", "harrison-1951"],
+				"note": "Forward strongpoints overrun across all three British/Canadian beaches ; reserves committed piecemeal. The static division can't manoeuvre."
+			},
+			{
+				"time": "1944-06-06T12:00:00Z",
+				"position": [-0.4, 49.27],
+				"sources": ["zetterling-2000"],
+				"note": "Mid-day: 716. ID losing cohesion ; surviving elements falling back through the Périers ridge / Caen north outskirts toward 21. Pz lines."
+			},
+			{
+				"time": "1944-06-06T15:00:00Z",
+				"position": [-0.36, 49.25],
+				"sources": ["zetterling-2000"],
+				"note": "Mid-afternoon : centroid pulled south of Caen-Carpiquet ; remaining battalions entangled with 21. Panzer's counterattack assembly area."
+			},
+			{
+				"time": "1944-06-06T18:00:00Z",
+				"position": [-0.36, 49.22],
+				"sources": ["zetterling-2000"],
+				"note": "End of MVP window: 716. ID effectively combat-broken ; survivors absorbed by 21. Panzer or holding fragmentary positions south of Caen. Position is approximate divisional centroid."
+			}
+		]
+	}
+}
