@@ -17,6 +17,7 @@
 	import Timeline from '$lib/components/timeline.svelte';
 	import Details, { type Selection } from '$lib/components/details.svelte';
 	import Legend from '$lib/components/legend.svelte';
+	import DesktopOnly from '$lib/components/desktop-only.svelte';
 
 	const loadResult: { data: LoadedData | null; error: Error | null } = (() => {
 		try {
@@ -232,6 +233,8 @@
 </svelte:head>
 
 <svelte:window onkeydown={onKeydown} />
+
+<DesktopOnly />
 
 {#if dataError}
 	<div class="error-wrap">
