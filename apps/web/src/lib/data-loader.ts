@@ -32,25 +32,12 @@ interface RegistryFile {
 	sources: Source[];
 }
 
-const unitGlob = import.meta.glob<UnitFile>('../../../../data/units/*.json', {
-	eager: true,
-	import: 'default'
-});
-
-const eventsGlob = import.meta.glob<{ events?: MapEvent[] } | MapEvent[]>(
-	'../../../../data/events/*.json',
-	{ eager: true, import: 'default' }
-);
-
-const registryGlob = import.meta.glob<RegistryFile>('../../../../data/sources/registry.json', {
-	eager: true,
-	import: 'default'
-});
-
-const frontlineGlob = import.meta.glob<FrontlineFile>('../../../../data/frontline.json', {
-	eager: true,
-	import: 'default'
-});
+interface Manifest {
+	units: string[];
+	events: string[];
+	sources: string;
+	frontline: string;
+}
 
 export class DataLoadError extends Error {
 	readonly context: string;
@@ -83,9 +70,58 @@ export interface LoadedData {
 	eventById: Map<string, MapEvent>;
 }
 
-export function loadData(): LoadedData {
+async function fetchJson<T>(path: string, ctx: string, fetcher: typeof fetch): Promise<T> {
+	let res: Response;
+	try {
+		res = await fetcher(path);
+	} catch (err) {
+		throw new DataLoadError(ctx, `network: ${err instanceof Error ? err.message : String(err)}`);
+	}
+	if (!res.ok) {
+		throw new DataLoadError(ctx, `HTTP ${res.status} ${res.statusText} for ${path}`);
+	}
+	try {
+		return (await res.json()) as T;
+	} catch (err) {
+		throw new DataLoadError(
+			ctx,
+			`invalid JSON: ${err instanceof Error ? err.message : String(err)}`
+		);
+	}
+}
+
+/**
+ * Load every dataset (units, events, sources, frontline) from the
+ * runtime `/data/` endpoint, validate against the ajv-compiled schemas,
+ * and assert source-id cross-references.
+ *
+ * The browser's HTTP cache + the server's `Cache-Control` (set in the
+ * `serve-data` Vite plugin and the static host's defaults) handle
+ * caching ; this function does no in-process memoisation.
+ */
+export async function loadData(fetcher: typeof fetch = fetch): Promise<LoadedData> {
+	const manifest = await fetchJson<Manifest>('/data/manifest.json', 'manifest', fetcher);
+
+	const [unitFiles, eventFiles, registry, frontlineFile] = await Promise.all([
+		Promise.all(
+			manifest.units.map((p) =>
+				fetchJson<UnitFile>(`/data/${p}`, p, fetcher).then((file) => ({ path: p, file }))
+			)
+		),
+		Promise.all(
+			manifest.events.map((p) =>
+				fetchJson<{ events?: MapEvent[] } | MapEvent[]>(`/data/${p}`, p, fetcher).then((raw) => ({
+					path: p,
+					raw
+				}))
+			)
+		),
+		fetchJson<RegistryFile>(`/data/${manifest.sources}`, manifest.sources, fetcher),
+		fetchJson<FrontlineFile>(`/data/${manifest.frontline}`, manifest.frontline, fetcher)
+	]);
+
 	const units: UnitTrack[] = [];
-	for (const [path, file] of Object.entries(unitGlob)) {
+	for (const { path, file } of unitFiles) {
 		expect(validateUnit, file.unit, `${path}#/unit`);
 		expect(validateMovement, file.movement, `${path}#/movement`);
 		if (file.movement.unitId !== file.unit.id) {
@@ -98,7 +134,7 @@ export function loadData(): LoadedData {
 	}
 
 	const events: MapEvent[] = [];
-	for (const [path, raw] of Object.entries(eventsGlob)) {
+	for (const { path, raw } of eventFiles) {
 		const arr = Array.isArray(raw) ? raw : (raw.events ?? []);
 		for (let i = 0; i < arr.length; i++) {
 			expect(validateEvent, arr[i], `${path}#/events/${i}`);
@@ -107,11 +143,9 @@ export function loadData(): LoadedData {
 	}
 
 	const sources: Source[] = [];
-	for (const [path, file] of Object.entries(registryGlob)) {
-		for (let i = 0; i < file.sources.length; i++) {
-			expect(validateSource, file.sources[i], `${path}#/sources/${i}`);
-			sources.push(file.sources[i]);
-		}
+	for (let i = 0; i < registry.sources.length; i++) {
+		expect(validateSource, registry.sources[i], `${manifest.sources}#/sources/${i}`);
+		sources.push(registry.sources[i]);
 	}
 	const sourceById = new Map(sources.map((s) => [s.id, s]));
 
@@ -129,22 +163,20 @@ export function loadData(): LoadedData {
 		for (const d of e.disputedBy ?? []) assertKnown(d.source, knownIds, `event ${e.id} disputedBy`);
 	}
 
+	expect(validateFrontline, frontlineFile, manifest.frontline);
 	const frontlineSegments: FrontlineSegment[] = [];
-	for (const [path, file] of Object.entries(frontlineGlob)) {
-		expect(validateFrontline, file, path);
-		for (const seg of file.segments) {
-			const v0 = seg.keyframes[0]?.path.length ?? 0;
-			for (let i = 1; i < seg.keyframes.length; i++) {
-				if (seg.keyframes[i].path.length !== v0) {
-					throw new DataLoadError(
-						`frontline segment ${seg.id}`,
-						`keyframe ${i} has ${seg.keyframes[i].path.length} vertices, expected ${v0} (vertex count must match across keyframes for interpolation)`
-					);
-				}
+	for (const seg of frontlineFile.segments) {
+		const v0 = seg.keyframes[0]?.path.length ?? 0;
+		for (let i = 1; i < seg.keyframes.length; i++) {
+			if (seg.keyframes[i].path.length !== v0) {
+				throw new DataLoadError(
+					`frontline segment ${seg.id}`,
+					`keyframe ${i} has ${seg.keyframes[i].path.length} vertices, expected ${v0} (vertex count must match across keyframes for interpolation)`
+				);
 			}
-			for (const id of seg.sources) assertKnown(id, knownIds, `frontline segment ${seg.id}`);
-			frontlineSegments.push(seg);
 		}
+		for (const id of seg.sources) assertKnown(id, knownIds, `frontline segment ${seg.id}`);
+		frontlineSegments.push(seg);
 	}
 
 	const unitById = new Map(units.map((u) => [u.unit.id, u]));
