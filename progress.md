@@ -7,10 +7,14 @@ place. Bottom section is an append-only dated log.
 ## Current state
 
 **Phase:** **M3a mergé sur main (2026-05-01) — PR #7 close, merge
-commit `88500df`.** CI Actions vert, 179 tests pass. Trois jalons
-post-MVP livrés (M1 prod-grade, M2 v1 Normandie, M3a naval) ;
-le périmètre v2 du brief est partiellement couvert (naval livré,
-air toujours hors scope).
+commit `88500df`.** Lot hygiène mergé par-dessus (PR #9, merge
+commit `6eaf621`) : 14 tests d'interpolation frontline +
+factorisation `interpolateWaypointsAt` partagé entre couches
+units et naval, suppression d'un cast `as UnitTrack` unsafe.
+CI Actions vert, 193 tests pass. Trois jalons post-MVP livrés
+(M1 prod-grade, M2 v1 Normandie, M3a naval) ; le périmètre v2
+du brief est partiellement couvert (naval livré, air toujours
+hors scope).
 
 Sign-off utilisateur sur scope M3 = M3a uniquement (naval). Air,
 extension D+1→D+6, timeline étendue, painted basemap restent
@@ -345,6 +349,35 @@ selon plan §6.2).
 ---
 
 ## Log
+
+### 2026-05-01 — PR #9 mergée : hygiène post-revue (frontline tests + interpolateur générique)
+
+- Branche `claude/frontline-interp-tests-001` (1 commit, `78ed210`)
+  mergée via `gh pr merge 9 --merge --auto`.
+- Merge commit `6eaf621` sur `main`.
+- Lot identifié à la revue post-M3a : trou de couverture sur la
+  logique d'interpolation runtime de la couche frontline, plus
+  duplication d'interpolateur unit/vessel avec un cast
+  `as UnitTrack` unsafe dans `naval.ts`.
+- Diff +161/-21 sur 4 fichiers :
+  - `apps/web/src/lib/layers/frontline.test.ts` (nouveau, 14 tests
+    couvrant `interpolatePath` aux bornes / au milieu / avec >2
+    keyframes / non-aliasing, et `chaikin` identité / doublement
+    par itération / bbox conservé / non-mutation / wrap closed).
+  - `apps/web/src/lib/layers/frontline.ts` : exports
+    `interpolatePath` et `chaikin` pour testabilité directe.
+  - `apps/web/src/lib/data-loader.ts` : extrait
+    `interpolateWaypointsAt(waypoints, isoTime)` générique ;
+    `unitPositionAt` devient un wrapper d'1 ligne.
+  - `apps/web/src/lib/layers/naval.ts` : supprime le shim
+    `vesselPositionAt` et son cast `as UnitTrack`, appel direct
+    à `interpolateWaypointsAt(track.waypoints, isoTime)`.
+- Aucun changement de comportement utilisateur. Tests 179 → 193.
+- Solde post-revue restant (hors hygiène code pure) : commanders
+  manquants sur 7/13 unités et 16/22 navires, casualties
+  manquants sur 9/13 unités. C'est de l'éditorial sourcé
+  (CLAUDE.md §"Sourcing posture"), pas de la hygiène code →
+  branche dédiée le moment venu, pas dans ce lot.
 
 ### 2026-05-01 — PR #7 mergée : M3a sur main
 
